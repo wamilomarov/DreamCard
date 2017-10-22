@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="DreamCard">
+    <serverData>
+      <paths name="DreamCard">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/.cache" />
+            <excludedPath path="/.config" />
+            <excludedPath path="/.local" />
+            <excludedPath path="/.php" />
+            <excludedPath path="/imap" />
+            <excludedPath path="/Maildir" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.cache" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.config" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.local" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.php" />
+            <excludedPath local="true" path="$PROJECT_DIR$/imap" />
+            <excludedPath local="true" path="$PROJECT_DIR$/Maildir" />
+            <excludedPath local="true" path="$PROJECT_DIR$/domains/dreamcard.az/dreamcard-lumen/vendor" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+      <paths name="Mida">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="hnotes-centos">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="hnotess-azure">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="yyk-demo">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
