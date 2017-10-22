@@ -15,6 +15,21 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('username')->unique();
+            $table->string('email')->uniqie();
+            $table->string('phone')->unique();
+            $table->string('password');
+            $table->integer('facebook_id')->nullable()->unique();
+            $table->integer('google_id')->nullable()->unique();
+            $table->integer('firebase_id')->nullable()->unique();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->integer('photo_id');
+            $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
+            $table->integer('api_token')->nullable();
+            $table->integer('get_news')->nullable();
+            $table->integer('city_id')->nullable();
+            $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             $table->timestamps();
         });
     }

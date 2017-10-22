@@ -13,8 +13,9 @@ class CreateCompaignsTable extends Migration
      */
     public function up()
     {
-        Schema::create('compaigns', function (Blueprint $table) {
+        Schema::create('campaigns', function (Blueprint $table) {
             $table->increments('id');
+
             $table->timestamps();
         });
     }
