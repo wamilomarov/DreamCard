@@ -24,11 +24,11 @@ class CreateUsersTable extends Migration
             $table->integer('firebase_id')->nullable()->unique();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->integer('photo_id');
+            $table->integer('photo_id')->unsigned();
             $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
             $table->integer('api_token')->nullable();
             $table->integer('get_news')->nullable();
-            $table->integer('city_id')->nullable();
+            $table->integer('city_id')->nullable()->unsigned();
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             $table->timestamps();
         });

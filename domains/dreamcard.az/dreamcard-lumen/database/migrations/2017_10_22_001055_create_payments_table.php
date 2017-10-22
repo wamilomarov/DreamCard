@@ -15,9 +15,9 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('card_id');
+            $table->integer('card_id')->unsigned();
             $table->foreign('card_id')->references('id')->on('cards')->onDelete('cascade');
-            $table->integer('package_id');
+            $table->integer('package_id')->unsigned();
             $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
             $table->dateTime('end_time');
             $table->decimal('price');

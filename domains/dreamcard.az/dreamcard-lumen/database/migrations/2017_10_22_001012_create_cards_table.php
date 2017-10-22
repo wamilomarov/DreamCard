@@ -15,9 +15,9 @@ class CreateCardsTable extends Migration
     {
         Schema::create('cards', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
+            $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->integer('photo_id');
+            $table->integer('photo_id')->unsigned();
             $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
             $table->integer('number');
             $table->timestamps();
