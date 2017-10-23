@@ -28,10 +28,13 @@ $router->get(
     'NewsController@getNews'
 );
 
-$router->get(
-    '/news/{id}',
-    'NewsController@get'
-);
+$router->get('/news/{id}', 'NewsController@get');
+
+$router->post('/user/register', 'UserController@create');
+$router->post('/user/login', 'UserController@login');
+$router->post('/user/update', 'UserController@update');
+
+$router->get('/user/{id}', 'UserController@get');
 
 
 

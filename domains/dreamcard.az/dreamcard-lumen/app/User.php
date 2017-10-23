@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -18,7 +19,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'phone', 'facebook_id', 'google_id', 'first_name', 'last_name', 'photo_id', 'get_news', 'city_id'
+        'username', 'email', 'phone', 'first_name', 'last_name', 'get_news'
     ];
 
     /**
@@ -27,6 +28,33 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'password', 'api_token', 'firebase_id'
+        'password', 'firebase_id', 'photo_id', 'city_id', 'facebook_id', 'google_id', 'api_token', 'status'
     ];
+
+    protected $appends = ['city', 'photo', 'card'];
+
+    public function photo()
+    {
+        return $this->hasOne('App\Photo');
+    }
+
+    public function card()
+    {
+        return $this->belongsTo('App\Card');
+    }
+
+    public function getCityAttribute()
+    {
+        return DB::table('cities')->where('id', $this->city_id)->first();
+    }
+
+    public function getCardAttribute()
+    {
+        return Card::find($this->card_id);
+    }
+
+    public function getPhotoAttribute()
+    {
+        return Photo::find($this->photo_id);
+    }
 }

@@ -18,6 +18,8 @@ class Photo extends Model
 {
     protected $fillable = ['id', 'url'];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     public function news()
     {
         return $this->belongsTo('App\News');

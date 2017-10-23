@@ -3,6 +3,7 @@
   {
     "200": "success",
     "405": "file format error",
-    "406": "empty request or empty field in request"
+    "406": "empty request or empty field in request",
+    "407": "user with this (phone, username or email) already exists"
   }
 }

@@ -15,6 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('status')->default(3); //1 - dreamczard admin, 2 - department admin, 3 - user
             $table->string('username')->unique();
             $table->string('email')->uniqie();
             $table->string('phone')->unique();
@@ -24,7 +25,7 @@ class CreateUsersTable extends Migration
             $table->integer('firebase_id')->nullable()->unique();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->integer('photo_id')->unsigned();
+            $table->integer('photo_id')->nullable()->unsigned();
             $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
             $table->integer('api_token')->nullable();
             $table->integer('get_news')->nullable();
