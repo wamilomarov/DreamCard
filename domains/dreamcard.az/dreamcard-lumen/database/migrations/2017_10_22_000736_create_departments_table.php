@@ -22,8 +22,8 @@ class CreateDepartmentsTable extends Migration
             $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
             $table->integer('city_id')->unsigned();
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
-            $table->float('lat');
-            $table->float('lng');
+//            $table->float('lat');
+//            $table->float('lng');
             $table->timestamps();
         });
     }

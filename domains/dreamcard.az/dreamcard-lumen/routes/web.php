@@ -19,5 +19,19 @@ $router->get('foo', function () {
     return 'Hello World';
 });
 
+$router->post(
+    '/test',
+    'NewsController@create'
+);
+$router->get(
+    '/news',
+    'NewsController@getNews'
+);
+
+$router->get(
+    '/news/{id}',
+    'NewsController@get'
+);
+
 
 
