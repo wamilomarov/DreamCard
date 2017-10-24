@@ -20,9 +20,7 @@ $app = new Laravel\Lumen\Application(
 );
  $app->withFacades();
  $app->withEloquent();
-if (!class_exists('Image')) {
-    class_alias('Intervention\Image\Facades\Image', 'Image');
-}
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -41,6 +39,7 @@ $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
 );
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -69,7 +68,6 @@ $app->singleton(
 */
  $app->register(App\Providers\AppServiceProvider::class);
  $app->register(App\Providers\AuthServiceProvider::class);
- $app->register(Intervention\Image\ImageServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 /*
 |--------------------------------------------------------------------------

@@ -20,7 +20,7 @@ $router->get('foo', function () {
 });
 
 $router->post(
-    '/test',
+    '/news',
     'NewsController@create'
 );
 $router->get(
@@ -30,11 +30,13 @@ $router->get(
 
 $router->get('/news/{id}', 'NewsController@get');
 
-$router->post('/user/register', 'UserController@create');
-$router->post('/user/login', 'UserController@login');
-$router->post('/user/update', 'UserController@update');
+$router->post('/users/register', 'UserController@create');
+$router->post('/users/login', 'UserController@login');
+$router->post('/users/update', 'UserController@update');
+$router->get('/users', 'UserController@getUsers');
+$router->get('/users/{id}', 'UserController@get');
 
-$router->get('/user/{id}', 'UserController@get');
+$router->post('/categories', 'CategoryController@create');
 
 
 

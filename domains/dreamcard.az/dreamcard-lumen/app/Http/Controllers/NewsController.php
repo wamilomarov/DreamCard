@@ -28,7 +28,7 @@ class NewsController extends Controller
             $width = $request->get('width');
             $height = $request->get('height');
 
-            $photo_upload_result = $photo->upload($request->file('photo'), '/uploads/photos/news/', $width, $height);
+            $photo_upload_result = $photo->upload($request->file('photo'),   'uploads/photos/news/', $width, $height);
 
             if ($photo_upload_result == 200)
             {
@@ -38,7 +38,7 @@ class NewsController extends Controller
                 $news->category_id = $request->get('category_id');
                 $news->save();
 
-                $result = ['status' => 200, 'data' => ['news' => $news]];
+                $result = ['status' => 200, 'data' => $news];
             }
             else
             {
@@ -56,7 +56,7 @@ class NewsController extends Controller
     public function get($id)
     {
         $news = News::find($id);
-        $result = ['status' => 200, 'data' => ['news' => $news]];
+        $result = ['status' => 200, 'data' => $news];
         return response($result);
 
     }
@@ -75,6 +75,21 @@ class NewsController extends Controller
         $status = collect(['status' => 200]);
         $result = $status->merge($news);
         return response($result);
+    }
+
+    public function update(Request $request)
+    {
+        $news = News::find($request->get('id'));
+
+        if ($news)
+        {
+
+        }
+        else
+        {
+            $result = ['status' => 408];
+        }
+
     }
 
 }

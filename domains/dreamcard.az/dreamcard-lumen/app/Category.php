@@ -10,6 +10,7 @@ namespace App;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class Category extends Model
 {
@@ -17,5 +18,16 @@ class Category extends Model
 
     protected $hidden = ['small_icon_id', 'large_icon_id', 'order_by'];
 
+    protected $appends = ['small_icon', 'large_icon'];
+
+    public function getSmallIconAttribute()
+    {
+        return Photo::find($this->small_icon_id);
+    }
+
+    public function getLargeIconAttribute()
+    {
+        return Photo::find($this->large_icon_id);
+    }
 
 }

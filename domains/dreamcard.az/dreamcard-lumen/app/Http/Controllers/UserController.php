@@ -89,4 +89,20 @@ class UserController
         return response($result);
     }
 
+    public function getUsers()
+    {
+        $users = User::paginate(10);
+        $status = collect(['status' => 200]);
+        $result = $status->merge($users);
+        return response($result);
+    }
+
+    public function delete($id)
+    {
+        User::find($id)->delete();
+        $result = ['status' => 200];
+
+        return response($result);
+    }
+
 }
