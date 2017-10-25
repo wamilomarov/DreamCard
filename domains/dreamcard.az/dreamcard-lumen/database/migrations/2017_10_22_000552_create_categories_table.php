@@ -21,6 +21,7 @@ class CreateCategoriesTable extends Migration
             $table->integer('large_icon_id')->unsigned();
             $table->foreign('large_icon_id')->references('id')->on('photos')->onDelete('cascade');
             $table->integer('order_by');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

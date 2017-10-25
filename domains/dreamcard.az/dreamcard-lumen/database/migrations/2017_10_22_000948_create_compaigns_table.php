@@ -23,6 +23,7 @@ class CreateCompaignsTable extends Migration
             $table->decimal('all_products_discount');
             $table->decimal('special_product_discount');
             $table->dateTime('end_date');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

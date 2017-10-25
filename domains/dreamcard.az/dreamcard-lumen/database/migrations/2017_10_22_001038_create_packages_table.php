@@ -19,6 +19,7 @@ class CreatePackagesTable extends Migration
             $table->decimal('price');
             $table->decimal('discount_price');
             $table->integer('duration');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

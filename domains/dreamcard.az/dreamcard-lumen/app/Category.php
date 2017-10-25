@@ -18,6 +18,8 @@ class Category extends Model
 
     protected $hidden = ['small_icon_id', 'large_icon_id', 'order_by'];
 
+    protected $dates = ['deleted_at'];
+
     protected $appends = ['small_icon', 'large_icon'];
 
     public function getSmallIconAttribute()

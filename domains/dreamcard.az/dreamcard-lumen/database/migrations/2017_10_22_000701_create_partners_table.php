@@ -20,6 +20,10 @@ class CreatePartnersTable extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->integer('photo_id')->unsigned();
             $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
+            $table->string('username')->unique();
+            $table->string('password');
+            $table->tinyInteger('first_entry');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

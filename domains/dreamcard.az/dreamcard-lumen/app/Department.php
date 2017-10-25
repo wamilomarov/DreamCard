@@ -17,4 +17,6 @@ class Department extends Model
 
     protected $hidden = ['partner_id', 'photo_id', 'city_id'];
 
+    protected $dates = ['deleted_at'];
+
 }

@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('status')->default(3); //1 - dreamczard admin, 2 - department admin, 3 - user
+            $table->integer('status')->default(2); //1 - dreamczard admin, 2 - user
             $table->string('username')->unique();
             $table->string('email')->uniqie();
             $table->string('phone')->unique();
@@ -27,7 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('last_name')->nullable();
             $table->integer('photo_id')->nullable()->unsigned();
             $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
-            $table->integer('api_token')->nullable();
+            $table->string('api_token')->nullable();
             $table->integer('get_news')->nullable();
             $table->integer('city_id')->nullable()->unsigned();
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');

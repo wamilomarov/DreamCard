@@ -24,6 +24,10 @@ class CreateDepartmentsTable extends Migration
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
 //            $table->float('lat');
 //            $table->float('lng');
+            $table->string('username')->unique();
+            $table->string('password');
+            $table->tinyInteger('first_entry');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

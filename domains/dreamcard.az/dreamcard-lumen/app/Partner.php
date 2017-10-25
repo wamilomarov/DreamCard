@@ -16,4 +16,6 @@ class Partner extends Model
     protected $fillable = ['name'];
 
     protected $hidden = ['category_id', 'photo_id'];
+
+    protected $dates = ['deleted_at'];
 }
