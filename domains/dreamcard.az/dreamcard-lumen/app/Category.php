@@ -30,4 +30,15 @@ class Category extends Model
         return Photo::find($this->large_icon_id);
     }
 
+    public function deleteSmallIcon()
+    {
+        $photo = new Photo($this->small_icon_id);
+        return $photo->remove('uploads/photos/categories/');
+    }
+
+    public function deleteLargeIcon()
+    {
+        $photo = new Photo($this->large_icon_id);
+        return $photo->remove('uploads/photos/categories/');
+    }
 }

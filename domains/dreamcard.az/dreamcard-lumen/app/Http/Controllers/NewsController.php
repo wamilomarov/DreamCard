@@ -25,10 +25,7 @@ class NewsController extends Controller
 
             $photo = new Photo();
 
-            $width = $request->get('width');
-            $height = $request->get('height');
-
-            $photo_upload_result = $photo->upload($request->file('photo'),   'uploads/photos/news/', $width, $height);
+            $photo_upload_result = $photo->upload($request->file('photo'),   'uploads/photos/news/');
 
             if ($photo_upload_result == 200)
             {
@@ -64,6 +61,7 @@ class NewsController extends Controller
     public function delete($id)
     {
         $news = News::find($id);
+        $news->deletePhoto();
         $news->delete();
 
         return response(['status' => 200]);

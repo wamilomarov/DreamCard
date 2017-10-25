@@ -15,28 +15,32 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('foo', function () {
-    return 'Hello World';
-});
-
-$router->post(
-    '/news',
-    'NewsController@create'
-);
-$router->get(
-    '/news',
-    'NewsController@getNews'
-);
-
-$router->get('/news/{id}', 'NewsController@get');
-
-$router->post('/users/register', 'UserController@create');
 $router->post('/users/login', 'UserController@login');
+$router->post('/users/logout',['middleware' => ['auth'], 'UserController@logout']);
+
+$router->post('/users', 'UserController@create');
 $router->post('/users/update', 'UserController@update');
+$router->get('/users/delete/{id}', 'UserController@delete');
 $router->get('/users', 'UserController@getUsers');
 $router->get('/users/{id}', 'UserController@get');
 
 $router->post('/categories', 'CategoryController@create');
+$router->post('/categories/update', 'CategoryController@update');
+$router->get('/categories/delete/{id}', 'CategoryController@delete');
+$router->get('/categories', 'CategoryController@getCategories');
+$router->get('/categories/{id}', 'CategoryController@get');
+
+$router->post('/partners', 'PartnerController@create');
+$router->post('/partners/update', 'PartnerController@update');
+$router->get('/partners/delete/{id}', 'PartnerController@delete');
+$router->get('/partners', 'PartnerController@getPartners');
+$router->get('/partners/{id}', 'PartnerController@get');
+
+$router->post('/news','NewsController@create');
+$router->post('/news','NewsController@update');
+$router->get('/news/delete/{id}', 'NewsController@delete');
+$router->get('/news','NewsController@getNews');
+$router->get('/news/{id}', 'NewsController@get');
 
 
 

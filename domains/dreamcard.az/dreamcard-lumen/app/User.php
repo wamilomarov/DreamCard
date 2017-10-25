@@ -57,4 +57,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return Photo::find($this->photo_id);
     }
+
+    public function deletePhoto()
+    {
+        $photo = Photo::find($this->photo_id);
+        return $photo->remove('uploads/photos/users/');
+    }
 }

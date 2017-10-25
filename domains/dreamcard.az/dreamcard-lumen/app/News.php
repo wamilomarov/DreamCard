@@ -42,4 +42,10 @@ class News extends Model
         return Category::find($this->category_id);
     }
 
+    public function deletePhoto()
+    {
+        $photo = Photo::find($this->photo_id);
+        return $photo->remove('uploads/photos/news/');
+    }
+
 }
