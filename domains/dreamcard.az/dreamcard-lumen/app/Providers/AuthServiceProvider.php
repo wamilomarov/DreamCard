@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Department;
+use App\Partner;
 use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -31,8 +33,36 @@ class AuthServiceProvider extends ServiceProvider
         // the User instance via an API token or any other method necessary.
 
         $this->app['auth']->viaRequest('api', function ($request) {
-            if ($request->input('api_token')) {
-                return User::where('api_token', $request->input('api_token'))->first();
+            if ($request->has('api_token')) {
+                $user =  User::where('api_token', $request->input('api_token'))->first();
+                if ($user)
+                {
+                    return $user;
+                }
+                else
+                {
+                    $partner = Partner::where('api_token', $request->input('api_token'))->first();
+                    if ($partner)
+                    {
+                        return $partner;
+                    }
+                    else
+                    {
+                        $department = Department::where('api_token', $request->input('api_token'))->first();
+                        if ($department)
+                        {
+                            return $department;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                return null;
             }
         });
     }

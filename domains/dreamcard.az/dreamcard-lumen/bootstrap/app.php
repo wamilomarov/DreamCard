@@ -55,6 +55,10 @@ $app->singleton(
 // ]);
  $app->routeMiddleware([
      'auth' => App\Http\Middleware\Authenticate::class,
+     'partner' => App\Http\Middleware\PartnerMiddleware::class,
+     'department' => App\Http\Middleware\DepartmentMiddleware::class,
+     'user' => App\Http\Middleware\UserMiddleware::class,
+
  ]);
 /*
 |--------------------------------------------------------------------------

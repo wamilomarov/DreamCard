@@ -25,7 +25,7 @@ class NewsController extends Controller
 
             $photo = new Photo();
 
-            $photo_upload_result = $photo->upload($request->file('photo'),   'uploads/photos/news/');
+            $photo_upload_result = $photo->upload($request->file('photo'),'uploads/photos/news/');
 
             if ($photo_upload_result == 200)
             {
@@ -62,7 +62,7 @@ class NewsController extends Controller
     {
         $news = News::find($id);
         $news->deletePhoto();
-        $news->delete();
+        $news->forceDelete();
 
         return response(['status' => 200]);
     }
@@ -81,13 +81,48 @@ class NewsController extends Controller
 
         if ($news)
         {
+            if ($request->has('title'))
+            {
+                $news->title = $request->get('title');
+            }
 
+            if ($request->has('content'))
+            {
+                $news->content = $request->get('content');
+            }
+
+            if ($request->has('category_id'))
+            {
+                $news->category_id = $request->get('category_id');
+            }
+
+            if ($request->hasFile('photo'))
+            {
+                $photo = new Photo();
+                $photo_result = $photo->upload($request->photo('photo'), 'uploads/photos/news/');
+
+                if ($photo_result == 200)
+                {
+                    $news->deletePhoto();
+                    $news->photo_id = $photo->id;
+                }
+                else
+                {
+                    return response(['status' => $photo_result]);
+                }
+            }
+
+            $news->save();
+            $result = ['status' => 200];
         }
         else
         {
             $result = ['status' => 408];
         }
 
+        return response($result);
+
     }
+
 
 }

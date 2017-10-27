@@ -22,7 +22,8 @@ class CreatePartnersTable extends Migration
             $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
             $table->string('username')->unique();
             $table->string('password');
-            $table->tinyInteger('first_entry');
+            $table->string('api_token');
+            $table->tinyInteger('first_entry')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

@@ -26,7 +26,8 @@ class CreateDepartmentsTable extends Migration
 //            $table->float('lng');
             $table->string('username')->unique();
             $table->string('password');
-            $table->tinyInteger('first_entry');
+            $table->string('api_token');
+            $table->tinyInteger('first_entry')->deafult(1);
             $table->softDeletes();
             $table->timestamps();
         });

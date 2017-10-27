@@ -87,7 +87,7 @@ class CategoryController extends Controller
         $category = Category::find($id);
         $category->deleteLargeIcon();
         $category->deleteSmallIcon();
-        $category->delete();
+        $category->forceDelete();
         $result = ['status' => 200];
         return response($result);
     }
@@ -149,5 +149,13 @@ class CategoryController extends Controller
 
         return response($result);
 
+    }
+
+    public function disable($id)
+    {
+        $category = Category::find($id);
+        $category->delete();
+        $result = ['status' => 200];
+        return response($result);
     }
 }
