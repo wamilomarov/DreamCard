@@ -38,6 +38,13 @@ $router->get('/partners/disable/{id}', 'PartnerController@disable');
 $router->get('/partners', ['middleware' => ['auth', 'department'], 'uses' => 'PartnerController@getPartners']);
 $router->get('/partners/{id}', 'PartnerController@get');
 
+$router->post('/departments', 'DepartmentController@create');
+$router->post('/departments/update', 'DepartmentController@update');
+$router->get('/departments/delete/{id}', 'DepartmentController@delete');
+$router->get('/departments/disable/{id}', 'DepartmentController@disable');
+$router->get('/departments', 'DepartmentController@getDepartments');
+$router->get('/departments/{id}', 'DepartmentController@get');
+
 $router->post('/news','NewsController@create');
 $router->post('/news','NewsController@update');
 $router->get('/news/delete/{id}', 'NewsController@delete');

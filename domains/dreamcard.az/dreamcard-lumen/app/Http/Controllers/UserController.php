@@ -117,6 +117,7 @@ class UserController
                 if (Hash::check($request->get('prev_password'), $user->getAuthPassword()))
                 {
                     $user->password = app('hash')->make($request->get('password'));
+                    $user->api_token = null;  //  log out when password is changed
                 }
                 else
                 {

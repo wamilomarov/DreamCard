@@ -68,7 +68,7 @@ class PartnerController extends Controller
             if ($request->hasFile('photo'))
             {
                 $photo = new Photo();
-                $photo_result = $photo->upload($request->photo('photo'), 'uploads/photos/partners/');
+                $photo_result = $photo->upload($request->file('photo'), 'uploads/photos/partners/');
 
                 if ($photo_result == 200)
                 {
@@ -92,6 +92,7 @@ class PartnerController extends Controller
                 {
                     $partner->password = app('hash')->make($request->get('password'));
                     $partner->first_entry = 0;
+                    $partner->api_token = null; //  log out when password is changed
                 }
                 else
                 {
@@ -118,4 +119,27 @@ class PartnerController extends Controller
         return response($result);
     }
 
+    public function get($id)
+    {
+        $partner = Partner::find($id);
+        $result = ['status' => 200, 'data' => $partner];
+        return response($result);
+    }
+
+    public function delete($id)
+    {
+        $partner = Partner::find($id);
+        $partner->deletePhoto();
+        $partner->forceDelete();
+        $result = ['status' => 200];
+        return response($result);
+    }
+
+    public function disable($id)
+    {
+        $partner = Partner::find($id);
+        $partner->delete();
+        $result = ['status' => 200];
+        return response($result);
+    }
 }
