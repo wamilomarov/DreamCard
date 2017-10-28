@@ -1,4 +1,5 @@
 {
+  "qr_url": "http://chart.googleapis.com/chart?chs=WIDTHxHEIGHT&cht=qr&chl=DATA&chld=H|MARGIN",
   "statuses":
   {
     "200": "success",
@@ -7,6 +8,7 @@
     "406": "empty request or empty field in request",
     "407": "user with this (phone, username or email) already exists",
     "408": "no such content",
-    "409": "previous password is wrong (in profile update)"
+    "409": "previous password is wrong (in profile update)",
+    "410": "you already have a card"
   }
 }

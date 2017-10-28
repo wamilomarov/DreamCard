@@ -17,6 +17,7 @@ class CreatePaymentsTable extends Migration
             $table->increments('id');
             $table->integer('card_id')->unsigned();
             $table->foreign('card_id')->references('id')->on('cards')->onDelete('cascade');
+            $table->string('qr_code');
             $table->integer('package_id')->unsigned();
             $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
             $table->dateTime('end_time');

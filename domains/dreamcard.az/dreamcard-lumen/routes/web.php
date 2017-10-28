@@ -45,6 +45,12 @@ $router->get('/departments/disable/{id}', 'DepartmentController@disable');
 $router->get('/departments', 'DepartmentController@getDepartments');
 $router->get('/departments/{id}', 'DepartmentController@get');
 
+$router->post('/cards', 'CardController@create');
+$router->post('/cards/update', 'CardController@update');
+$router->get('/cards/delete/{id}', 'CardController@delete');
+$router->get('/cards', 'CardController@getCards');
+$router->get('/cards/{id}', 'CardController@get');
+
 $router->post('/news','NewsController@create');
 $router->post('/news','NewsController@update');
 $router->get('/news/delete/{id}', 'NewsController@delete');
