@@ -1,5 +1,6 @@
 {
   "qr_url": "http://chart.googleapis.com/chart?chs=WIDTHxHEIGHT&cht=qr&chl=DATA&chld=H|MARGIN",
+  "application_base_url": "http://dreamcard.az/api",
   "statuses":
   {
     "200": "success",
@@ -10,5 +11,64 @@
     "408": "no such content",
     "409": "previous password is wrong (in profile update)",
     "410": "you already have a card"
+  },
+  "url's":
+  {
+    "mobile":
+            [
+
+            ],
+    "admin":
+            [
+              {
+                "url": "/admin/register/",
+                "request_type": "POST",
+                "request_fields": "username, email, phone, password",
+                "response_example":
+                {
+                  "status": 200,
+                  "data": {
+                    "user": {
+                      "username": "DreamAdmin",
+                      "email": "admin@dreamcard.az",
+                      "phone": "+994555555555",
+                      "updated_at": "2017-10-30 08:25:37",
+                      "created_at": "2017-10-30 08:25:37",
+                      "id": 1,
+                      "city": null,
+                      "photo": null,
+                      "card": null
+                    }
+                  }
+                }
+              },
+              {
+                "url": "/admin/login/",
+                "request_type": "POST",
+                "request_fields": "email, password",
+                "response_example":
+                {
+                  "status": 200,
+                  "data": {
+                    "user": {
+                      "id": 1,
+                      "username": "DreamAdmin",
+                      "email": "admin@dreamcard.az",
+                      "phone": "+994555555555",
+                      "first_name": null,
+                      "last_name": null,
+                      "api_token": "d325b6fc5183957ecd5e95029479b158",
+                      "get_news": null,
+                      "created_at": "2017-10-30 08:25:37",
+                      "updated_at": "2017-10-30 08:30:19",
+                      "city": null,
+                      "photo": null,
+                      "card": null
+                    }
+                  }
+                }
+              }
+            ]
   }
+
 }

@@ -2,17 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: wamil
- * Date: 28-Oct-17
- * Time: 03:38
+ * Date: 29-Oct-17
+ * Time: 00:33
  */
 
 namespace App\Http\Middleware;
 
 
-use Closure;
-use Illuminate\Support\Facades\Auth;
-
-class UserMiddleware
+class AdminMiddleware
 {
     /**
      * The authentication guard factory instance.
@@ -42,7 +39,7 @@ class UserMiddleware
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($request->user()->getTable() != 'users' && $request->user()->status == 2) {
+        if ($request->user()->getTable() != 'users' && $request->user()->status == 1) {
             return response(['status' => 401]);
         }
 

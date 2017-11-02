@@ -20,6 +20,8 @@ class CreatePaymentsTable extends Migration
             $table->string('qr_code');
             $table->integer('package_id')->unsigned();
             $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
+            $table->string('payment_source');
+            $table->string('payment_key');
             $table->dateTime('end_time');
             $table->decimal('price');
             $table->timestamps();

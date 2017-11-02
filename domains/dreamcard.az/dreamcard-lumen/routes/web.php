@@ -15,6 +15,20 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+//PAYMENT API
+
+$router->post('/pay', 'UserController@pay');
+$router->get('/pay', 'UserController@getPaymentForm');
+$router->get('/payment_callback', 'UserController@paymentCallback');
+$router->get('/payment_error', 'UserController@paymentError');
+
+//MILLION
+$router->get('/million/check', 'UserController@millionCheckId');
+
+$router->post('/admin/login', 'UserController@loginAdmin');
+$router->post('/admin/register', 'UserController@registerAdmin');
+$router->post('/admin/logout',['middleware' => ['auth', 'admin'], 'uses' => 'UserController@adminLogout']);
+
 $router->post('/users/login', 'UserController@login');
 $router->post('/users/logout',['middleware' => ['auth'], 'uses' => 'UserController@logout']);
 
@@ -50,6 +64,12 @@ $router->post('/cards/update', 'CardController@update');
 $router->get('/cards/delete/{id}', 'CardController@delete');
 $router->get('/cards', 'CardController@getCards');
 $router->get('/cards/{id}', 'CardController@get');
+
+$router->post('/packages', 'PackageController@create');
+$router->post('/packages/update', 'PackageController@update');
+$router->get('/packages/delete/{id}', 'PackageController@delete');
+$router->get('/packages', ['middleware' => ['auth', 'department'], 'uses' => 'PackageController@getPackages']);
+$router->get('/packages/{id}', 'PackageController@get');
 
 $router->post('/news','NewsController@create');
 $router->post('/news','NewsController@update');

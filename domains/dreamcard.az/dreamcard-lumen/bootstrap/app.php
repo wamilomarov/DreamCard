@@ -58,6 +58,7 @@ $app->singleton(
      'partner' => App\Http\Middleware\PartnerMiddleware::class,
      'department' => App\Http\Middleware\DepartmentMiddleware::class,
      'user' => App\Http\Middleware\UserMiddleware::class,
+     'admin' => App\Http\Middleware\AdminMiddleware::class,
 
  ]);
 /*
