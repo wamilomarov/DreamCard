@@ -9,12 +9,11 @@
 namespace App\Http\Controllers;
 
 
-class PaymentController
+class PaymentController extends Controller
 {
     private $urlGetPaymentKey    = "https://rest.goldenpay.az/web/service/merchant/getPaymentKey";
     private $urlGetPaymentResult = "https://rest.goldenpay.az/web/service/merchant/getPaymentResult";
     private $urlRedirect         = "https://rest.goldenpay.az/web/paypage?payment_key=";
-
 
     private $merchantName = "dreamcard";
     private $authKey      = "aa79a95f0cf246a056b43b15918dab7a";
@@ -39,7 +38,6 @@ class PaymentController
         return $json;
     }
 
-
     public function getPaymentResult($payment_key) {
         $params = array(
             'payment_key' => $payment_key
@@ -60,15 +58,13 @@ class PaymentController
         return json_decode($json);
     }
 
-
     private function getHashcCode($params) {
         return md5($this->authKey.implode($params));
     }
 
-    private function getParamsClone() {
+    private function getParamsClone($params) {
         return array_merge(array(), $params);
     }
-
 
     private function getJsonContent($url, $content) {
         $options = array(
