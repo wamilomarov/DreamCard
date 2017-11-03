@@ -20,6 +20,7 @@ class CreateCardsTable extends Migration
             $table->string('qr_code')->unique();
             $table->dateTime('qr_created_at');
             $table->integer('number');
+            $table->decimal('balance')->default(0);
             $table->timestamps();
         });
     }

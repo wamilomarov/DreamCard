@@ -77,4 +77,5 @@ class PaymentController extends Controller
         $context = stream_context_create($options);
         return file_get_contents($url, false, $context);
     }
+
 }

@@ -18,152 +18,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class UserController
+class UserController extends Controller
 {
-
-    public function pay(Request $request)
-    {
-        $cardType = getFilteredParam('cardType');
-        $amount = intval(getFilteredParam('amount')*100);
-        $description = getFilteredParam('item');
-        $lang = getFilteredParam('lang');
-
-        $stub = new PaymentController();
-
-        /*
-         * Response: {"status":{"code":1,"message":"success"},"paymentKey":"8d53b07f-ec45-48b9-b877-c0e9d5c54682"}
-         *
-         * Save payment key to your db : $resp->paymentKey
-         */
-        $resp = $stub->getPaymentKeyJSONRequest($amount, $lang, $cardType, $description);
-//        var_dump($resp); exit;
-//        DB::table('payments')->insert([
-//            'payment_key' => $resp->paymentKey,
-//            'payment_source' => 'golden_pay'
-//        ]);
-        return redirect($resp->urlRedirect);
-    }
-
-    public function getPaymentForm()
-    {
-        return
-        '
-        <form action="http://dreamcard.az/api/pay" method="post">
-    Amount : <input type="text" name="amount" value="" /> <br>
-    Item : <input type="text" name="item" value="" /> <br>
-    Card type : 
-    <select name="cardType">
-        <option value=\'v\'>Visa</option>
-        <option value=\'m\'>Master</option>
-    </select> <br>
-    
-    Lang : 
-    <select name="lang">
-        <option value=\'lv\'>Az</option>
-        <option value=\'ru\'>Ru</option>
-        <option value=\'ru\'>En</option>
-    </select> <br>
-    <input type="submit" name="selectItem" value="Select item">
-</form>
-        ';
-    }
-
-    public function paymentCallback()
-    {
-        $payment_key = getFilteredParam('payment_key');
-//        var_dump($payment_key);
-        $stub = new PaymentController();
-        $resp = $stub->getPaymentResult($payment_key);
-//        var_dump($resp); exit;
-
-
-        if ($resp->status->code == 1 && $resp->checkCount == 0) {
-            echo "Payment was successful";
-            echo "<br>amount: ".$resp->amount;
-            echo "<br>amount: ".$resp->paymentDate;
-        } else {
-            echo "Payment was <b>unsuccessful</b>";
-        }
-    }
-
-    public function paymentError()
-    {
-        return "ERROR";
-    }
-
-    public function millionCheckId(Request $request)
-    {
-        $id = $request->get('id');
-        $card = Card::find($id);
-        if ($card)
-        {
-            $result = "
-        <response>
-          <id>$id</id>
-          <balance>0 AZN</balance>
-          <code>0</code>
-          <message>OK</message>
-        </response>
-        ";
-        }
-        else
-        {
-            $result = "
-        <response>
-          <code>1</code>
-          <code>Wrong ID specified</code>
-        </response>
-        ";
-        }
-
-        return response($result)->header('Content-Type', 'text/xml');
-    }
-
-    public function millionPay(Request $request)
-    {
-        $id = $request->get('id');
-        $amount = $request->get('amount');
-        $currency = $request->get('currency');
-        $guid = $request->get('guid');
-
-        if (DB::table('payments')->where('payment_source', 'million')
-                ->where('guid', $guid)->count() > 0)
-        {
-            $result = "
-            <response>
-              <code>2</code>
-              <code>Duplicate GUID specified</code>
-            </response>";
-        }
-        else
-        {
-            $insert = DB::table('payments')->insert([
-                'payment_source' => 'million',
-                'payment_key' => $guid
-            ]);
-
-            if ($insert)
-            {
-                $result = "
-                <response>
-                  <balance>0 AZN</balance>
-                  <code>0</code>
-                  <code>OK</code>
-                </response>";
-            }
-            else
-            {
-                $result = "
-                <response>
-                  <code>3</code>
-                  <code>Unknown reason</code>
-                </response>";
-            }
-        }
-
-        return response($result)->header('Content-Type', 'text/xml');
-    }
-
     public function create(Request $request)
     {
         if ($request->has('username') && $request->has('email')
@@ -330,4 +186,155 @@ class UserController
     }
 
 
+    public function pay(Request $request)
+    {
+//        $cardType = getFilteredParam('cardType');
+//        $amount = intval(getFilteredParam('amount')*100);
+//        $description = getFilteredParam('item');
+//        $lang = getFilteredParam('lang');
+
+        $this->validate($request, [
+            'cardType' => ['regex:/^[v|m]$/'],
+            'amount' => ['regex:/^[0-9.]*$/'],
+            'item' => ['regex:/^[a-zA-Z0-9]*$/'],
+            'lang' => ['regex:/^(lv|en|ru)$/'],
+//            'payment_key' => 'regex:/^[a-zA-Z0-9\-]*$/'
+        ]);
+
+        $cardType = $request->get('cardType');
+        $amount = intval($request->get('amount'))*100;
+        $description = $request->get('item');
+        $lang = $request->get('lang');
+
+        $stub = new PaymentController();
+
+        /*
+         * Response: {"status":{"code":1,"message":"success"},"paymentKey":"8d53b07f-ec45-48b9-b877-c0e9d5c54682"}
+         *
+         * Save payment key to your db : $resp->paymentKey
+         */
+        $resp = $stub->getPaymentKeyJSONRequest($amount, $lang, $cardType, $description);
+//        var_dump($resp); exit;
+//        DB::table('payments')->insert([
+//            'payment_key' => $resp->paymentKey,
+//            'payment_source' => 'golden_pay'
+//        ]);
+        return redirect($resp->urlRedirect);
+    }
+
+    public function getPaymentForm()
+    {
+        return
+            '
+        <form action="http://dreamcard.az/api/pay" method="post">
+    Amount : <input type="text" name="amount" value="" /> <br>
+    Item : <input type="text" name="item" value="" /> <br>
+    Card type : 
+    <select name="cardType">
+        <option value=\'v\'>Visa</option>
+        <option value=\'m\'>Master</option>
+    </select> <br>
+    
+    Lang : 
+    <select name="lang">
+        <option value=\'lv\'>Az</option>
+        <option value=\'ru\'>Ru</option>
+        <option value=\'ru\'>En</option>
+    </select> <br>
+    <input type="submit" name="selectItem" value="Select item">
+</form>
+        ';
+    }
+
+    public function paymentCallback(Request $request)
+    {
+        $this->validate($request, [
+            'payment_key' => 'regex:/^[a-zA-Z0-9\-]*$/'
+        ]);
+        $payment_key = $request->get('payment_key');
+        $stub = new PaymentController();
+        $resp = $stub->getPaymentResult($payment_key);
+
+
+        if ($resp->status->code == 1 && $resp->checkCount == 0) {
+            echo "Payment was successful";
+            echo "<br>amount: ".$resp->amount;
+            echo "<br>amount: ".$resp->paymentDate;
+        } else {
+            echo "Payment was <b>unsuccessful</b>";
+        }
+    }
+
+    public function millionCheckId(Request $request)
+    {
+        $id = $request->get('id');
+        $card = Card::find($id);
+        if ($card)
+        {
+            $result = "
+        <response>
+          <id>$id</id>
+          <balance>0 AZN</balance>
+          <code>0</code>
+          <message>OK</message>
+        </response>
+        ";
+        }
+        else
+        {
+            $result = "
+        <response>
+          <code>1</code>
+          <code>Wrong ID specified</code>
+        </response>
+        ";
+        }
+
+        return response($result)->header('Content-Type', 'text/xml');
+    }
+
+    public function millionPay(Request $request)
+    {
+        $id = $request->get('id');
+        $amount = $request->get('amount');
+        $currency = $request->get('currency');
+        $guid = $request->get('guid');
+
+        if (DB::table('payments')->where('payment_source', 'million')
+                ->where('guid', $guid)->count() > 0)
+        {
+            $result = "
+            <response>
+              <code>2</code>
+              <code>Duplicate GUID specified</code>
+            </response>";
+        }
+        else
+        {
+            $insert = DB::table('payments')->insert([
+                'payment_source' => 'million',
+                'payment_key' => $guid
+            ]);
+
+            if ($insert)
+            {
+                $result = "
+                <response>
+                  <balance>0 AZN</balance>
+                  <code>0</code>
+                  <code>OK</code>
+                </response>";
+            }
+            else
+            {
+                $result = "
+                <response>
+                  <code>3</code>
+                  <code>Unknown reason</code>
+                </response>";
+            }
+        }
+
+        return response($result)->header('Content-Type', 'text/xml');
+    }
 }

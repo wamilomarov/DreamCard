@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
 {
-    protected $fillable = ['number', 'qr_code', 'qr_created_at'];
+    protected $fillable = ['number', 'qr_code', 'qr_created_at', 'balance'];
 
     protected $hidden = ['user_id', 'photo_id'];
 
