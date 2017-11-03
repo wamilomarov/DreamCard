@@ -8,8 +8,6 @@
 
 namespace App;
 
-
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
@@ -44,7 +42,7 @@ class Card extends Model
             return $this->generateQrCode();
         }
         $this->qr_code = $qr_code;
-        $this->qr_created_at = Carbon::now();
+        $this->qr_created_at = Date('Y-m-d H:i:s');
         return $qr_code;
     }
 

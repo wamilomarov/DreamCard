@@ -10,7 +10,8 @@
     "407": "user with this (phone, username or email) already exists",
     "408": "no such content",
     "409": "previous password is wrong (in profile update)",
-    "410": "you already have a card"
+    "410": "you already have a card",
+    "411": "not enough balance in your card"
   },
   "url's":
   {

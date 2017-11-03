@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-require_once 'Payment/filter/filter.php';
 
 use App\Card;
 use App\Photo;
@@ -23,16 +22,12 @@ class UserController extends Controller
     public function create(Request $request)
     {
         if ($request->has('username') && $request->has('email')
-            && $request->has('phone') && $request->has('password'))
-        {
+            && $request->has('phone') && $request->has('password')) {
             if (User::where('email', $request->get('email'))
                 ->orWhere('username', $request->get('username'))
-                ->orWhere('phone', $request->get('phone'))->exists())
-            {
+                ->orWhere('phone', $request->get('phone'))->exists()) {
                 $result = ['status' => 407];
-            }
-            else
-            {
+            } else {
                 $user = new User();
                 $user->username = $request->get('username');
                 $user->email = $request->get('email');
@@ -46,9 +41,7 @@ class UserController extends Controller
                 $result = ['status' => 200, 'data' => ['user' => $user]];
             }
 
-        }
-        else
-        {
+        } else {
             $result = ['status' => 406];
         }
 
@@ -57,20 +50,16 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        if ($request->has('email') && $request->has('password'))
-        {
+        if ($request->has('email') && $request->has('password')) {
             $user = User::where('email', $request->get('email'))
                 ->where('status', 3)->first();
 
-            if(Hash::check($request->get('password'), $user->getAuthPassword()))
-            {
+            if (Hash::check($request->get('password'), $user->getAuthPassword())) {
                 $user->api_token = md5(microtime());
                 $user->save();
                 $user = $user->makeVisible(['api_token']);
                 $result = ['status' => 200, 'data' => ['user' => $user]];
-            }
-            else
-            {
+            } else {
                 $result = ['status' => 401];
             }
 
@@ -91,67 +80,51 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $user = User::find($request->get('id'));
-        if ($user)
-        {
-            if ($request->has('first_name'))
-            {
+        if ($user) {
+            if ($request->has('first_name')) {
                 $user->first_name = $request->get('first_name');
             }
 
-            if ($request->has('last_name'))
-            {
+            if ($request->has('last_name')) {
                 $user->last_name = $request->get('last_name');
             }
 
-            if ($request->has('email'))
-            {
+            if ($request->has('email')) {
                 $user->email = $request->get('email');
             }
 
-            if ($request->has('phone'))
-            {
+            if ($request->has('phone')) {
                 $user->phone = $request->get('phone');
             }
 
-            if ($request->has('password') && $request->has('prev_password'))
-            {
-                if (Hash::check($request->get('prev_password'), $user->getAuthPassword()))
-                {
+            if ($request->has('password') && $request->has('prev_password')) {
+                if (Hash::check($request->get('prev_password'), $user->getAuthPassword())) {
                     $user->password = app('hash')->make($request->get('password'));
                     $user->api_token = null;  //  log out when password is changed
-                }
-                else
-                {
+                } else {
                     return response(['status' => 409]);
                 }
             }
 
-            if ($request->has('city_id'))
-            {
+            if ($request->has('city_id')) {
                 $user->city_id = $request->get('city_id');
             }
 
-            if ($request->hasFile('photo'))
-            {
+            if ($request->hasFile('photo')) {
                 $photo = new Photo();
                 $photo_result = $photo->upload($request->file('photo'), 'uploads/photos/users/');
 
-                if ($photo_result == 200)
-                {
+                if ($photo_result == 200) {
                     $user->deletePhoto();
                     $user->photo_id = $photo->id;
-                }
-                else
-                {
+                } else {
                     return response(['status' => $photo_result]);
                 }
             }
 
             $user->save();
             $result = ['status' => 200];
-        }
-        else
-        {
+        } else {
             $result = ['status' => 408];
         }
 
@@ -185,24 +158,18 @@ class UserController extends Controller
         return response($result);
     }
 
-
+//              PAYMENT
     public function pay(Request $request)
     {
-//        $cardType = getFilteredParam('cardType');
-//        $amount = intval(getFilteredParam('amount')*100);
-//        $description = getFilteredParam('item');
-//        $lang = getFilteredParam('lang');
-
         $this->validate($request, [
             'cardType' => ['regex:/^[v|m]$/'],
             'amount' => ['regex:/^[0-9.]*$/'],
             'item' => ['regex:/^[a-zA-Z0-9]*$/'],
             'lang' => ['regex:/^(lv|en|ru)$/'],
-//            'payment_key' => 'regex:/^[a-zA-Z0-9\-]*$/'
         ]);
 
         $cardType = $request->get('cardType');
-        $amount = intval($request->get('amount'))*100;
+        $amount = intval($request->get('amount')) * 100;
         $description = $request->get('item');
         $lang = $request->get('lang');
 
@@ -258,30 +225,32 @@ class UserController extends Controller
 
         if ($resp->status->code == 1 && $resp->checkCount == 0) {
             echo "Payment was successful";
-            echo "<br>amount: ".$resp->amount;
-            echo "<br>amount: ".$resp->paymentDate;
+            echo "<br>amount: " . $resp->amount;
+            echo "<br>amount: " . $resp->paymentDate;
         } else {
             echo "Payment was <b>unsuccessful</b>";
         }
+    }
+
+    public function paymentError()
+    {
+        return Date('Y-m-d H:i:s', strtotime("+2 days"));
     }
 
     public function millionCheckId(Request $request)
     {
         $id = $request->get('id');
         $card = Card::find($id);
-        if ($card)
-        {
+        if ($card) {
             $result = "
         <response>
-          <id>$id</id>
-          <balance>0 AZN</balance>
+          <id>$card->id</id>
+          <balance>$card->balance AZN</balance>
           <code>0</code>
           <message>OK</message>
         </response>
         ";
-        }
-        else
-        {
+        } else {
             $result = "
         <response>
           <code>1</code>
@@ -301,32 +270,34 @@ class UserController extends Controller
         $guid = $request->get('guid');
 
         if (DB::table('payments')->where('payment_source', 'million')
-                ->where('guid', $guid)->count() > 0)
-        {
+                ->where('payment_key', $guid)->count() > 0) {
             $result = "
             <response>
               <code>2</code>
               <code>Duplicate GUID specified</code>
             </response>";
-        }
-        else
-        {
+        } else {
             $insert = DB::table('payments')->insert([
                 'payment_source' => 'million',
-                'payment_key' => $guid
+                'payment_key' => $guid,
+                'amount' => $amount,
+                'card_id' => $id
             ]);
+            $card = Card::find($id);
 
-            if ($insert)
-            {
+            if ($insert && $card) {
+
+
+                $card->balance += $amount;
+                $card->save();
                 $result = "
                 <response>
-                  <balance>0 AZN</balance>
+                  <balance>$card->balance AZN</balance>
                   <code>0</code>
                   <code>OK</code>
                 </response>";
-            }
-            else
-            {
+
+            } else {
                 $result = "
                 <response>
                   <code>3</code>

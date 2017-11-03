@@ -10,8 +10,10 @@ namespace App\Http\Controllers;
 
 
 use App\Card;
+use App\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CardController extends Controller
 {
@@ -54,6 +56,48 @@ class CardController extends Controller
         $card = Card::find($id);
         $card->delete();
         $result = ['status' => 200];
+        return response($result);
+    }
+
+    public function upgrade(Request $request)
+    {
+        $card = Card::find($request->get('card_id'));
+        $package = Package::find($request->get('package_id'));
+        if ($package->discount_price == NULL)
+        {
+            $price = $package->price;
+        }
+        else
+        {
+            $price = $package->discount_price;
+        }
+
+        if ($card && $package)
+        {
+            if ($card->balance >= $price)
+            {
+                DB::table('card_upgrades')->insert([
+                    'card_id' => $card->id,
+                    'package_id' => $package->id,
+                    'price' => $price,
+                    'end_time' => Date('Y-m-d H:i:s', strtotime("+$package->duration days"))
+                ]);
+
+                $card->balance -= $price;
+                $card->save();
+                $result = ['status' => 200];
+            }
+            else
+            {
+                $result = ['status' => 411];
+            }
+
+        }
+        else
+        {
+            $result = ['status' => 408];
+        }
+
         return response($result);
     }
 }
