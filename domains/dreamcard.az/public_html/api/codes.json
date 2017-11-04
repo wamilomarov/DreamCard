@@ -11,13 +11,99 @@
     "408": "no such content",
     "409": "previous password is wrong (in profile update)",
     "410": "you already have a card",
-    "411": "not enough balance in your card"
+    "411": "not enough balance in your card",
+    "412": "unexpected error"
   },
   "url's":
   {
     "mobile":
             [
-
+              {
+                "url": "/users/register/",
+                "request_type": "POST",
+                "request_fields": "username, email, phone, password",
+                "response_example":
+                {
+                  "status": 200,
+                  "data": {
+                    "username": "wamiomaro",
+                    "email": "wamil95omarov@gmail.co",
+                    "phone": "+99477332632",
+                    "api_token": "38903fec0b544c4085bfa275db52b9e7",
+                    "updated_at": "2017-11-04 13:28:22",
+                    "created_at": "2017-11-04 13:28:22",
+                    "id": 2,
+                    "city": null,
+                    "photo": null,
+                    "card": null
+                  }
+                }
+              },
+              {
+                "url": "/users/login/",
+                "request_type": "POST",
+                "request_fields": "email, password",
+                "response_example":
+                {
+                  "status": 200,
+                  "data": {
+                    "id": 3,
+                    "username": "wamiomaroe",
+                    "email": "wamil95omarov@gmail.coe",
+                    "phone": "+99477332632e",
+                    "first_name": null,
+                    "last_name": null,
+                    "api_token": "107829089ec4169d71ea19ac0ae21d2e",
+                    "get_news": null,
+                    "created_at": "2017-11-04 13:29:40",
+                    "updated_at": "2017-11-04 13:34:02",
+                    "city": null,
+                    "photo": null,
+                    "card": null
+                  }
+                }
+              },
+              {
+                "url": "/users/logout/",
+                "request_type": "POST",
+                "request_fields": "api_token",
+                "response_example":
+                {
+                  "status": 200
+                }
+              },
+              {
+                "url": "/users/{id}",
+                "request_type": "GET",
+                "request_fields": "api_token",
+                "response_example":
+                {
+                  "status": 200,
+                  "data": {
+                    "id": 2,
+                    "username": "wamiomaro",
+                    "email": "wamil95omarov@gmail.co",
+                    "phone": "+99477332632",
+                    "first_name": null,
+                    "last_name": null,
+                    "get_news": null,
+                    "created_at": "2017-11-04 13:28:22",
+                    "updated_at": "2017-11-04 13:28:22",
+                    "city": null,
+                    "photo": null,
+                    "card": null
+                  }
+                }
+              },
+              {
+                "url": "/users/update",
+                "request_type": "POST",
+                "request_fields": "api_token, (first_name, last_name, email, phone, city_id, photo, [password, prev_password])", //() - optional; [] - both should exist
+                "response_example":
+                {
+                  "status": 200
+                }
+              }
             ],
     "admin":
             [

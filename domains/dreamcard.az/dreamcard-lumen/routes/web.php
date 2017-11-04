@@ -32,11 +32,13 @@ $router->post('/admin/logout',['middleware' => ['auth', 'admin'], 'uses' => 'Use
 $router->post('/users/login', 'UserController@login');
 $router->post('/users/logout',['middleware' => ['auth'], 'uses' => 'UserController@logout']);
 
-$router->post('/users', 'UserController@create');
+$router->post('/users/register', 'UserController@create');
 $router->post('/users/update', 'UserController@update');
 $router->get('/users/delete/{id}', 'UserController@delete');
 $router->get('/users', 'UserController@getUsers');
 $router->get('/users/{id}', 'UserController@get');
+$router->post('/users/forgot_password', 'UserController@forgotPassword');
+$router->post('/users/reset_password', 'UserController@resetPassword');
 
 $router->post('/categories', 'CategoryController@create');
 $router->post('/categories/update', 'CategoryController@update');
@@ -63,7 +65,10 @@ $router->post('/cards', 'CardController@create');
 $router->post('/cards/update', 'CardController@update');
 $router->get('/cards/delete/{id}', 'CardController@delete');
 $router->get('/cards', 'CardController@getCards');
+$router->post('/cards/upgrade', 'CardController@upgrade');
+$router->get('/cards/request_qr', 'CardController@requestQr');
 $router->get('/cards/{id}', 'CardController@get');
+
 
 $router->post('/packages', 'PackageController@create');
 $router->post('/packages/update', 'PackageController@update');

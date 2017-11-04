@@ -100,4 +100,9 @@ class CardController extends Controller
 
         return response($result);
     }
+
+    public function requestQr(Request $request)
+    {
+        
+    }
 }

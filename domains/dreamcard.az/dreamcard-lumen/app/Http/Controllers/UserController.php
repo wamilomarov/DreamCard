@@ -38,10 +38,11 @@ class UserController extends Controller
                 $user->api_token = md5(microtime());
                 $user->save();
                 $user = $user->makeVisible(['api_token']);
-                $result = ['status' => 200, 'data' => ['user' => $user]];
+                $result = ['status' => 200, 'data' =>  $user];
             }
 
-        } else {
+        }
+        else {
             $result = ['status' => 406];
         }
 
@@ -52,20 +53,24 @@ class UserController extends Controller
     {
         if ($request->has('email') && $request->has('password')) {
             $user = User::where('email', $request->get('email'))
-                ->where('status', 3)->first();
+                ->where('status', 2)->first();
 
             if (Hash::check($request->get('password'), $user->getAuthPassword())) {
                 $user->api_token = md5(microtime());
                 $user->save();
                 $user = $user->makeVisible(['api_token']);
-                $result = ['status' => 200, 'data' => ['user' => $user]];
+                $result = ['status' => 200, 'data' => $user];
             } else {
                 $result = ['status' => 401];
             }
 
-            return response($result);
-
         }
+        else
+        {
+            $result = ['status' => 406];
+        }
+
+        return response($result);
     }
 
     public function logout()
@@ -135,7 +140,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        $result = ['status' => 200, 'data' => ['user' => $user]];
+        $result = ['status' => 200, 'data' => $user];
 
         return response($result);
     }
@@ -154,6 +159,74 @@ class UserController extends Controller
         $user->deletePhoto();
         $user->delete();
         $result = ['status' => 200];
+
+        return response($result);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        if ($request->has('email'))
+        {
+            if (User::where('email', $request->get('email'))->where('status', 2)->exists())
+            {
+                $token = crypt(sha1(microtime()), 'password_reset');
+                DB::table('password_resets')->insert([
+                    'email' => $request->get('email'),
+                    'token' => $token
+                ]);
+                $url = url() . "/users/reset_password?token=$token";
+                $subject = "Password Reset";
+                $to = $request->get('email');
+                $message = "$url";
+                $headers = "MIME-Version: 1.0" . "\r\n";
+                $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+
+                $headers .= 'From: <dreamcard@dreamcard.az>' . "\r\n";
+//                $headers .= 'Cc: admin@dreamcard.az' . "\r\n";
+
+                if (mail($to, $subject, $message, $headers))
+                {
+                    $result = ['status' => 200];
+                }
+                else
+                {
+                    $result = ['status' => 412];
+                }
+
+            }
+            else
+            {
+                $result = ['status' => 408];
+            }
+        }
+        else
+        {
+            $result = ['status' => 406];
+        }
+
+        return response($result);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        if ($request->has('token') && $request->has('password'))
+        {
+            $token = $request->get('token');
+            $password = $request->get('password');
+
+            $password_reset = DB::table('password_resets')->where('token', $token)->first();
+            $email = $password_reset->email;
+
+            $user = User::where('email', $email)->where('status', 2)->first();
+            $user->password = app('hash')->make($password);
+            $user->save();
+
+            $result = ['status' => 200];
+        }
+        else
+        {
+            $result = ['status' => 406];
+        }
 
         return response($result);
     }
@@ -234,7 +307,7 @@ class UserController extends Controller
 
     public function paymentError()
     {
-        return Date('Y-m-d H:i:s', strtotime("+2 days"));
+        return url();
     }
 
     public function millionCheckId(Request $request)
