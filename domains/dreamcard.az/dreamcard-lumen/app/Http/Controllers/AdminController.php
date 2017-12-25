@@ -9,7 +9,7 @@
 namespace App\Http\Controllers;
 
 
-use App\User;
+use App\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,28 +18,51 @@ class AdminController extends Controller
 {
     public function create(Request $request)
     {
-        if ($request->has('username') && $request->has('email')
-            && $request->has('phone') && $request->has('password'))
+
+        if ($request->has('username') && $request->has('email') && $request->has('password'))
         {
-            if (User::where('email', $request->get('email'))
-                ->orWhere('username', $request->get('username'))
-                ->orWhere('phone', $request->get('phone'))
-                ->where('status', 1)->exists())
+            if (Admin::where('email', $request->get('email'))
+                ->orWhere('username', $request->get('username'))->exists())
             {
                 $result = ['status' => 407];
             }
             else
             {
-                $user = new User();
-                $user->username = $request->get('username');
-                $user->email = $request->get('email');
-                $user->phone = $request->get('phone');
-                $user->password = app('hash')->make($request->get('password'));
-                $user->photo_id = NULL;
-                $user->status = 1;
+                $admin = new Admin();
+                $admin->username = $request->get('username');
+                $admin->email = $request->get('email');
+                $admin->password = app('hash')->make($request->get('password'));
 
-                $user->save();
-                $result = ['status' => 200, 'data' => ['user' => $user]];
+                $admin->save();
+                $result = ['status' => 200, 'data' => $admin];
+            }
+
+        }
+        else
+        {
+            $result = ['status' => 406];
+        }
+
+        return response()->json($result);
+    }
+
+    public function login(Request $request)
+    {
+        $request = $request->json();
+        if ($request->has('email') && $request->has('password'))
+        {
+            $admin = Admin::where('email', $request->get('email'))->first();
+
+            if($admin && Hash::check($request->get('password'), $admin->getAuthPassword()))
+            {
+                $admin->api_token = md5(microtime());
+                $admin->save();
+                $admin = $admin->makeVisible(['api_token']);
+                $result = ['status' => 200, 'data' => $admin];
+            }
+            else
+            {
+                $result = ['status' => 401];
             }
 
         }
@@ -51,70 +74,37 @@ class AdminController extends Controller
         return response($result);
     }
 
-    public function login(Request $request)
-    {
-        if ($request->has('email') && $request->has('password'))
-        {
-            $user = User::where('email', $request->get('email'))
-                ->where('status', 1)->first();
-
-            if(Hash::check($request->get('password'), $user->getAuthPassword()))
-            {
-                $user->api_token = md5(microtime());
-                $user->save();
-                $user = $user->makeVisible(['api_token']);
-                $result = ['status' => 200, 'data' => ['user' => $user]];
-            }
-            else
-            {
-                $result = ['status' => 401];
-            }
-
-            return response($result);
-
-        }
-    }
-
     public function logout()
     {
-        $user = Auth::user();
-        $user->api_token = null;
-        $user->save();
+        $admin = Auth::user();
+        $admin->api_token = null;
+        $admin->save();
         $result = ['status' => 200];
         return response($result);
     }
 
     public function update(Request $request)
     {
-        $user = User::find($request->get('id'));
-        if ($user)
+        $request = $request->json();
+        $admin = Admin::find($request->get('id'));
+        if ($admin)
         {
-            if ($request->has('first_name'))
-            {
-                $user->first_name = $request->get('first_name');
-            }
-
-            if ($request->has('last_name'))
-            {
-                $user->last_name = $request->get('last_name');
-            }
-
             if ($request->has('email'))
             {
-                $user->email = $request->get('email');
+                $admin->email = $request->get('email');
             }
 
-            if ($request->has('phone'))
+            if ($request->has('username'))
             {
-                $user->phone = $request->get('phone');
+                $admin->username = $request->get('username');
             }
 
             if ($request->has('password') && $request->has('prev_password'))
             {
-                if (Hash::check($request->get('prev_password'), $user->getAuthPassword()))
+                if ($admin && Hash::check($request->get('prev_password'), $admin->getAuthPassword()))
                 {
-                    $user->password = app('hash')->make($request->get('password'));
-                    $user->api_token = null;  //  log out when password is changed
+                    $admin->password = app('hash')->make($request->get('password'));
+                    $admin->api_token = null;  //  log out when password is changed
                 }
                 else
                 {
@@ -122,28 +112,7 @@ class AdminController extends Controller
                 }
             }
 
-            if ($request->has('city_id'))
-            {
-                $user->city_id = $request->get('city_id');
-            }
-
-            if ($request->hasFile('photo'))
-            {
-                $photo = new Photo();
-                $photo_result = $photo->upload($request->file('photo'), 'uploads/photos/users/');
-
-                if ($photo_result == 200)
-                {
-                    $user->deletePhoto();
-                    $user->photo_id = $photo->id;
-                }
-                else
-                {
-                    return response(['status' => $photo_result]);
-                }
-            }
-
-            $user->save();
+            $admin->save();
             $result = ['status' => 200];
         }
         else
@@ -151,33 +120,32 @@ class AdminController extends Controller
             $result = ['status' => 408];
         }
 
-        return response($result);
+        return response()->json($result);
     }
 
     public function get($id)
     {
-        $user = User::find($id);
+        $admin = Admin::find($id);
 
-        $result = ['status' => 200, 'data' => ['user' => $user]];
+        $result = ['status' => 200, 'data' => ['user' => $admin]];
 
-        return response($result);
+        return response()->json($result);
     }
 
     public function getAdmins()
     {
-        $users = User::where('status', 1)->paginate(10);
+        $admins = Admin::paginate(10);
         $status = collect(['status' => 200]);
-        $result = $status->merge($users);
-        return response($result);
+        $result = $status->merge($admins);
+        return response()->json($result);
     }
 
     public function delete($id)
     {
-        $user = User::find($id);
-        $user->deletePhoto();
-        $user->delete();
+        $admin = Admin::find($id);
+        $admin->delete();
         $result = ['status' => 200];
 
-        return response($result);
+        return response()->json($result);
     }
 }

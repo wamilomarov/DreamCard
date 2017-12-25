@@ -17,6 +17,7 @@ class DepartmentController extends Controller
 {
     public function create(Request $request)
     {
+        $request = $request->json();
         if ($request->has('name') && $request->has('category_id') &&  $request->hasFile('photo')
             && $request->has('username') && $request->has('password') && $request->has('city_id')
             && $request->has('partner_id'))
@@ -52,6 +53,7 @@ class DepartmentController extends Controller
 
     public function update(Request $request)
     {
+        $request = $request->json();
         $department = Department::find($request->get('id'));
 
         if ($department)
@@ -103,7 +105,7 @@ class DepartmentController extends Controller
 
             if ($request->has('password') && $request->has('prev_password'))
             {
-                if (Hash::check($request->get('prev_password'), $department->getAuthPassword()))
+                if ($department && Hash::check($request->get('prev_password'), $department->getAuthPassword()))
                 {
                     $department->password = app('hash')->make($request->get('password'));
                     $department->first_entry = 0;

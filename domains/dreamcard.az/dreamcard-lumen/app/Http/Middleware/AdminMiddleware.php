@@ -9,6 +9,9 @@
 namespace App\Http\Middleware;
 
 
+use Closure;
+use Illuminate\Support\Facades\Auth;
+
 class AdminMiddleware
 {
     /**
@@ -39,7 +42,7 @@ class AdminMiddleware
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($request->user()->getTable() != 'users' && $request->user()->status == 1) {
+        if ($request->user()->getTable() != 'admins') {
             return response(['status' => 401]);
         }
 

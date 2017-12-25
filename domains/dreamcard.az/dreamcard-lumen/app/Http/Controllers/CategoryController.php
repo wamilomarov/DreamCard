@@ -15,11 +15,17 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    private $categoryInstance;
+    public function __construct()
+    {
+        $this->categoryInstance = new Category();
+    }
     public function create(Request $request)
     {
+        $request = $request->json();
         if ($request->has('name') && $request->hasFile('small_icon') && $request->hasFile('large_icon'))
         {
-            if (!Category::where('name', $request->get('name'))->exists())
+            if (!$this->categoryInstance->where('name', $request->get('name'))->exists())
             {
                 $small_icon = new Photo();
                 $small_icon_result = $small_icon->upload($request->file('small_icon'), 'uploads/photos/categories/');
@@ -31,7 +37,7 @@ class CategoryController extends Controller
                 {
                     if ($large_icon_result == 200)
                     {
-                        $category = new Category();
+                        $category = $this->categoryInstance;
                         $category->name = $request->get('name');
                         $category->small_icon_id = $small_icon->id;
                         $category->large_icon_id = $large_icon->id;
@@ -69,14 +75,14 @@ class CategoryController extends Controller
 
     public function get($id)
     {
-        $category = Category::find($id);
+        $category = $this->categoryInstance->find($id);
         $result = ['status' => 200, 'data' => $category];
         return response($result);
     }
 
     public function getCategories()
     {
-        $categories = Category::paginate(10);
+        $categories = $this->categoryInstance->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($categories);
         return response($result);
@@ -84,7 +90,7 @@ class CategoryController extends Controller
 
     public function delete($id)
     {
-        $category = Category::find($id);
+        $category = $this->categoryInstance->find($id);
         $category->deleteLargeIcon();
         $category->deleteSmallIcon();
         $category->forceDelete();
@@ -94,7 +100,8 @@ class CategoryController extends Controller
 
     public function update(Request $request)
     {
-        $category = Category::find($request->get('id'));
+        $request = $request->json();
+        $category = $this->categoryInstance->find($request->get('id'));
         if ($category)
         {
             if ($request->has('name'))
@@ -153,7 +160,7 @@ class CategoryController extends Controller
 
     public function disable($id)
     {
-        $category = Category::find($id);
+        $category = $this->categoryInstance->find($id);
         $category->delete();
         $result = ['status' => 200];
         return response($result);

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Admin;
 use App\Department;
 use App\Partner;
 use App\User;
@@ -55,7 +56,15 @@ class AuthServiceProvider extends ServiceProvider
                         }
                         else
                         {
-                            return null;
+                            $admin = Admin::where('api_token', $request->input('api_token'))->first();
+                            if ($admin)
+                            {
+                                return $admin;
+                            }
+                            else
+                            {
+                                return null;
+                            }
                         }
                     }
                 }

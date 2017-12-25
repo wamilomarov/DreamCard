@@ -25,9 +25,9 @@ $router->get('/payment_error', 'UserController@paymentError');
 //MILLION
 $router->get('/million/check', 'UserController@millionCheckId');
 
-$router->post('/admin/login', 'UserController@loginAdmin');
-$router->post('/admin/register', 'UserController@registerAdmin');
-$router->post('/admin/logout',['middleware' => ['auth', 'admin'], 'uses' => 'UserController@adminLogout']);
+$router->post('/admin/login', 'AdminController@login');
+$router->post('/admin/register', 'AdminController@create');
+$router->post('/admin/logout', 'AdminController@logout');
 
 $router->post('/users/login', 'UserController@login');
 $router->post('/users/logout',['middleware' => ['auth'], 'uses' => 'UserController@logout']);
@@ -51,7 +51,7 @@ $router->post('/partners', 'PartnerController@create');
 $router->post('/partners/update', 'PartnerController@update');
 $router->get('/partners/delete/{id}', 'PartnerController@delete');
 $router->get('/partners/disable/{id}', 'PartnerController@disable');
-$router->get('/partners', ['middleware' => ['auth', 'department'], 'uses' => 'PartnerController@getPartners']);
+$router->get('/partners', 'PartnerController@getPartners');
 $router->get('/partners/{id}', 'PartnerController@get');
 
 $router->post('/departments', 'DepartmentController@create');

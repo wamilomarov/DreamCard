@@ -13,9 +13,16 @@ use Illuminate\Http\UploadedFile;
 
 class Photo extends Model
 {
-    protected $fillable = ['id', 'url'];
+    protected $fillable = ['id'];
 
     protected $hidden = ['created_at', 'updated_at'];
+
+    protected $appends = ['url'];
+
+    public function getUrlAttribute()
+    {
+        return "http://dreamcard.az/api/" . $this->attributes['url'];
+    }
 
     public function news()
     {
@@ -33,7 +40,7 @@ class Photo extends Model
             $name = $name . '.' . $extension;
 
             $file->move($folder, $name);
-            $this->url = $name;
+            $this->url = $folder . $name;
             $this->save();
             return 200;
         }

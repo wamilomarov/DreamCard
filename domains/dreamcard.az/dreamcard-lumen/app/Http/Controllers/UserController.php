@@ -21,6 +21,7 @@ class UserController extends Controller
 {
     public function create(Request $request)
     {
+        $request = $request->json();
         if ($request->has('username') && $request->has('email')
             && $request->has('phone') && $request->has('password')) {
             if (User::where('email', $request->get('email'))
@@ -51,11 +52,11 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
+        $request = $request->json();
         if ($request->has('email') && $request->has('password')) {
-            $user = User::where('email', $request->get('email'))
-                ->where('status', 2)->first();
+            $user = User::where('email', $request->get('email'))->first();
 
-            if (Hash::check($request->get('password'), $user->getAuthPassword())) {
+            if ($user && Hash::check($request->get('password'), $user->getAuthPassword())) {
                 $user->api_token = md5(microtime());
                 $user->save();
                 $user = $user->makeVisible(['api_token']);
@@ -84,6 +85,7 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
+        $request = $request->json();
         $user = User::find($request->get('id'));
         if ($user) {
             if ($request->has('first_name')) {
@@ -103,7 +105,7 @@ class UserController extends Controller
             }
 
             if ($request->has('password') && $request->has('prev_password')) {
-                if (Hash::check($request->get('prev_password'), $user->getAuthPassword())) {
+                if ($user && Hash::check($request->get('prev_password'), $user->getAuthPassword())) {
                     $user->password = app('hash')->make($request->get('password'));
                     $user->api_token = null;  //  log out when password is changed
                 } else {
@@ -165,6 +167,7 @@ class UserController extends Controller
 
     public function forgotPassword(Request $request)
     {
+        $request = $request->json();
         if ($request->has('email'))
         {
             if (User::where('email', $request->get('email'))->where('status', 2)->exists())
@@ -209,6 +212,7 @@ class UserController extends Controller
 
     public function resetPassword(Request $request)
     {
+        $request = $request->json();
         if ($request->has('token') && $request->has('password'))
         {
             $token = $request->get('token');
@@ -217,7 +221,7 @@ class UserController extends Controller
             $password_reset = DB::table('password_resets')->where('token', $token)->first();
             $email = $password_reset->email;
 
-            $user = User::where('email', $email)->where('status', 2)->first();
+            $user = User::where('email', $email)->first();
             $user->password = app('hash')->make($password);
             $user->save();
 
@@ -234,6 +238,7 @@ class UserController extends Controller
 //              PAYMENT
     public function pay(Request $request)
     {
+        $request = $request->json();
         $this->validate($request, [
             'cardType' => ['regex:/^[v|m]$/'],
             'amount' => ['regex:/^[0-9.]*$/'],
@@ -288,6 +293,7 @@ class UserController extends Controller
 
     public function paymentCallback(Request $request)
     {
+        $request = $request->json();
         $this->validate($request, [
             'payment_key' => 'regex:/^[a-zA-Z0-9\-]*$/'
         ]);
@@ -312,6 +318,7 @@ class UserController extends Controller
 
     public function millionCheckId(Request $request)
     {
+        $request = $request->json();
         $id = $request->get('id');
         $card = Card::find($id);
         if ($card) {
@@ -337,6 +344,7 @@ class UserController extends Controller
 
     public function millionPay(Request $request)
     {
+        $request = $request->json();
         $id = $request->get('id');
         $amount = $request->get('amount');
         $currency = $request->get('currency');

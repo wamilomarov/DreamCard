@@ -42,7 +42,7 @@ class UserMiddleware
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($request->user()->getTable() != 'users' && $request->user()->status == 2) {
+        if ($request->user()->getTable() != 'users') {
             return response(['status' => 401]);
         }
 

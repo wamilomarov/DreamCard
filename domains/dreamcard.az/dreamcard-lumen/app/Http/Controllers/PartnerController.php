@@ -12,15 +12,29 @@ namespace App\Http\Controllers;
 use App\Partner;
 use App\Photo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PartnerController extends Controller
 {
+    private $partnerInstance;
+
+    public function __construct()
+    {
+        $this->partnerInstance = new Partner();
+    }
+
     public function create(Request $request)
     {
+//        $request = $request->json();
         if ($request->has('name') && $request->has('category_id') &&  $request->hasFile('photo')
             && $request->has('username') && $request->has('password'))
         {
-            $partner = new Partner();
+            if (Partner::where('username', $request->has('username'))->exists())
+            {
+                $result = ['status' => 413];
+                return response()->json($result);
+            }
+            $partner = $this->partnerInstance;
 
             $photo = new Photo();
             $photo_result = $photo->upload($request->file('photo'), 'uploads/photos/partners/');
@@ -49,7 +63,8 @@ class PartnerController extends Controller
 
     public function update(Request $request)
     {
-        $partner = Partner::find($request->get('id'));
+        $request = $request->json();
+        $partner = $this->partnerInstance->find($request->get('id'));
 
         if ($partner)
         {
@@ -88,7 +103,7 @@ class PartnerController extends Controller
 
             if ($request->has('password') && $request->has('prev_password'))
             {
-                if (Hash::check($request->get('prev_password'), $partner->getAuthPassword()))
+                if ($partner && Hash::check($request->get('prev_password'), $partner->getAuthPassword()))
                 {
                     $partner->password = app('hash')->make($request->get('password'));
                     $partner->first_entry = 0;
@@ -113,7 +128,7 @@ class PartnerController extends Controller
 
     public function getPartners()
     {
-        $partners = Partner::paginate(10);
+        $partners = $this->partnerInstance->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($partners);
         return response($result);
@@ -121,14 +136,14 @@ class PartnerController extends Controller
 
     public function get($id)
     {
-        $partner = Partner::find($id);
+        $partner = $this->partnerInstance->find($id);
         $result = ['status' => 200, 'data' => $partner];
         return response($result);
     }
 
     public function delete($id)
     {
-        $partner = Partner::find($id);
+        $partner = $this->partnerInstance->find($id);
         $partner->deletePhoto();
         $partner->forceDelete();
         $result = ['status' => 200];
@@ -137,7 +152,7 @@ class PartnerController extends Controller
 
     public function disable($id)
     {
-        $partner = Partner::find($id);
+        $partner = $this->partnerInstance->find($id);
         $partner->delete();
         $result = ['status' => 200];
         return response($result);

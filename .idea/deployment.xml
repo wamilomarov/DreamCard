@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData">
+  <component name="PublishConfigData" serverName="DreamCard">
     <serverData>
+      <paths name="AdyContainer">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="DreamCard">
         <serverdata>
           <mappings>
@@ -31,6 +38,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="V2C">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="hnotes-centos">
         <serverdata>
           <mappings>
@@ -39,6 +53,13 @@
         </serverdata>
       </paths>
       <paths name="hnotess-azure">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="yolget.az">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
