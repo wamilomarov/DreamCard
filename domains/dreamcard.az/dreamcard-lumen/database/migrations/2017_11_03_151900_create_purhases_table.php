@@ -16,11 +16,11 @@ class CreatePurhasesTable extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('card_id')->unsigned();
-            $table->foreign('card_id')->references('id')->on('cards')->onDelete('cascade');
+            $table->foreign('card_id')->references('id')->on('cards');
             $table->integer('department_id')->unsigned();
-            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
+            $table->foreign('department_id')->references('id')->on('departments');
             $table->integer('campaign_id')->unsigned();
-            $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade');
+            $table->foreign('campaign_id')->references('id')->on('campaigns');
             $table->decimal('price');
             $table->timestamps();
         });

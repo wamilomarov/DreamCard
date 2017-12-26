@@ -185,10 +185,7 @@
             "phone": "+994555555555",
             "updated_at": "2017-10-30 08:25:37",
             "created_at": "2017-10-30 08:25:37",
-            "id": 1,
-            "city": null,
-            "photo": null,
-            "card": null
+            "id": 1
           }
         }
       },
@@ -203,15 +200,9 @@
             "username": "DreamAdmin",
             "email": "admin@dreamcard.az",
             "phone": "+994555555555",
-            "first_name": null,
-            "last_name": null,
             "api_token": "d325b6fc5183957ecd5e95029479b158",
-            "get_news": null,
             "created_at": "2017-10-30 08:25:37",
-            "updated_at": "2017-10-30 08:30:19",
-            "city": null,
-            "photo": null,
-            "card": null
+            "updated_at": "2017-10-30 08:30:19"
           }
         }
       },
@@ -375,6 +366,124 @@
               "name": "Partner",
               "username": "partner",
               "first_entry": 1,
+              "deleted_at": null,
+              "created_at": "2017-12-10 10:32:26",
+              "updated_at": "2017-12-10 10:32:26",
+              "category": {
+                "id": 5,
+                "name": "testCategory",
+                "deleted_at": null,
+                "created_at": "2017-12-09 20:07:41",
+                "updated_at": "2017-12-09 20:07:41",
+                "small_icon": {
+                  "id": 2,
+                  "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
+                },
+                "large_icon": {
+                  "id": 3,
+                  "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
+                }
+              },
+              "photo": {
+                "id": 8,
+                "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
+              }
+            }
+          ],
+          "first_page_url": "http://dreamcard.az/api/partners?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "http://dreamcard.az/api/partners?page=1",
+          "next_page_url": null,
+          "path": "http://dreamcard.az/api/partners",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 1,
+          "total": 1
+        }
+      },
+      {
+        "url": "/partners/{id}",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200,
+          "data": {
+            "id": 1,
+            "name": "Partner",
+            "username": "partner",
+            "first_entry": 1,
+            "deleted_at": null,
+            "created_at": "2017-12-10 10:32:26",
+            "updated_at": "2017-12-10 10:32:26",
+            "category": {
+              "id": 5,
+              "name": "testCategory",
+              "deleted_at": null,
+              "created_at": "2017-12-09 20:07:41",
+              "updated_at": "2017-12-09 20:07:41",
+              "small_icon": {
+                "id": 2,
+                "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
+              },
+              "large_icon": {
+                "id": 3,
+                "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
+              }
+            },
+            "photo": {
+              "id": 8,
+              "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
+            }
+          }
+        }
+      },
+
+      {
+        "url": "/packages/",
+        "request_type": "POST",
+        "request_fields": "name, price, duration(in days), discount_price?, api_token",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
+        "url": "/packages/update",
+        "request_type": "POST",
+        "request_fields": "id, name?, price?, duration?, discount_price?, api_token",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
+        "url": "/packages/delete/{id}",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
+        "url": "/packages/disable/{id}",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
+        "url": "/packages",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200,
+          "current_page": 1,
+          "data": [
+            {
+              "id": 1,
+              "name": "Partner",
+              "username": "partner",
+              "duration": 1,
               "deleted_at": null,
               "created_at": "2017-12-10 10:32:26",
               "updated_at": "2017-12-10 10:32:26",

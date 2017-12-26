@@ -24,12 +24,13 @@ class CreateUsersTable extends Migration
             $table->integer('firebase_id')->nullable()->unique();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->integer('photo_id')->nullable()->unsigned();
-            $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
+            $table->integer('photo_id')->nullable()->nullable()->unsigned();
+            $table->foreign('photo_id')->nullable()->references('id')->on('photos')->onUpdate('cascade')->onDelete('set null');
             $table->string('api_token')->nullable();
-            $table->integer('get_news')->nullable();
-            $table->integer('city_id')->nullable()->unsigned();
-            $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
+            $table->integer('get_news')->nullable()->default(1);
+            $table->integer('city_id')->nullable()->nullable()->unsigned();
+            $table->foreign('city_id')->references('id')->on('cities')->onUpdate('cascade')->onDelete('set null');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

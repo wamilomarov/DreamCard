@@ -18,10 +18,10 @@ class CreateDepartmentsTable extends Migration
             $table->string('name');
             $table->integer('partner_id')->unsigned();
             $table->foreign('partner_id')->references('id')->on('partners')->onDelete('cascade');
-            $table->integer('photo_id')->unsigned();
-            $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
-            $table->integer('city_id')->unsigned();
-            $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
+            $table->integer('photo_id')->nullable()->unsigned();
+            $table->foreign('photo_id')->references('id')->on('photos')->onUpdate('cascade')->onDelete('set null');
+            $table->integer('city_id')->nullable()->unsigned();
+            $table->foreign('city_id')->references('id')->on('cities')->onUpdate('cascade')->onDelete('set null');
 //            $table->float('lat');
 //            $table->float('lng');
             $table->string('username')->unique();

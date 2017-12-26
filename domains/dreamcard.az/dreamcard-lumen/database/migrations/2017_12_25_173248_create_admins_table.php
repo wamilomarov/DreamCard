@@ -17,8 +17,10 @@ class CreateAdminsTable extends Migration
             $table->increments('id');
             $table->string('username')->unique();
             $table->string('email')->uniqie();
+            $table->string('phone');
             $table->string('password');
             $table->string('api_token');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

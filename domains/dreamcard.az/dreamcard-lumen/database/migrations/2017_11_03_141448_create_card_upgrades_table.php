@@ -16,9 +16,9 @@ class CreateCardUpgradesTable extends Migration
         Schema::create('card_upgrades', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('card_id')->unsigned();
-            $table->foreign('card_id')->references('id')->on('cards')->onDelete('cascade');
+            $table->foreign('card_id')->references('id')->on('cards');
             $table->integer('package_id')->unsigned();
-            $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
+            $table->foreign('package_id')->references('id')->on('packages');
             $table->dateTime('end_time');
             $table->decimal('price');
             $table->timestamps();

@@ -19,10 +19,11 @@ class AdminController extends Controller
     public function create(Request $request)
     {
 
-        if ($request->has('username') && $request->has('email') && $request->has('password'))
+        if ($request->has('username') && $request->has('email') && $request->has('phone') && $request->has('password'))
         {
             if (Admin::where('email', $request->get('email'))
-                ->orWhere('username', $request->get('username'))->exists())
+                ->orWhere('username', $request->get('username'))
+                ->orWhere('phone', $request->get('phone'))->exists())
             {
                 $result = ['status' => 407];
             }
@@ -32,7 +33,7 @@ class AdminController extends Controller
                 $admin->username = $request->get('username');
                 $admin->email = $request->get('email');
                 $admin->password = app('hash')->make($request->get('password'));
-
+                $admin->phone = $request->get('phone');
                 $admin->save();
                 $result = ['status' => 200, 'data' => $admin];
             }
@@ -94,6 +95,11 @@ class AdminController extends Controller
                 $admin->email = $request->get('email');
             }
 
+            if ($request->has('phone'))
+            {
+                $admin->email = $request->get('phone');
+            }
+
             if ($request->has('username'))
             {
                 $admin->username = $request->get('username');
@@ -145,7 +151,7 @@ class AdminController extends Controller
         $admin = Admin::find($id);
         $admin->delete();
         $result = ['status' => 200];
-
         return response()->json($result);
+
     }
 }

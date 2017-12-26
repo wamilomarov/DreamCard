@@ -18,8 +18,8 @@ class CreatePartnersTable extends Migration
             $table->string('name');
             $table->integer('category_id')->unsigned();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->integer('photo_id')->unsigned();
-            $table->foreign('photo_id')->references('id')->on('photos')->onDelete('cascade');
+            $table->integer('photo_id')->nullable()->unsigned();
+            $table->foreign('photo_id')->references('id')->on('photos')->onUpdate('cascade')->onDelete('set null');
             $table->string('username')->unique();
             $table->string('password');
             $table->string('api_token');
