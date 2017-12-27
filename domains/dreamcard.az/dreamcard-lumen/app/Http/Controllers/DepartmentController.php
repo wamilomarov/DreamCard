@@ -17,7 +17,7 @@ class DepartmentController extends Controller
 {
     public function create(Request $request)
     {
-        $request = $request->json();
+
         if ($request->has('name') && $request->has('category_id') &&  $request->hasFile('photo')
             && $request->has('username') && $request->has('password') && $request->has('city_id')
             && $request->has('partner_id'))

@@ -22,15 +22,12 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $request = $request->json();
-        if ($request->has('username') && $request->has('email')
-            && $request->has('phone') && $request->has('password')) {
+        if ($request->has('email') && $request->has('phone') && $request->has('password')) {
             if (User::where('email', $request->get('email'))
-                ->orWhere('username', $request->get('username'))
                 ->orWhere('phone', $request->get('phone'))->exists()) {
                 $result = ['status' => 407];
             } else {
                 $user = new User();
-                $user->username = $request->get('username');
                 $user->email = $request->get('email');
                 $user->phone = $request->get('phone');
                 $user->password = app('hash')->make($request->get('password'));

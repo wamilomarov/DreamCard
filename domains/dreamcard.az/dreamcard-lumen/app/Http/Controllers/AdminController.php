@@ -18,7 +18,7 @@ class AdminController extends Controller
 {
     public function create(Request $request)
     {
-
+        $request = $request->json();
         if ($request->has('username') && $request->has('email') && $request->has('phone') && $request->has('password'))
         {
             if (Admin::where('email', $request->get('email'))

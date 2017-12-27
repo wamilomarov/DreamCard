@@ -22,7 +22,6 @@ class CategoryController extends Controller
     }
     public function create(Request $request)
     {
-        $request = $request->json();
         if ($request->has('name') && $request->hasFile('small_icon') && $request->hasFile('large_icon'))
         {
             if (!$this->categoryInstance->where('name', $request->get('name'))->exists())

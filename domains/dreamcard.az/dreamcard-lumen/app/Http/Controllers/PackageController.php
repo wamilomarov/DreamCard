@@ -16,6 +16,7 @@ class PackageController extends Controller
 {
     public function create(Request $request)
     {
+        $request = $request->json();
         if ($request->has('name') && $request->has('price') && $request->has('duration'))
         {
             $package = new Package();
