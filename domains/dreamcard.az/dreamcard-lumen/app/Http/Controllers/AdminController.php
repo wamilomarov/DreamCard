@@ -140,7 +140,7 @@ class AdminController extends Controller
 
     public function getAdmins()
     {
-        $admins = Admin::paginate(10);
+        $admins = Admin::withTrashed()->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($admins);
         return response()->json($result);
@@ -148,10 +148,26 @@ class AdminController extends Controller
 
     public function delete($id)
     {
-        $admin = Admin::find($id);
-        $admin->delete();
+        $admin = Admin::withTrashed()->find($id);
+        $admin->forceDelete();
+        $admin->photo->remove();
         $result = ['status' => 200];
         return response()->json($result);
 
+    }
+  public function disable($id)
+  {
+      $admin = Admin::withTrashed()->find($id);
+      $admin->delete();
+      $result = ['status' => 200];
+      return response($result);
+  }
+
+    public function restore($id)
+    {
+        $admin = Admin::withTrashed()->find($id);
+        $admin->restore();
+        $result = ['status' => 200];
+        return response($result);
     }
 }

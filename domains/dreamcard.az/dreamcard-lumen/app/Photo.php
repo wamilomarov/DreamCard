@@ -50,9 +50,9 @@ class Photo extends Model
         }
     }
 
-    public function remove($folder)
+    public function remove($folder = null)
     {
-        unlink($folder . $this->url);
+        unlink($this->attributes['url']);
         return $this->forceDelete();
     }
 }

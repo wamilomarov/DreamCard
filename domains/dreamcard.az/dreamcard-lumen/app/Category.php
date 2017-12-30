@@ -11,9 +11,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use SoftDeletes;
     protected $fillable = ['name'];
 
     protected $hidden = ['small_icon_id', 'large_icon_id', 'order_by'];

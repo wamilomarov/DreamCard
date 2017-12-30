@@ -12,17 +12,11 @@ namespace App\Http\Controllers;
 use App\Partner;
 use App\Photo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class PartnerController extends Controller
 {
-    private $partnerInstance;
-
-    public function __construct()
-    {
-        $this->partnerInstance = new Partner();
-    }
-
     public function create(Request $request)
     {
 //        $request = $request->json();
@@ -34,7 +28,7 @@ class PartnerController extends Controller
                 $result = ['status' => 413];
                 return response()->json($result);
             }
-            $partner = $this->partnerInstance;
+            $partner = new Partner();
 
             $photo = new Photo();
             $photo_result = $photo->upload($request->file('photo'), 'uploads/photos/partners/');
@@ -64,7 +58,7 @@ class PartnerController extends Controller
     public function update(Request $request)
     {
         $request = $request->json();
-        $partner = $this->partnerInstance->find($request->get('id'));
+        $partner = Partner::find($request->get('id'));
 
         if ($partner)
         {
@@ -128,7 +122,14 @@ class PartnerController extends Controller
 
     public function getPartners()
     {
-        $partners = $this->partnerInstance->paginate(10);
+        if (Auth::user()->getTable() == 'admins')
+        {
+            $partners = Partner::withTrashed()->paginate(10);
+        }
+        else
+        {
+            $partners = Partner::paginate(10);
+        }
         $status = collect(['status' => 200]);
         $result = $status->merge($partners);
         return response($result);
@@ -136,15 +137,15 @@ class PartnerController extends Controller
 
     public function get($id)
     {
-        $partner = $this->partnerInstance->find($id);
+        $partner = Partner::find($id);
         $result = ['status' => 200, 'data' => $partner];
         return response($result);
     }
 
     public function delete($id)
     {
-        $partner = $this->partnerInstance->find($id);
-        $partner->deletePhoto();
+        $partner = Partner::withTrashed()->find($id);
+        $partner->photo->remove();
         $partner->forceDelete();
         $result = ['status' => 200];
         return response($result);
@@ -152,8 +153,16 @@ class PartnerController extends Controller
 
     public function disable($id)
     {
-        $partner = $this->partnerInstance->find($id);
+        $partner = Partner::withTrashed()->find($id);
         $partner->delete();
+        $result = ['status' => 200];
+        return response($result);
+    }
+
+    public function restore($id)
+    {
+        $partner = Partner::withTrashed()->find($id);
+        $partner->restore();
         $result = ['status' => 200];
         return response($result);
     }

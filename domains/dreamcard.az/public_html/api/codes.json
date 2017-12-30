@@ -311,8 +311,7 @@
             "updated_at": "2017-12-09 20:07:41",
             "small_icon": {
               "id": 2,
-              "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
-            },
+              "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"},
             "large_icon": {
               "id": 3,
               "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
@@ -320,7 +319,6 @@
           }
         }
       },
-
       {
         "url": "/partners/",
         "request_type": "POST",
@@ -438,7 +436,6 @@
           }
         }
       },
-
       {
         "url": "/packages/",
         "request_type": "POST",
@@ -556,7 +553,6 @@
           }
         }
       }
-
     ]
   }
 }

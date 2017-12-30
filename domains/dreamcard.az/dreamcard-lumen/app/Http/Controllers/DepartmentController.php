@@ -130,7 +130,7 @@ class DepartmentController extends Controller
 
     public function getDepartments()
     {
-        $departments = Department::paginate(10);
+        $departments = Department::withTrashed()->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($departments);
         return response($result);
@@ -145,8 +145,8 @@ class DepartmentController extends Controller
 
     public function delete($id)
     {
-        $department = Department::find($id);
-        $department->deletePhoto();
+        $department = Department::withTrashed()->find($id);
+        $department->photo->remove();
         $department->forceDelete();
         $result = ['status' => 200];
         return response($result);
@@ -154,9 +154,17 @@ class DepartmentController extends Controller
 
     public function disable($id)
     {
-        $department = Department::find($id);
+        $department = Department::withTrashed()->find($id);
         $department->delete();
         $result = ['status' => 200];
         return response($result);
     }
+    public function restore($id)
+    {
+        $department = Department::withTrashed()->find($id);
+        $department->restore();
+        $result = ['status' => 200];
+        return response($result);
+    }
+
 }

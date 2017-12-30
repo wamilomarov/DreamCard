@@ -146,7 +146,7 @@ class UserController extends Controller
 
     public function getUsers()
     {
-        $users = User::paginate(10);
+        $users = User::withTrashed()->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($users);
         return response($result);
@@ -154,7 +154,7 @@ class UserController extends Controller
 
     public function delete($id)
     {
-        $user = User::find($id);
+        $user = User::withTrashed()->find($id);
         $user->deletePhoto();
         $user->delete();
         $result = ['status' => 200];

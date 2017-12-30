@@ -25,7 +25,7 @@ class NewsController extends Controller
 
             $photo = new Photo();
 
-            $photo_upload_result = $photo->upload($request->file('photo'),'uploads/photos/news/');
+            $photo_upload_result = $photo->upload($request->file('photo'),   'uploads/photos/news/');
 
             if ($photo_upload_result == 200)
             {

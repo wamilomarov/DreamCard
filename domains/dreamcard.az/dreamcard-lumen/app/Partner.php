@@ -8,15 +8,12 @@
 
 namespace App;
 
-use Illuminate\Auth\Authenticatable;
-use Laravel\Lumen\Auth\Authorizable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class Partner extends Model implements AuthenticatableContract, AuthorizableContract
+class Partner extends Model
 {
-    use Authenticatable, Authorizable;
+    use SoftDeletes;
     protected $fillable = ['name', 'username', 'first_entry'];
 
     protected $hidden = ['category_id', 'photo_id', 'password', 'api_token'];
