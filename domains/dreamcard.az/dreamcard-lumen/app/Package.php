@@ -11,6 +11,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Package extends Model
 {
@@ -18,4 +19,17 @@ class Package extends Model
     protected $fillable = ['name', 'price', 'discount_price', 'duration', ];
 
     protected $dates = ['deleted_at'];
+
+    public function scopeArrangeUser($query)
+    {
+        if (Auth::user()->getTable() == 'admins')
+        {
+            return $query->withTrashed();
+        }
+        else
+        {
+            return $query;
+        }
+    }
+
 }

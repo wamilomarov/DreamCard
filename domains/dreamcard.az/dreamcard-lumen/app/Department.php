@@ -9,6 +9,7 @@
 namespace App;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -47,5 +48,29 @@ class Department extends Model implements AuthenticatableContract, AuthorizableC
         $photo = Photo::find($this->photo_id);
         return $photo->remove('uploads/photos/departments/');
     }
+
+    public function scopeArrangeUser($query)
+    {
+        if (Auth::user()->getTable() == 'admins' || Auth::user()->getTable() == 'partners')
+        {
+            return $query->withTrashed();
+        }
+        else
+        {
+            return $query;
+        }
+    }
+
+    public function isEditableByGuard()
+    {
+        switch (Auth::user()->getTable())
+        {
+            case "admins" : return true;
+            case "partners" : return $this->partner->id == Auth::user()->id ?  true : false;
+            case "department" : return $this->id == Auth::user()->id ?  true : false;
+            default : return false;
+        }
+    }
+
 
 }

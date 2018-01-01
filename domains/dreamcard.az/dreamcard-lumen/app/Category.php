@@ -12,6 +12,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Category extends Model
 {
@@ -45,4 +46,17 @@ class Category extends Model
         $photo = Photo::where($this->large_icon_id);
         return $photo->remove('uploads/photos/categories/');
     }
+
+    public function scopeArrangeUser($query)
+    {
+        if (Auth::user()->getTable() == 'admins')
+        {
+            return $query->withTrashed();
+        }
+        else
+        {
+            return $query;
+        }
+    }
+
 }

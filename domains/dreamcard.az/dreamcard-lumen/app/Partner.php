@@ -10,6 +10,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Partner extends Model
 {
@@ -37,4 +38,17 @@ class Partner extends Model
         $photo = Photo::find($this->photo_id);
         return $photo->remove('uploads/photos/partners/');
     }
+
+    public function scopeArrangeUser($query)
+    {
+        if (Auth::user()->getTable() == 'admins')
+        {
+            return $query->withTrashed();
+        }
+        else
+        {
+            return $query;
+        }
+    }
+
 }

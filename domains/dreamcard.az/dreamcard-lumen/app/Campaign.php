@@ -11,6 +11,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Campaign extends Model
 {
@@ -20,4 +21,17 @@ class Campaign extends Model
     protected $hidden = [];
 
     protected $dates = ['deleted_at'];
+
+    public function scopeArrangeUser($query)
+    {
+        if (Auth::user()->getTable() != 'users')
+        {
+            return $query->withTrashed();
+        }
+        else
+        {
+            return $query;
+        }
+    }
+
 }

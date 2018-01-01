@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
@@ -64,4 +65,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $photo = Photo::find($this->photo_id);
         return $photo->remove('uploads/photos/users/');
     }
+
+    public function scopeArrangeUser($query)
+    {
+        if (Auth::user()->getTable() == 'admins')
+        {
+            return $query->withTrashed();
+        }
+        else
+        {
+            return $query;
+        }
+    }
+
 }

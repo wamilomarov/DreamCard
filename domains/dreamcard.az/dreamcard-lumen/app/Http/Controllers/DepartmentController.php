@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 use App\Department;
 use App\Photo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DepartmentController extends Controller
 {
@@ -22,6 +23,11 @@ class DepartmentController extends Controller
             && $request->has('username') && $request->has('password') && $request->has('city_id')
             && $request->has('partner_id'))
         {
+            if (Department::arrangeUser()->where('name', $request->get('name'))->orWhere('username', $request->get('username'))->exists())
+            {
+                $result = ['status' => 407];
+                return response()->json($result);
+            }
             $department = new Department();
 
             $photo = new Photo();
@@ -53,10 +59,9 @@ class DepartmentController extends Controller
 
     public function update(Request $request)
     {
-        $request = $request->json();
-        $department = Department::find($request->get('id'));
+        $department = Department::arrangeUser()->find($request->get('id'));
 
-        if ($department)
+        if ($department && $department->isEditableByGuard())
         {
             if ($request->has('name'))
             {
@@ -130,7 +135,7 @@ class DepartmentController extends Controller
 
     public function getDepartments()
     {
-        $departments = Department::withTrashed()->paginate(10);
+        $departments = Department::arrangeUser()->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($departments);
         return response($result);
@@ -138,14 +143,14 @@ class DepartmentController extends Controller
 
     public function get($id)
     {
-        $department = Department::find($id);
+        $department = Department::arrangeUser()->find($id);
         $result = ['status' => 200, 'data' => $department];
         return response($result);
     }
 
     public function delete($id)
     {
-        $department = Department::withTrashed()->find($id);
+        $department = Department::arrangeUser()->find($id);
         $department->photo->remove();
         $department->forceDelete();
         $result = ['status' => 200];
@@ -154,14 +159,15 @@ class DepartmentController extends Controller
 
     public function disable($id)
     {
-        $department = Department::withTrashed()->find($id);
+        $department = Department::arrangeUser()->find($id);
         $department->delete();
         $result = ['status' => 200];
         return response($result);
     }
+
     public function restore($id)
     {
-        $department = Department::withTrashed()->find($id);
+        $department = Department::arrangeUser()->find($id);
         $department->restore();
         $result = ['status' => 200];
         return response($result);
