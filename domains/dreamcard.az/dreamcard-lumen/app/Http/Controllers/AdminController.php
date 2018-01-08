@@ -88,7 +88,7 @@ class AdminController extends Controller
     {
         $request = $request->json();
         $admin = Admin::find($request->get('id'));
-        if ($admin)
+        if ($admin && $admin->isEditableByGuard())
         {
             if ($request->has('email'))
             {
@@ -140,7 +140,7 @@ class AdminController extends Controller
 
     public function getAdmins()
     {
-        $admins = Admin::withTrashed()->paginate(10);
+        $admins = Admin::paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($admins);
         return response()->json($result);
@@ -148,7 +148,7 @@ class AdminController extends Controller
 
     public function delete($id)
     {
-        $admin = Admin::withTrashed()->find($id);
+        $admin = Admin::find($id);
         $admin->forceDelete();
         $admin->photo->remove();
         $result = ['status' => 200];
@@ -157,7 +157,7 @@ class AdminController extends Controller
     }
   public function disable($id)
   {
-      $admin = Admin::withTrashed()->find($id);
+      $admin = Admin::find($id);
       $admin->delete();
       $result = ['status' => 200];
       return response($result);
@@ -165,7 +165,7 @@ class AdminController extends Controller
 
     public function restore($id)
     {
-        $admin = Admin::withTrashed()->find($id);
+        $admin = Admin::find($id);
         $admin->restore();
         $result = ['status' => 200];
         return response($result);

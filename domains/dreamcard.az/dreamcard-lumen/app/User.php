@@ -52,7 +52,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getCardAttribute()
     {
-        return Card::find($this->card_id);
+        return Card::where('user_id', $this->id)->first();
     }
 
     public function getPhotoAttribute()
@@ -76,6 +76,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         {
             return $query;
         }
+    }
+
+    public function favoritePartners($category_id)
+    {
+        return $this->belongsToMany("App\Partner", "favorites" )->where("category_id", "=", $category_id);
+    }
+
+    public function favoriteCategories()
+    {
+        return $this->favoritePartners()->groupBy("partners.category_id");
     }
 
 }

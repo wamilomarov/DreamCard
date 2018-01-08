@@ -11,6 +11,7 @@ namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Partner extends Model
 {
@@ -21,11 +22,17 @@ class Partner extends Model
 
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['category', 'photo'];
+    protected $appends = ['category', 'photo', 'rating'];
+
+    public function getRatingAttribute()
+    {
+        $rating = DB::table("ratings")->where("partner_id", $this->id)->avg("rate");
+        return $rating == null ? 0 : $rating;
+    }
 
     public function getCategoryAttribute()
     {
-        return Category::find($this->category_id);
+        return Category::arrangeUser()->find($this->category_id);
     }
 
     public function getPhotoAttribute()

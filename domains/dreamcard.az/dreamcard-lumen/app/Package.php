@@ -31,5 +31,4 @@ class Package extends Model
             return $query;
         }
     }
-
 }

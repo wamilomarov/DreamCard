@@ -14,6 +14,7 @@ use App\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class PartnerController extends Controller
 {
@@ -52,7 +53,7 @@ class PartnerController extends Controller
     {
         $partner = Partner::arrangeUser()->find($request->get('id'));
 
-        if ($partner) {
+        if ($partner && $partner->isEditableByGuard()) {
             if ($request->has('name')) {
                 $partner->name = $request->get('name');
 
@@ -138,4 +139,6 @@ class PartnerController extends Controller
         $result = ['status' => 200];
         return response($result);
     }
+
+
 }

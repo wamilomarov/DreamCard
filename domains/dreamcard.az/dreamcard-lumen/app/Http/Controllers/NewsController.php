@@ -52,7 +52,7 @@ class NewsController extends Controller
 
     public function get($id)
     {
-        $news = News::find($id);
+        $news = News::arrangeUser()->find($id);
         $result = ['status' => 200, 'data' => $news];
         return response($result);
 
@@ -60,7 +60,7 @@ class NewsController extends Controller
 
     public function delete($id)
     {
-        $news = News::find($id);
+        $news = News::arrangeUser()->find($id);
         $news->deletePhoto();
         $news->forceDelete();
 
@@ -69,7 +69,7 @@ class NewsController extends Controller
 
     public function getNews()
     {
-        $news = News::paginate(10);
+        $news = News::arrangeUser()->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($news);
         return response($result);
@@ -77,7 +77,7 @@ class NewsController extends Controller
 
     public function update(Request $request)
     {
-        $news = News::find($request->get('id'));
+        $news = News::arrangeUser()->find($request->get('id'));
 
         if ($news)
         {

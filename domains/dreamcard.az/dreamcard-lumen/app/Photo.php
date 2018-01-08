@@ -53,6 +53,6 @@ class Photo extends Model
     public function remove($folder = null)
     {
         unlink($this->attributes['url']);
-        return $this->forceDelete();
+        return $this->delete();
     }
 }

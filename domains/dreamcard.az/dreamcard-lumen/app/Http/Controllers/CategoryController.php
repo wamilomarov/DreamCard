@@ -17,23 +17,23 @@ class CategoryController extends Controller
 {
         public function create(Request $request)
     {
-        if ($request->has('name') && $request->hasFile('small_icon') && $request->hasFile('large_icon'))
+        if ($request->has('name') /*&& $request->hasFile('small_icon')*/ && $request->hasFile('large_icon'))
         {
-            if (!Category::where('name', $request->get('name'))->exists())
+            if (!Category::arrangeUser()->where('name', $request->get('name'))->exists())
             {
-                $small_icon = new Photo();
-                $small_icon_result = $small_icon->upload($request->file('small_icon'), 'uploads/photos/categories/');
+//                $small_icon = new Photo();
+//                $small_icon_result = $small_icon->upload($request->file('small_icon'), 'uploads/photos/categories/');
 
                 $large_icon = new Photo();
                 $large_icon_result = $large_icon->upload($request->file('large_icon'), 'uploads/photos/categories/');
 
-                if ($small_icon_result == 200)
+                if (/*$small_icon_result*/ 200 == 200)
                 {
                     if ($large_icon_result == 200)
                     {
                         $category = new Category();
                         $category->name = $request->get('name');
-                        $category->small_icon_id = $small_icon->id;
+                        $category->small_icon_id = /*$small_icon->id;*/ $large_icon->id;
                         $category->large_icon_id = $large_icon->id;
 
                         if ($request->has('order_by'))
@@ -51,7 +51,7 @@ class CategoryController extends Controller
                 }
                 else
                 {
-                    $result = ['status' => $small_icon_result];
+                    $result = ['status' => 400 /*$small_icon_result*/];
                 }
             }
             else
@@ -69,14 +69,14 @@ class CategoryController extends Controller
 
     public function get($id)
     {
-        $category = Category::find($id);
+        $category = Category::arrangeUser()->find($id);
         $result = ['status' => 200, 'data' => $category];
         return response($result);
     }
 
     public function getCategories()
     {
-        $categories = Category::withTrashed()->paginate(10);
+        $categories = Category::arrangeUser()->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($categories);
         return response($result);
@@ -84,8 +84,8 @@ class CategoryController extends Controller
 
     public function delete($id)
     {
-        $category = Category::withTrashed()->find($id);
-        $category->large_icon->remove();
+        $category = Category::arrangeUser()->find($id);
+//        $category->large_icon->remove();
         $category->small_icon->remove();
         $category->forceDelete();
         $result = ['status' => 200];
@@ -94,8 +94,7 @@ class CategoryController extends Controller
 
     public function update(Request $request)
     {
-        $request = $request->json();
-        $category = Category::find($request->get('id'));
+        $category = Category::arrangeUser()->find($request->get('id'));
         if ($category)
         {
             if ($request->has('name'))
@@ -126,7 +125,7 @@ class CategoryController extends Controller
 
                 if ($large_icon_result == 200)
                 {
-                    $category->deleteLargeIcon();
+                    $category->large_icon->remove();
                     $category->large_icon_id = $large_icon->id;
                 }
                 else
@@ -154,7 +153,7 @@ class CategoryController extends Controller
 
     public function disable($id)
     {
-        $category = Category::withTrashed()->find($id);
+        $category = Category::arrangeUser()->find($id);
         $category->delete();
         $result = ['status' => 200];
         return response($result);
@@ -162,7 +161,7 @@ class CategoryController extends Controller
 
     public function restore($id)
     {
-        $category = Category::withTrashed()->find($id);
+        $category = Category::arrangeUser()->find($id);
         $category->restore();
         $result = ['status' => 200];
         return response($result);

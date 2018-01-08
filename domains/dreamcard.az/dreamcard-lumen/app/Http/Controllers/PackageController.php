@@ -41,7 +41,7 @@ class PackageController extends Controller
 
     public function update(Request $request)
     {
-        $package = Package::find($request->get('id'));
+        $package = Package::arrangeUser()->find($request->get('id'));
 
         if ($package)
         {
@@ -82,7 +82,7 @@ class PackageController extends Controller
 
     public function getPackages()
     {
-        $packages = Package::paginate(10);
+        $packages = Package::arrangeUser()->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($packages);
         return response($result);
@@ -90,14 +90,14 @@ class PackageController extends Controller
 
     public function get($id)
     {
-        $package = Package::find($id);
+        $package = Package::arrangeUser()->find($id);
         $result = ['status' => 200, 'data' => $package];
         return response($result);
     }
 
     public function delete($id)
     {
-        $package = Package::find($id);
+        $package = Package::arrangeUser()->find($id);
         $package->delete();
         $result = ['status' => 200];
         return response($result);

@@ -18,9 +18,19 @@ class Campaign extends Model
     use SoftDeletes;
     protected $fillable = [''];
 
-    protected $hidden = [];
+    protected $hidden = ['partner_id', 'department_id'];
 
     protected $dates = ['deleted_at'];
+
+    protected $appends = ['partner', 'department'];
+
+    public function getPartnerAttribute(){
+      return Partner::arrangeUser()->find($this->partner_id);
+    }
+
+    public function getDepartmentAttribute(){
+      return Department::arrangeUser()->find($this->department_id);
+    }
 
     public function scopeArrangeUser($query)
     {

@@ -39,6 +39,9 @@ $router->get('/users', ['middleware' => ['auth', 'admin'], 'uses' => 'UserContro
 $router->get('/users/{id}', ['middleware' => ['auth'], 'uses' => 'UserController@get']);
 $router->post('/users/forgot_password', 'UserController@forgotPassword');
 $router->post('/users/reset_password', 'UserController@resetPassword');
+$router->get('/users/favorite/partners/{category_id}', 'UserController@favoritePartners');
+$router->get('/users/favorite/categories', 'UserController@favoriteCategories');
+$router->post('/users/favorite/partner', 'UserController@addFavoritePartner');
 
 $router->post('/categories', ['middleware' => ['auth', 'admin'], 'uses' => 'CategoryController@create']);
 $router->post('/categories/update', ['middleware' => ['auth', 'admin'], 'uses' => 'CategoryController@update']);
@@ -55,6 +58,7 @@ $router->get('/partners/disable/{id}', ['middleware' => ['auth', 'admin'], 'uses
 $router->get('/partners/restore/{id}', ['middleware' => ['auth', 'admin'], 'uses' => 'PartnerController@restore']);
 $router->get('/partners', ['middleware' => ['auth'], 'uses' => 'PartnerController@getPartners']);
 $router->get('/partners/{id}', 'PartnerController@get');
+
 
 $router->post('/departments', 'DepartmentController@create');
 $router->post('/departments/update', 'DepartmentController@update');
@@ -76,16 +80,19 @@ $router->get('/cards/{id}', 'CardController@get');
 $router->post('/packages', 'PackageController@create');
 $router->post('/packages/update', 'PackageController@update');
 $router->get('/packages/delete/{id}', 'PackageController@delete');
-$router->get('/packages', ['middleware' => ['auth', 'department'], 'uses' => 'PackageController@getPackages']);
+$router->get('/packages', ['middleware' => ['auth'], 'uses' => 'PackageController@getPackages']);
 $router->get('/packages/{id}', 'PackageController@get');
 
 $router->post('/news','NewsController@create');
-$router->post('/news','NewsController@update');
+$router->post('/news/update','NewsController@update');
 $router->get('/news/delete/{id}', 'NewsController@delete');
 $router->get('/news','NewsController@getNews');
 $router->get('/news/{id}', 'NewsController@get');
 
 
-
-
+$router->post('/campaign', 'CampaignController@create');
+$router->post('/campaign/update', 'CampaignController@update');
+$router->get('/campaign/delete/{id}', 'CampaignController@delete');
+$router->get('/campaigns', 'CampaignController@getCampaign');
+$router->get('/campaigns/{id}', 'CampaignController@get');
 

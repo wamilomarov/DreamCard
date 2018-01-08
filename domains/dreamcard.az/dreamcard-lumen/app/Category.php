@@ -44,7 +44,7 @@ class Category extends Model
     public function deleteLargeIcon()
     {
         $photo = Photo::where($this->large_icon_id);
-        return $photo->remove('uploads/photos/categories/');
+        return $photo->remove();
     }
 
     public function scopeArrangeUser($query)

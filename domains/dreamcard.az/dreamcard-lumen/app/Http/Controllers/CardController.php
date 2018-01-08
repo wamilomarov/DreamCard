@@ -21,7 +21,7 @@ class CardController extends Controller
     {
         $user = Auth::user();
 
-        if (!Card::where('user_id', $user->id)->exists()) {
+        if (!Card::arrangeUser()->where('user_id', $user->id)->exists()) {
             $card = new Card();
             $card->user_id = $request->get('user_id');
             $card->generateNumber();
@@ -38,7 +38,7 @@ class CardController extends Controller
 
     public function getCards()
     {
-        $cards = Card::paginate(10);
+        $cards = Card::arrangeUser()->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($cards);
         return response($result);
@@ -46,14 +46,14 @@ class CardController extends Controller
 
     public function get($id)
     {
-        $card = Card::find($id);
+        $card = Card::arrangeUser()->find($id);
         $result = ['status' => 200, 'data' => $card];
         return response($result);
     }
 
     public function delete($id)
     {
-        $card = Card::find($id);
+        $card = Card::arrangeUser()->find($id);
         $card->delete();
         $result = ['status' => 200];
         return response($result);
@@ -61,7 +61,7 @@ class CardController extends Controller
 
     public function upgrade(Request $request)
     {
-        $card = Card::find($request->get('card_id'));
+        $card = Card::arrangeUser()->find($request->get('card_id'));
         $package = Package::find($request->get('package_id'));
         if ($package->discount_price == NULL)
         {

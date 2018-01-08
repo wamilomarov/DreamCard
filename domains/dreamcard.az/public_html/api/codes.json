@@ -11,27 +11,48 @@
     "409": "previous password is wrong (in profile update)",
     "410": "you already have a card",
     "411": "not enough balance in your card",
-    "412": "unexpected error"
+    "412": "unexpected error",
+    "413": "no such partner",
+    "414": "campaign already exists"
   },
   "url's": {
     "mobile": [
       {
         "url": "/users/register/",
         "request_type": "POST",
-        "request_fields": "username, email, phone, password",
+        "request_fields": "first_name, last_name, email, phone, password",
         "response_example": {
           "status": 200,
           "data": {
-            "username": "wamiomaro",
-            "email": "wamil95omarov@gmail.co",
+            "id": 5,
+            "email": "wamil95omarov@gmail.com",
             "phone": "+99477332632",
-            "api_token": "38903fec0b544c4085bfa275db52b9e7",
-            "updated_at": "2017-11-04 13:28:22",
-            "created_at": "2017-11-04 13:28:22",
-            "id": 2,
-            "city": null,
-            "photo": null,
-            "card": null
+            "first_name": "Shamil",
+            "last_name": "Omarov",
+            "api_token": "b4f0eb6e4ff1990a328183a901c66555",
+            "get_news": 1,
+            "deleted_at": null,
+            "created_at": "2018-01-06 21:23:36",
+            "updated_at": "2018-01-06 21:23:36",
+            "city": {
+              "id": 1,
+              "name": "Baku",
+              "created_at": "2018-01-06 21:23:36",
+              "updated_at": "2018-01-06 21:23:36"
+            },
+            "photo": {
+              "id": 14,
+              "url": "http://dreamcard.az/api/uploads/photos/partners/8673b38caaf546a1b52de1b90d05ae3d.jpeg"
+            },
+            "card": {
+              "id": 4,
+              "qr_code": "bee800c8",
+              "qr_created_at": "2018-01-06 21:48:42",
+              "number": 335352,
+              "balance": "0.00",
+              "created_at": "2018-01-06 21:23:36",
+              "updated_at": "2018-01-06 21:48:42"
+            }
           }
         }
       },
@@ -92,9 +113,171 @@
         "url": "/users/update",
         "request_type": "POST",
         "request_fields": "api_token, first_name?, last_name?, email?, phone?, city_id?, photo?, [password, prev_password]?",
-        //? - optional; [] - both should exist
         "response_example": {
           "status": 200
+        }
+      },
+      {
+        "url": "users/favorite/partners",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200,
+          "current_page": 1,
+          "data":[
+            {
+              "id": 17,
+              "user_id": 1,
+              "partner_id": 17,
+              "created_at": "2018-01-04 21:21:00",
+              "updated_at": "2018-01-04 21:21:00",
+              "name": "Zara",
+              "category_id": 8,
+              "photo_id": 34,
+              "password": "$2y$10$RmHWVl8ZOK5wTTEQ.sJ7H.ILlkM/qGTpl5EqYPSaorXJur4d4qvMm",
+              "api_token": "",
+              "first_entry": 1,
+              "deleted_at": null
+            }
+          ],
+          "first_page_url": "http://dreamcard.az/api/user/favorite/partners?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "http://dreamcard.az/api/user/favorite/partners?page=1",
+          "next_page_url": null,
+          "path": "http://dreamcard.az/api/user/favorite/partners",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 1,
+          "total": 1
+        }
+      },
+      {
+        "url": "/users/favorite/partners",
+        "request_type":"POST",
+        "request_fields": "api_token, partner_id?",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
+        "url": "/users/favorite/partners/{category_id}",
+        "request_type":"GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200,
+          "current_page": 1,
+          "data": [
+            {
+              "id": 17,
+              "name": "Zara",
+              "username": "zara-001",
+              "first_entry": 1,
+              "deleted_at": null,
+              "created_at": "2018-01-04 21:21:00",
+              "updated_at": "2018-01-04 21:21:00",
+              "category": {
+                "id": 8,
+                "name": "Healt",
+                "deleted_at": null,
+                "created_at": "2018-01-04 21:20:24",
+                "updated_at": "2018-01-04 21:20:24",
+                "small_icon": {
+                  "id": 33,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                },
+                "large_icon": {
+                  "id": 33,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                }
+              },
+              "photo": {
+                "id": 34,
+                "url": "http://dreamcard.az/api/uploads/photos/partners/d827da4963c7e3f21976c05c2909924f.jpeg"
+              },
+              "rating": 0,
+              "pivot": {
+                "user_id": 1,
+                "partner_id": 17
+              }
+            }
+          ],
+          "first_page_url": "http://dreamcard.az/api/users/favorite/partners/8?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "http://dreamcard.az/api/users/favorite/partners/8?page=1",
+          "next_page_url": null,
+          "path": "http://dreamcard.az/api/users/favorite/partners/8",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 1,
+          "total": 1
+        }
+      },
+      {
+        "url": "/users/favorite/categories",
+        "request_type":"GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200,
+          "current_page": 1,
+          "data": [
+            {
+              "id": 8,
+              "name": "Healt",
+              "deleted_at": null,
+              "created_at": "2018-01-04 21:20:24",
+              "updated_at": "2018-01-04 21:20:24",
+              "small_icon": {
+                "id": 33,
+                "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+              },
+              "large_icon": {
+                "id": 33,
+                "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+              }
+            },
+            {
+              "id": 9,
+              "name": "Clothing",
+              "deleted_at": null,
+              "created_at": "2018-01-08 13:10:38",
+              "updated_at": "2018-01-08 13:10:38",
+              "small_icon": {
+                "id": 35,
+                "url": "http://dreamcard.az/api/uploads/photos/categories/04d53c2dd98c506864757104d23f5227.jpeg"
+              },
+              "large_icon": {
+                "id": 35,
+                "url": "http://dreamcard.az/api/uploads/photos/categories/04d53c2dd98c506864757104d23f5227.jpeg"
+              }
+            },
+            {
+              "id": 10,
+              "name": "Food & Drinks",
+              "deleted_at": null,
+              "created_at": "2018-01-08 13:11:04",
+              "updated_at": "2018-01-08 13:11:04",
+              "small_icon": {
+                "id": 36,
+                "url": "http://dreamcard.az/api/uploads/photos/categories/ec6b9fbbfaac95461477a0fa227e68eb.jpeg"
+              },
+              "large_icon": {
+                "id": 36,
+                "url": "http://dreamcard.az/api/uploads/photos/categories/ec6b9fbbfaac95461477a0fa227e68eb.jpeg"
+              }
+            }
+          ],
+          "first_page_url": "http://dreamcard.az/api/users/favorite/categories?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "http://dreamcard.az/api/users/favorite/categories?page=1",
+          "next_page_url": null,
+          "path": "http://dreamcard.az/api/users/favorite/categories",
+          "per_page": 15,
+          "prev_page_url": null,
+          "to": 3,
+          "total": 3
         }
       },
       {
@@ -169,6 +352,112 @@
               "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
             }
           }
+        }
+      },
+      {
+        "url": "/campaigns",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200,
+          "current_page": 1,
+          "data":[
+            {
+              "id": 3,
+              "title": "campaign",
+              "all_products_discount": "50.00",
+              "special_product_discount": "100.00",
+              "end_date": "0000-00-00 00:00:00",
+              "deleted_at": null,
+              "created_at": "2018-01-05 20:09:21",
+              "updated_at": "2018-01-05 20:09:21",
+              "partner": {
+                "id": 17,
+                "name": "Zara",
+                "username": "zara-001",
+                "first_entry": 1,
+                "deleted_at": null,
+                "created_at": "2018-01-04 21:21:00",
+                "updated_at": "2018-01-04 21:21:00",
+                "category": {
+                  "id": 8,
+                  "name": "Healt",
+                  "deleted_at": null,
+                  "created_at": "2018-01-04 21:20:24",
+                  "updated_at": "2018-01-04 21:20:24",
+                  "small_icon": {
+                    "id": 33,
+                    "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                  },
+                  "large_icon": {
+                    "id": 33,
+                    "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                  }
+                },
+                "photo": {
+                  "id": 34,
+                  "url": "http://dreamcard.az/api/uploads/photos/partners/d827da4963c7e3f21976c05c2909924f.jpeg"
+                }
+              },
+              "department": {
+                "id": 1,
+                "name": "test Department",
+                "username": "memmed",
+                "first_entry": 1,
+                "deleted_at": null,
+                "created_at": null,
+                "updated_at": null,
+                "partner": {
+                  "id": 17,
+                  "name": "Zara",
+                  "username": "zara-001",
+                  "first_entry": 1,
+                  "deleted_at": null,
+                  "created_at": "2018-01-04 21:21:00",
+                  "updated_at": "2018-01-04 21:21:00",
+                  "category": {
+                    "id": 8,
+                    "name": "Healt",
+                    "deleted_at": null,
+                    "created_at": "2018-01-04 21:20:24",
+                    "updated_at": "2018-01-04 21:20:24",
+                    "small_icon": {
+                      "id": 33,
+                      "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                    },
+                    "large_icon": {
+                      "id": 33,
+                      "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                    }
+                  },
+                  "photo": {
+                    "id": 34,
+                    "url": "http://dreamcard.az/api/uploads/photos/partners/d827da4963c7e3f21976c05c2909924f.jpeg"
+                  }
+                },
+                "photo": {
+                  "id": 2,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/5c4a463ff4ee4a2c4e0779358c6e58b0.png"
+                },
+                "city": {
+                  "id": 1,
+                  "name": "Baku",
+                  "created_at": null,
+                  "updated_at": null
+                }
+              }
+            }
+          ],
+          "first_page_url": "http://dreamcard.az/api/campaigns?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "http://dreamcard.az/api/campaigns?page=1",
+          "next_page_url": null,
+          "path": "http://dreamcard.az/api/campaigns",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 1,
+          "total": 1
         }
       }
     ],

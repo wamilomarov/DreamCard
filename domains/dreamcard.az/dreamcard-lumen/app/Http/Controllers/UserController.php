@@ -10,8 +10,10 @@ namespace App\Http\Controllers;
 
 
 use App\Card;
+use App\Category;
 use App\Photo;
 use App\User;
+use App\Partner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,8 +23,9 @@ class UserController extends Controller
 {
     public function create(Request $request)
     {
-        $request = $request->json();
-        if ($request->has('email') && $request->has('phone') && $request->has('password')) {
+//        $request = $request->json();
+        if ($request->has('email') && $request->has('phone') && $request->has('password')
+            && $request->has('first_name') && $request->has('last_name')) {
             if (User::where('email', $request->get('email'))
                 ->orWhere('phone', $request->get('phone'))->exists()) {
                 $result = ['status' => 407];
@@ -30,11 +33,17 @@ class UserController extends Controller
                 $user = new User();
                 $user->email = $request->get('email');
                 $user->phone = $request->get('phone');
+                $user->first_name = $request->get('first_name');
+                $user->last_name = $request->get('last_name');
                 $user->password = app('hash')->make($request->get('password'));
                 $user->photo_id = NULL;
 
                 $user->api_token = md5(microtime());
                 $user->save();
+                $card = new Card();
+                $card->user_id = $user->id;
+                $card->save();
+                $user = User::find($user->id);
                 $user = $user->makeVisible(['api_token']);
                 $result = ['status' => 200, 'data' =>  $user];
             }
@@ -49,7 +58,7 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        $request = $request->json();
+//        $request = $request->json();
         if ($request->has('email') && $request->has('password')) {
             $user = User::where('email', $request->get('email'))->first();
 
@@ -386,4 +395,46 @@ class UserController extends Controller
 
         return response($result)->header('Content-Type', 'text/xml');
     }
+
+    public function favoriteCategories()
+    {
+        $favorites = DB::table("partners")
+        ->join("favorites", "favorites.partner_id", "=", "partners.id")
+            ->where("favorites.user_id", Auth::user()->id)
+                ->pluck("partners.category_id")->toArray();
+        $categories = Category::whereIn("id", $favorites)->paginate();
+        $status = collect(['status' => 200]);
+        $result = $status->merge($categories);
+        return response($result);
+    }
+
+    public function favoritePartners($category_id)
+  {
+    $favorites = Auth::user()->favoritePartners($category_id)->paginate(10);
+    $status = collect(['status' => 200]);
+    $result = $status->merge($favorites);
+    return response($result);
+  }
+
+    public function addFavoritePartner(Request $request)
+  {
+      if($request->has('partner_id') && Partner::arrangeUser()->where('id', $request->get('partner_id'))->exists()){
+
+        DB::table('favorites')->insert([
+          'user_id' => Auth::user()->id,
+          'partner_id' => $request->get('partner_id'),
+          'updated_at' => DB::raw("NOW()"),
+          'created_at' => DB::raw("NOW()")
+        ]);
+
+        $result = ['status' => 200];
+
+      }else{
+        $result = ['status' => 413];
+      }
+
+      return response($result);
+  }
+
+
 }

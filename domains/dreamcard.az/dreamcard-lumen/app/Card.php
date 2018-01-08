@@ -16,17 +16,17 @@ class Card extends Model
 
     protected $hidden = ['user_id', 'photo_id'];
 
-    protected $appends = ['user', 'photo'];
+    protected $appends = [ ];
 
-    public function getUserAttribute()
-    {
-        return User::find($this->user_id);
-    }
+//    public function getUserAttribute()
+//    {
+//        return User::find($this->user_id);
+//    }
 
-    public function getPhotoAttribute()
-    {
-        return Photo::find($this->photo_id);
-    }
+//    public function getPhotoAttribute()
+//    {
+//        return Photo::find($this->photo_id);
+//    }
 
     public function deletePhoto()
     {
@@ -39,11 +39,11 @@ class Card extends Model
         $qr_code = substr(md5(uniqid(mt_rand(), true)), 0, 8);
         if (Card::where('qr_code', $qr_code)->exists())
         {
-            return $this->generateQrCode();
+            $this->generateQrCode();
         }
         $this->qr_code = $qr_code;
         $this->qr_created_at = Date('Y-m-d H:i:s');
-        return $qr_code;
+        $this->save();
     }
 
     public function generateNumber()
@@ -56,10 +56,10 @@ class Card extends Model
 
         if (Card::where('number', $number)->exists())
         {
-            return $this->generateNumber();
+            $this->generateNumber();
         }
 
         $this->number = $number;
-        return $number;
+        $this->save();
     }
 }
