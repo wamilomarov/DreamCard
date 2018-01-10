@@ -50,6 +50,7 @@ $router->get('/categories/disable/{id}', ['middleware' => ['auth', 'admin'], 'us
 $router->get('/categories/restore/{id}', ['middleware' => ['auth', 'admin'], 'uses' => 'CategoryController@restore']);
 $router->get('/categories', ['middleware' => ['auth'], 'uses' => 'CategoryController@getCategories']);
 $router->get('/categories/{id}', ['middleware' => ['auth'], 'uses' => 'CategoryController@get']);
+$router->get('/categories/{id}/partners', ['middleware' => ['auth'], 'uses' => 'CategoryController@getPartners']);
 
 $router->post('/partners', ['middleware' => ['auth', 'admin'], 'uses' => 'PartnerController@create']);
 $router->post('/partners/update', ['middleware' => ['auth', 'admin'], 'uses' => 'PartnerController@update']);

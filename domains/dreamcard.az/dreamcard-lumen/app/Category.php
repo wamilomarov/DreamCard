@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Category extends Model
 {
@@ -23,7 +24,12 @@ class Category extends Model
 
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['small_icon', 'large_icon'];
+    protected $appends = ['small_icon', 'large_icon', 'partners_count'];
+
+    public function getPartnersCountAttribute()
+    {
+        return DB::table('partners')->where('category_id', $this->id)->count();
+    }
 
     public function getSmallIconAttribute()
     {

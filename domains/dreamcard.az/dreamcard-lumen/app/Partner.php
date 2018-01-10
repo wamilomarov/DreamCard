@@ -22,12 +22,28 @@ class Partner extends Model
 
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['category', 'photo', 'rating'];
+    protected $appends = ['category', 'photo', 'rating', 'is_favorite', 'my_rate', 'campaign'];
 
     public function getRatingAttribute()
     {
         $rating = DB::table("ratings")->where("partner_id", $this->id)->avg("rate");
         return $rating == null ? 0 : $rating;
+    }
+
+    public function getIsFavoriteAttribute()
+    {
+        return DB::table('favorites')->where(['user_id' => Auth::user()->id, 'partner_id' => $this->id])->count();
+    }
+
+    public function getMyRateAttribute()
+    {
+        $rating = DB::table("ratings")->where(['user_id' => Auth::user()->id, 'partner_id' => $this->id])->select('rate')->first();
+        return $rating == null ? 0 : $rating;
+    }
+
+    public function getCampaignAttribute()
+    {
+        return Campaign::where([['partner_id', $this->id], ["end_date", ">", DB::raw("NOW()")]])->first();
     }
 
     public function getCategoryAttribute()

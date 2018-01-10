@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 
 use App\Category;
+use App\Partner;
 use App\Photo;
 use Illuminate\Http\Request;
 
@@ -77,6 +78,14 @@ class CategoryController extends Controller
     public function getCategories()
     {
         $categories = Category::arrangeUser()->paginate(10);
+        $status = collect(['status' => 200]);
+        $result = $status->merge($categories);
+        return response($result);
+    }
+
+    public function getPartners($id)
+    {
+        $categories = Partner::arrangeUser()->where('category_id', $id)->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($categories);
         return response($result);
