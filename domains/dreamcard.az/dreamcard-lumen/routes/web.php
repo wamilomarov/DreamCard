@@ -29,6 +29,8 @@ $router->post('/admin/login', 'AdminController@login');
 $router->post('/admin/register', 'AdminController@create');
 $router->post('/admin/logout', ['middleware' => ['auth', 'admin'], 'uses' => 'AdminController@logout']);
 
+$router->get('/cities', ['middleware' => ['auth'], 'uses' => 'UserController@cities']);
+
 $router->post('/users/login', 'UserController@login');
 $router->post('/users/logout',['middleware' => ['auth', 'user'], 'uses' => 'UserController@logout']);
 

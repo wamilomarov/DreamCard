@@ -24,6 +24,7 @@ class Partner extends Model
 
     protected $appends = ['category', 'photo', 'rating', 'is_favorite', 'my_rate', 'campaign'];
 
+
     public function getRatingAttribute()
     {
         $rating = DB::table("ratings")->where("partner_id", $this->id)->avg("rate");

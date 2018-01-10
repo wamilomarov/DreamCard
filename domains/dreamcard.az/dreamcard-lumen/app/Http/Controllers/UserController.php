@@ -21,6 +21,13 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+
+    public function cities()
+    {
+        $cities = DB::table('cities')->select(['id', 'name'])->get();
+        $result = ['status' => 200, 'data' => $cities];
+        return response()->json($result);
+    }
     public function create(Request $request)
     {
 //        $request = $request->json();
