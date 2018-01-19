@@ -26,9 +26,12 @@ class CreateUsersTable extends Migration
             $table->integer('photo_id')->nullable()->nullable()->unsigned();
             $table->foreign('photo_id')->nullable()->references('id')->on('photos')->onUpdate('cascade')->onDelete('set null');
             $table->string('api_token')->nullable();
-            $table->integer('get_news')->nullable()->default(1);
             $table->integer('city_id')->nullable()->nullable()->unsigned();
             $table->foreign('city_id')->references('id')->on('cities')->onUpdate('cascade')->onDelete('set null');
+            $table->tinyInteger('notification_sound')->default(1);
+            $table->tinyInteger('notification')->default(1);
+            $table->tinyInteger('news')->default(1);
+            $table->string('language')->default('az');
             $table->softDeletes();
             $table->timestamps();
         });

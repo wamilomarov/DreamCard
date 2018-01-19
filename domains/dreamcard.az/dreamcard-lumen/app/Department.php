@@ -46,6 +46,10 @@ class Department extends Model implements AuthenticatableContract, AuthorizableC
     public function deletePhoto()
     {
         $photo = Photo::find($this->photo_id);
+        if ($photo == null)
+        {
+            return true;
+        }
         return $photo->remove('uploads/photos/departments/');
     }
 

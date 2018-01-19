@@ -18,9 +18,9 @@ class CategoryController extends Controller
 {
         public function create(Request $request)
     {
-        if ($request->has('name') /*&& $request->hasFile('small_icon')*/ && $request->hasFile('large_icon'))
+        if ($request->has('name_az') && $request->has('name_en') && $request->has('name_ru') /*&& $request->hasFile('small_icon')*/ && $request->hasFile('large_icon'))
         {
-            if (!Category::arrangeUser()->where('name', $request->get('name'))->exists())
+            if (!Category::arrangeUser()->where('name_az', $request->get('name_az'))->where('name_ru', $request->get('name_ru'))->where('name_en', $request->get('name_en'))->exists())
             {
 //                $small_icon = new Photo();
 //                $small_icon_result = $small_icon->upload($request->file('small_icon'), 'uploads/photos/categories/');
@@ -33,7 +33,9 @@ class CategoryController extends Controller
                     if ($large_icon_result == 200)
                     {
                         $category = new Category();
-                        $category->name = $request->get('name');
+                        $category->name_az = $request->get('name_az');
+                        $category->name_ru = $request->get('name_ru');
+                        $category->name_en = $request->get('name_en');
                         $category->small_icon_id = /*$small_icon->id;*/ $large_icon->id;
                         $category->large_icon_id = $large_icon->id;
 
@@ -85,7 +87,7 @@ class CategoryController extends Controller
 
     public function getPartners($id)
     {
-        $categories = Partner::arrangeUser()->where('category_id', $id)->paginate(10);
+        $categories = Partner::arrangeUser()->with('news')->where('category_id', $id)->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($categories);
         return response($result);
@@ -106,9 +108,17 @@ class CategoryController extends Controller
         $category = Category::arrangeUser()->find($request->get('id'));
         if ($category)
         {
-            if ($request->has('name'))
+            if ($request->has('name_en'))
             {
-                $category->name = $request->get('name');
+                $category->name_en = $request->get('name_en');
+            }
+
+            if($request->has('name_az')){
+              $category->name_az = $request->get('name_az');
+            }
+
+            if($request->has('name_ru')){
+              $category->name_ru = $request->get('name_ru');
             }
 
             if ($request->hasFile('small_icon'))

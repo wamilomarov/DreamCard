@@ -8,6 +8,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Partner;
+use App\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +21,7 @@ class CampaignController extends Controller
 {
   public function create(Request $request){
 
-    if($request->has('title') && $request->has('department_id') && $request->has('partner_id')
+    if($request->has('title') && $request->has('department_id') && $request->has('partner_id') && $request->hasFile('photo')
       && $request->has('all_products_discount') && $request->has('special_product_discount') && $request->has('end_date')
     ){
       if(Campaign::arrangeUser()->where('department_id', $request->has('department_id'))->where('partner_id', $request->has('partner_id'))->exists()){
@@ -27,10 +29,19 @@ class CampaignController extends Controller
         return response()->json($result);
       }
 
+      $photo = new Photo();
+      $photo_result = $photo->upload($request->file('photo'), 'uploads/photos/campaigns/');
+      if ($photo_result != 200)
+      {
+          $result = ['status' => $photo_result];
+          return response()->json($result);
+      }
+
       $campaign = new Campaign();
       $campaign->title = $request->get('title');
       $campaign->department_id = $request->get('department_id');
       $campaign->partner_id = $request->get('partner_id');
+      $campaign->photo_id = $photo->id;
       $campaign->all_products_discount = $request->get('all_products_discount');
       $campaign->special_product_discount = $request->get('special_product_discount');
       $campaign->end_date = $request->get('end_date');
@@ -47,8 +58,15 @@ class CampaignController extends Controller
 
   public function getCampaign(){
     $campaigns = Campaign::arrangeUser()->paginate(10);
+    $partner = Partner::arrangeUser()->orderBy('created_at', 'desc')->limit(5)->get();
+    $data = array(
+      'data' => array(
+        'campaigns' => $campaigns,
+        'partners' => $partner
+      )
+    );
     $status = collect(['status' => 200]);
-    $result = $status->merge($campaigns);
+    $result = $status->merge($data);
 
     return response($result);
   }

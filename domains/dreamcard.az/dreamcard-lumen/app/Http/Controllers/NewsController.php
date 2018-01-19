@@ -52,7 +52,7 @@ class NewsController extends Controller
 
     public function get($id)
     {
-        $news = News::arrangeUser()->find($id);
+        $news = News::arrangeUser()->with('partner')->find($id);
         $result = ['status' => 200, 'data' => $news];
         return response($result);
 
@@ -69,7 +69,7 @@ class NewsController extends Controller
 
     public function getNews()
     {
-        $news = News::arrangeUser()->paginate(10);
+        $news = News::arrangeUser()->with('partner')->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($news);
         return response($result);

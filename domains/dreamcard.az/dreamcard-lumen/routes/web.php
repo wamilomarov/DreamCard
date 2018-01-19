@@ -28,12 +28,18 @@ $router->get('/million/check', 'UserController@millionCheckId');
 $router->post('/admin/login', 'AdminController@login');
 $router->post('/admin/register', 'AdminController@create');
 $router->post('/admin/logout', ['middleware' => ['auth', 'admin'], 'uses' => 'AdminController@logout']);
+$router->post('/admin/faq', 'AdminController@faqCreate');
+$router->post('/admin/faq/update', 'AdminController@faqUpdate');
+$router->get('/admin/faq/delete/{id}', 'AdminController@faqDelete');
 
 $router->get('/cities', ['middleware' => ['auth'], 'uses' => 'UserController@cities']);
 
 $router->post('/users/login', 'UserController@login');
+$router->post('/users/facebook/login', 'UserController@fbLogin');
+$router->post('/users/google/login', 'UserController@gLogin');
 $router->post('/users/logout',['middleware' => ['auth', 'user'], 'uses' => 'UserController@logout']);
 
+$router->get('/users/card', 'UserController@card');
 $router->post('/users/register', 'UserController@create');
 $router->post('/users/update', ['middleware' => ['auth', 'user'], 'uses' => 'UserController@update']);
 $router->get('/users/delete/{id}', ['middleware' => ['auth', 'user'], 'uses' => 'UserController@delete']);
@@ -44,6 +50,15 @@ $router->post('/users/reset_password', 'UserController@resetPassword');
 $router->get('/users/favorite/partners/{category_id}', 'UserController@favoritePartners');
 $router->get('/users/favorite/categories', 'UserController@favoriteCategories');
 $router->post('/users/favorite/partner', 'UserController@addFavoritePartner');
+$router->delete('/users/favorite/partners/{partner_id}', 'UserController@deleteFavoritePartner');
+
+$router->get('/users/card/generate', 'UserController@cardGenerate');
+
+
+
+$router->get('/search', ['middleware' => ['auth'], 'uses' => 'UserController@search']);
+
+$router->get('/faq', 'UserController@faq');
 
 $router->post('/categories', ['middleware' => ['auth', 'admin'], 'uses' => 'CategoryController@create']);
 $router->post('/categories/update', ['middleware' => ['auth', 'admin'], 'uses' => 'CategoryController@update']);

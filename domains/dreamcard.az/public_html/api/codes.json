@@ -55,7 +55,7 @@
             "first_name": "Shamil",
             "last_name": "Omarov",
             "api_token": "b4f0eb6e4ff1990a328183a901c66555",
-            "get_news": 1,
+            "news": 1,
             "deleted_at": null,
             "created_at": "2018-01-06 21:23:36",
             "updated_at": "2018-01-06 21:23:36",
@@ -95,7 +95,7 @@
             "first_name": null,
             "last_name": null,
             "api_token": "107829089ec4169d71ea19ac0ae21d2e",
-            "get_news": null,
+            "news": null,
             "created_at": "2017-11-04 13:29:40",
             "updated_at": "2017-11-04 13:34:02",
             "city": null,
@@ -125,7 +125,7 @@
             "phone": "+99477332632",
             "first_name": null,
             "last_name": null,
-            "get_news": null,
+            "news": null,
             "created_at": "2017-11-04 13:28:22",
             "updated_at": "2017-11-04 13:28:22",
             "city": null,
@@ -137,7 +137,7 @@
       {
         "url": "/users/update",
         "request_type": "POST",
-        "request_fields": "api_token, first_name?, last_name?, email?, phone?, city_id?, photo?, [password, prev_password]?",
+        "request_fields": "api_token, first_name?, last_name?, email?, phone?, city_id?, photo?, [password, prev_password]?, notification_sound?, notification?, language?, news?",
         "response_example": {
           "status": 200
         }
@@ -440,7 +440,30 @@
           "total": 2
         }
       },
-
+      {
+        "url": "/faq",
+        "request_type":"GET",
+        "requested_fields": "api_token",
+        "response_example":{
+          "status": 200,
+          "data": [
+            {
+              "id": 1,
+              "question": "hey?",
+              "answer": "yes",
+              "created_at": "2017-10-30 08:25:37",
+              "updated_at": "2017-10-30 08:25:37"
+            },
+            {
+              "id": 2,
+              "question": "heyy",
+              "answer": "yess",
+              "created_at": "2017-10-30 08:25:37",
+              "updated_at": "2017-10-30 08:25:37"
+            }
+          ]
+        }
+      },
       {
         "url": "/campaigns",
         "request_type": "GET",
@@ -450,89 +473,145 @@
           "current_page": 1,
           "data":[
             {
-              "id": 3,
-              "title": "campaign",
-              "all_products_discount": "50.00",
-              "special_product_discount": "100.00",
-              "end_date": "0000-00-00 00:00:00",
-              "deleted_at": null,
-              "created_at": "2018-01-05 20:09:21",
-              "updated_at": "2018-01-05 20:09:21",
-              "partner": {
-                "id": 17,
-                "name": "Zara",
-                "username": "zara-001",
-                "first_entry": 1,
-                "deleted_at": null,
-                "created_at": "2018-01-04 21:21:00",
-                "updated_at": "2018-01-04 21:21:00",
-                "category": {
-                  "id": 8,
-                  "name": "Healt",
-                  "deleted_at": null,
-                  "created_at": "2018-01-04 21:20:24",
-                  "updated_at": "2018-01-04 21:20:24",
-                  "small_icon": {
-                    "id": 33,
-                    "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
-                  },
-                  "large_icon": {
-                    "id": 33,
-                    "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+              "campaigns": {
+                "current_page": 1,
+                "data": [
+                  {
+                    "id": 3,
+                    "title": "campaign",
+                    "all_products_discount": "50.00",
+                    "special_product_discount": "100.00",
+                    "end_date": "0000-00-00 00:00:00",
+                    "deleted_at": null,
+                    "created_at": "2018-01-05 20:09:21",
+                    "updated_at": "2018-01-05 20:09:21",
+                    "partner": {
+                      "id": 17,
+                      "name": "Zara",
+                      "username": "zara-001",
+                      "first_entry": 1,
+                      "deleted_at": null,
+                      "created_at": "2018-01-04 21:21:00",
+                      "updated_at": "2018-01-04 21:21:00",
+                      "category": {
+                        "id": 8,
+                        "name": "Healt",
+                        "deleted_at": null,
+                        "created_at": "2018-01-04 21:20:24",
+                        "updated_at": "2018-01-04 21:20:24",
+                        "small_icon": {
+                          "id": 33,
+                          "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                        },
+                        "large_icon": {
+                          "id": 33,
+                          "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                        }
+                      },
+                      "photo": {
+                        "id": 34,
+                        "url": "http://dreamcard.az/api/uploads/photos/partners/d827da4963c7e3f21976c05c2909924f.jpeg"
+                      }
+                    },
+                    "photo": {
+                      "id": 2,
+                      "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
+                    },
+                    "department": {
+                      "id": 1,
+                      "name": "test Department",
+                      "username": "memmed",
+                      "first_entry": 1,
+                      "deleted_at": null,
+                      "created_at": null,
+                      "updated_at": null,
+                      "partner": {
+                        "id": 17,
+                        "name": "Zara",
+                        "username": "zara-001",
+                        "first_entry": 1,
+                        "deleted_at": null,
+                        "created_at": "2018-01-04 21:21:00",
+                        "updated_at": "2018-01-04 21:21:00",
+                        "category": {
+                          "id": 8,
+                          "name": "Healt",
+                          "deleted_at": null,
+                          "created_at": "2018-01-04 21:20:24",
+                          "updated_at": "2018-01-04 21:20:24",
+                          "small_icon": {
+                            "id": 33,
+                            "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                          },
+                          "large_icon": {
+                            "id": 33,
+                            "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                          }
+                        },
+                        "photo": {
+                          "id": 34,
+                          "url": "http://dreamcard.az/api/uploads/photos/partners/d827da4963c7e3f21976c05c2909924f.jpeg"
+                        }
+                      },
+                      "photo": {
+                        "id": 2,
+                        "url": "http://dreamcard.az/api/uploads/photos/categories/5c4a463ff4ee4a2c4e0779358c6e58b0.png"
+                      },
+                      "city": {
+                        "id": 1,
+                        "name": "Baku",
+                        "created_at": null,
+                        "updated_at": null
+                      }
+                    }
                   }
-                },
-                "photo": {
-                  "id": 34,
-                  "url": "http://dreamcard.az/api/uploads/photos/partners/d827da4963c7e3f21976c05c2909924f.jpeg"
-                }
+                ],
+                "first_page_url": "http://dreamcard.az/api/campaigns?page=1",
+                "from": null,
+                "last_page": 1,
+                "last_page_url": "http://dreamcard.az/api/campaigns?page=1",
+                "next_page_url": null,
+                "path": "http://dreamcard.az/api/campaigns",
+                "per_page": 10,
+                "prev_page_url": null,
+                "to": null,
+                "total": 0
               },
-              "department": {
-                "id": 1,
-                "name": "test Department",
-                "username": "memmed",
-                "first_entry": 1,
-                "deleted_at": null,
-                "created_at": null,
-                "updated_at": null,
-                "partner": {
-                  "id": 17,
-                  "name": "Zara",
-                  "username": "zara-001",
+              "partners":[
+                {
+                  "id": 22,
+                  "name": "SecondCup",
+                  "username": "secondcup-01",
                   "first_entry": 1,
                   "deleted_at": null,
-                  "created_at": "2018-01-04 21:21:00",
-                  "updated_at": "2018-01-04 21:21:00",
+                  "created_at": "2018-01-08 13:14:48",
+                  "updated_at": "2018-01-08 13:14:48",
                   "category": {
-                    "id": 8,
-                    "name": "Healt",
+                    "id": 10,
                     "deleted_at": null,
-                    "created_at": "2018-01-04 21:20:24",
-                    "updated_at": "2018-01-04 21:20:24",
+                    "created_at": "2018-01-08 13:11:04",
+                    "updated_at": "2018-01-08 13:11:04",
                     "small_icon": {
-                      "id": 33,
-                      "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                      "id": 36,
+                      "url": "http://dreamcard.az/api/uploads/photos/categories/ec6b9fbbfaac95461477a0fa227e68eb.jpeg"
                     },
                     "large_icon": {
-                      "id": 33,
-                      "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
-                    }
+                      "id": 36,
+                      "url": "http://dreamcard.az/api/uploads/photos/categories/ec6b9fbbfaac95461477a0fa227e68eb.jpeg"
+                    },
+                    "partners_count": 2,
+                    "name": ""
                   },
                   "photo": {
-                    "id": 34,
-                    "url": "http://dreamcard.az/api/uploads/photos/partners/d827da4963c7e3f21976c05c2909924f.jpeg"
-                  }
-                },
-                "photo": {
-                  "id": 2,
-                  "url": "http://dreamcard.az/api/uploads/photos/categories/5c4a463ff4ee4a2c4e0779358c6e58b0.png"
-                },
-                "city": {
-                  "id": 1,
-                  "name": "Baku",
-                  "created_at": null,
-                  "updated_at": null
+                    "id": 42,
+                    "url": "http://dreamcard.az/api/uploads/photos/partners/2c3a1aa5d6257ac8e482b4354bd737c6.jpeg"
+                  },
+                  "rating": 0,
+                  "is_favorite": 1,
+                  "my_rate": 0,
+                  "campaign": null
                 }
-              }
+              ]
             }
           ],
           "first_page_url": "http://dreamcard.az/api/campaigns?page=1",
@@ -545,6 +624,52 @@
           "prev_page_url": null,
           "to": 1,
           "total": 1
+        }
+      },
+      {
+        "url":"/users/favorite/partners/{partner_id}",
+        "request_type":"DELETE",
+        "request_fields":"api_token",
+        "response_example":{
+          "status": 200
+        }
+      },
+      {
+        "url":"/users/card/generate",
+        "request_type":"GET",
+        "request_fields": "api_token",
+        "response_example":{
+          "status": 200,
+          "data": [
+            {
+              "id": 4,
+              "qr_code": "bee800c8",
+              "qr_created_at": "2018-01-06 21:48:42",
+              "number": 335352,
+              "balance": "0.00",
+              "created_at": "2018-01-06 21:23:36",
+              "updated_at": "2018-01-06 21:48:42"
+            }
+          ]
+        }
+      },
+      {
+        "url":"/users/card",
+        "request_type":"GET",
+        "request_fields": "api_token",
+        "response_example":{
+          "status": 200,
+          "data": [
+            {
+              "id": 4,
+              "qr_code": "bee800c8",
+              "qr_created_at": "2018-01-06 21:48:42",
+              "number": 335352,
+              "balance": "0.00",
+              "created_at": "2018-01-06 21:23:36",
+              "updated_at": "2018-01-06 21:48:42"
+            }
+          ]
         }
       }
 
@@ -592,9 +717,33 @@
         }
       },
       {
+        "url": "/admin/faq",
+        "request_type": "POST",
+        "request_fields": "question_en, question_az, question_ru, answer_en, answer_ru, answer_az, api_token",
+        "response_example":{
+          "status": 200
+        }
+      },
+      {
+        "url": "/admin/faq/update",
+        "request_type": "POST",
+        "request_fields": "id, question_en?, question_az?, question_ru?, answer_en?, answer_ru?, answer_az?, api_token",
+        "response_example":{
+          "status": 200
+        }
+      },
+      {
+        "url": "/admin/faq/delete/{id}",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
         "url": "/categories/",
         "request_type": "POST",
-        "request_fields": "name, small_icon, large_icon, api_token",
+        "request_fields": "name_en, name_az, name_ru, small_icon, large_icon, api_token",
         "response_example": {
           "status": 200
         }
@@ -602,7 +751,7 @@
       {
         "url": "/categories/update",
         "request_type": "POST",
-        "request_fields": "id, name?, small_icon?, large_icon?, api_token",
+        "request_fields": "id, name_en?, name_az?, name_ru?, small_icon?, large_icon?, api_token",
         "response_example": {
           "status": 200
         }
@@ -682,7 +831,9 @@
           "status": 200,
           "data": {
             "id": 5,
-            "name": "testCategory",
+            "name_az": "test kategoriya",
+            "name_ru": "тестовая категория",
+            "name_en": "test category",
             "deleted_at": null,
             "created_at": "2017-12-09 20:07:41",
             "updated_at": "2017-12-09 20:07:41",
@@ -817,6 +968,106 @@
         "url": "/packages/",
         "request_type": "POST",
         "request_fields": "name, price, duration(in days), discount_price?, api_token",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
+        "url": "/packages/update",
+        "request_type": "POST",
+        "request_fields": "id, name?, price?, duration?, discount_price?, api_token",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
+        "url": "/packages/delete/{id}",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
+        "url": "/packages/disable/{id}",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200
+        }
+      },
+      {
+        "url": "/packages",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200,
+          "current_page": 1,
+          "data": [
+            {
+              "id": 1,
+              "name": "DREAMER60",
+              "price": "20.00",
+              "discount_price": "17.00",
+              "duration": 60,
+              "deleted_at": null,
+              "created_at": "2018-01-19 00:00:00",
+              "updated_at": "2018-01-19 00:00:00"
+            }
+          ],
+          "first_page_url": "http://dreamcard.az/api/packages?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "http://dreamcard.az/api/packages?page=1",
+          "next_page_url": null,
+          "path": "http://dreamcard.az/api/packages",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 1,
+          "total": 1
+        }
+      },
+      {
+        "url": "/partners/{id}",
+        "request_type": "GET",
+        "request_fields": "api_token",
+        "response_example": {
+          "status": 200,
+          "data": {
+            "id": 1,
+            "name": "Partner",
+            "username": "partner",
+            "first_entry": 1,
+            "deleted_at": null,
+            "created_at": "2017-12-10 10:32:26",
+            "updated_at": "2017-12-10 10:32:26",
+            "category": {
+              "id": 5,
+              "name": "testCategory",
+              "deleted_at": null,
+              "created_at": "2017-12-09 20:07:41",
+              "updated_at": "2017-12-09 20:07:41",
+              "small_icon": {
+                "id": 2,
+                "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
+              },
+              "large_icon": {
+                "id": 3,
+                "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
+              }
+            },
+            "photo": {
+              "id": 8,
+              "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
+            }
+          }
+        }
+      },
+
+      {
+        "url": "/campaigns/",
+        "request_type": "POST",
+        "request_fields": "title, partner_id, all_products_discount, special_product_discount, end_date, photo, api_token",
         "response_example": {
           "status": 200
         }

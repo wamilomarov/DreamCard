@@ -18,11 +18,26 @@ class Campaign extends Model
     use SoftDeletes;
     protected $fillable = [''];
 
-    protected $hidden = ['partner_id', 'department_id', 'created_at', 'updated_at'];
+    protected $hidden = ['partner_id', 'department_id', 'created_at', 'updated_at', 'photo_id'];
 
     protected $dates = ['deleted_at'];
 
-    protected $appends = [];
+    protected $appends = ['photo'];
+
+    public function getPhotoAttribute()
+    {
+        return Photo::find($this->photo_id);
+    }
+
+    public function deletePhoto()
+    {
+        $photo = Photo::find($this->photo_id);
+        if ($photo == null)
+        {
+            return true;
+        }
+        return $photo->remove('uploads/photos/campaigns/');
+    }
 
 //    public function getPartnerAttribute(){
 //      return Partner::arrangeUser()->find($this->partner_id);

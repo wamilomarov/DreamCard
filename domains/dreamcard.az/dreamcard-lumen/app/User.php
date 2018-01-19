@@ -21,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'email', 'phone', 'first_name', 'last_name', 'get_news'
+        'email', 'phone', 'first_name', 'last_name', 'language'
     ];
 
     /**
@@ -63,7 +63,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function deletePhoto()
     {
         $photo = Photo::find($this->photo_id);
-        return $photo->remove('uploads/photos/users/');
+        if ($this->photo != null)
+        {
+            return $photo->remove('uploads/photos/users/');
+        }
+        else
+        {
+            return true;
+        }
     }
 
     public function scopeArrangeUser($query)
@@ -80,7 +87,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function favoritePartners($category_id)
     {
-        return $this->belongsToMany("App\Partner", "favorites" )->where("category_id", "=", $category_id);
+        return $this->belongsToMany("App\Partner", "favorites" )->where("category_id", "=", $category_id)->groupBy('partner_id');
     }
 
     public function favoriteCategories()

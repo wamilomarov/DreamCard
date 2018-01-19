@@ -263,3 +263,28 @@ cd domains/
 cd dreamcard.az/
 cd dreamcard-lumen/
 php artisan migrate
+ls
+cd domains/
+cd dreamcard.az/
+ls
+cd dreamcard-lumen/
+ls
+php artisan make:migration add_photo_to_campaign
+php artisan migrate
+ls
+cd domains
+ls
+cd dreamcard.az
+ls
+cd dreamcard-lumen
+ls
+composer 
+composer require facebook/graph-sdk
+ls
+cd vendor
+ls
+cd illuminate
+ls
+cd..
+cd ..
+ls

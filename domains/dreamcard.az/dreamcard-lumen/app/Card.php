@@ -31,6 +31,10 @@ class Card extends Model
     public function deletePhoto()
     {
         $photo = Photo::find($this->photo_id);
+        if ($photo == null)
+        {
+            return true;
+        }
         return $photo->remove('uploads/photos/cards/');
     }
 

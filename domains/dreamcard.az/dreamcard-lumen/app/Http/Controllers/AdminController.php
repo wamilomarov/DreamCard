@@ -170,4 +170,82 @@ class AdminController extends Controller
         $result = ['status' => 200];
         return response($result);
     }
+
+    public function faqCreate(Request $request){
+
+      if(
+        $request->has('question_en') &&
+        $request->has('question_az') &&
+        $request->has('question_ru') &&
+        $request->has('answer_ru') &&
+        $request->has('answer_en') &&
+        $request->has('answer_az')
+      ){
+
+        DB::table('faq')->insert([
+          'question_en' => $request->get('question_en'),
+          'question_ru' => $request->get('question_ru'),
+          'question_az' => $request->get('question_az'),
+          'answer_en' => $request->get('answer_en'),
+          'answer_ru' => $request->get('answer_ru'),
+          'answer_az' => $request->get('answer_az'),
+        ]);
+
+        $result = ['status' => 200];
+
+      }else{
+        $result = ['status' => 406];
+      }
+
+      return response($result);
+    }
+
+    public function faqUpdate(Request $request){
+
+      $faq = DB::table('faq')->where('id', $request->get('id'))->get();
+
+      if($faq){
+
+        if($request->has('question_en')){
+          $faq->question_en = $request->get('question_en');
+        }
+
+        if($request->has('question_ru')){
+          $faq->question_ru = $request->get('question_ru');
+        }
+
+        if($request->has('question_az')){
+          $faq->question_az = $request->get('question_az');
+        }
+
+        if($request->answer('answer_az')){
+          $faq->answer_az = $request->get('answer_az');
+        }
+
+        if($request->answer('answer_ru')){
+          $faq->answer_ru = $request->get('answer_ru');
+        }
+
+        if($request->answer('answer_az')){
+          $faq->answer_en = $request->get('answer_en');
+        }
+
+        $faq->save();
+        $result = ['status' => 200];
+
+      }else{
+        $result = ['status' => 408];
+      }
+
+      return response($result);
+    }
+
+    public function faqDelete($id){
+
+      $faq = DB::table('faq')->where('id', $id);
+      $faq->delete();
+      $result = ['status' => 200];
+      return response($result);
+
+    }
 }

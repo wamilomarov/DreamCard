@@ -10,6 +10,7 @@ namespace App;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class News extends Model
 {
@@ -18,18 +19,13 @@ class News extends Model
 
     protected $fillable = ['title', 'content'];
 
-    protected $appends = ['photo', 'category'];
+    protected $appends = ['photo'];
 
-    protected $hidden = ['category_id', 'photo_id'];
+    protected $hidden = ['partner_id', 'photo_id'];
 
     public function photo()
     {
         return $this->hasOne('App\Photo');
-    }
-
-    public function category()
-    {
-        return $this->hasOne('App\Category');
     }
 
     public function getPhotoAttribute()
@@ -37,15 +33,37 @@ class News extends Model
         return Photo::find($this->photo_id);
     }
 
-    public function getCategoryAttribute()
-    {
-        return Category::find($this->category_id);
-    }
-
     public function deletePhoto()
     {
         $photo = Photo::find($this->photo_id);
+        if($photo == null)
+        {
+            return true;
+        }
         return $photo->remove('uploads/photos/news/');
     }
+
+    public function scopeArrangeUser($query)
+    {
+      if (Auth::user()->getTable() == 'admins')
+      {
+        return $query->withTrashed();
+      }
+      else
+      {
+        return $query;
+      }
+    }
+
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
+    public function category()
+    {
+        return $this->partner->category;
+    }
+
 
 }

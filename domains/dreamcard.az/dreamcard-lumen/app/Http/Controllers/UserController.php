@@ -11,9 +11,11 @@ namespace App\Http\Controllers;
 
 use App\Card;
 use App\Category;
+use App\News;
 use App\Photo;
 use App\User;
 use App\Partner;
+use Facebook\Facebook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -87,6 +89,32 @@ class UserController extends Controller
         return response($result);
     }
 
+    public function fbLogin(Request $request){
+      $fb = new Facebook([
+        'app_id' => '126332011463258',
+        'app_secret' => '2212a0100df3d8b1ac36a0af452b8191',
+        'default_graph_version' => 'v2.10',
+      ]);
+
+      try {
+        // Get the \Facebook\GraphNodes\GraphUser object for the current user.
+        // If you provided a 'default_access_token', the '{access-token}' is optional.
+        $response = $fb->get('/me', $request->get('access_token'));
+      } catch(\Facebook\Exceptions\FacebookResponseException $e) {
+        // When Graph returns an error
+        echo 'Graph returned an error: ' . $e->getMessage();
+        exit;
+      } catch(\Facebook\Exceptions\FacebookSDKException $e) {
+        // When validation fails or other local issues
+        echo 'Facebook SDK returned an error: ' . $e->getMessage();
+        exit;
+      }
+
+      $me = $response->getGraphUser();
+      echo 'Logged in as ' . $me->getName();
+
+    }
+
     public function logout()
     {
         $user = Auth::user();
@@ -98,8 +126,8 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $request = $request->json();
-        $user = User::find($request->get('id'));
+//        $request = $request->json();
+        $user = Auth::user();
         if ($user) {
             if ($request->has('first_name')) {
                 $user->first_name = $request->get('first_name');
@@ -128,6 +156,22 @@ class UserController extends Controller
 
             if ($request->has('city_id')) {
                 $user->city_id = $request->get('city_id');
+            }
+
+            if($request->has('language')){
+              $user->language = $request->get('language');
+            }
+
+            if($request->has('notification_sound')){
+              $user->notification_sound = $request->get('notification_sound');
+            }
+
+            if($request->has('notification')){
+              $user->notification = $request->get('notification');
+            }
+
+            if($request->has('news')){
+              $user->news = $request->get('news');
             }
 
             if ($request->hasFile('photo')) {
@@ -416,32 +460,93 @@ class UserController extends Controller
     }
 
     public function favoritePartners($category_id)
+    {
+      $favorites = Auth::user()->favoritePartners($category_id)
+          ->with('lastNews')->paginate(10);
+      $status = collect(['status' => 200]);
+      $result = $status->merge($favorites);
+      return response($result);
+    }
+
+    public function addFavoritePartner(Request $request)
+    {
+        $request = $request->json();
+        if($request->has('partner_id')){
+
+          DB::table('favorites')->insert([
+            'user_id' => Auth::user()->id,
+            'partner_id' => $request->get('partner_id'),
+            'updated_at' => DB::raw("NOW()"),
+            'created_at' => DB::raw("NOW()")
+          ]);
+
+          $result = ['status' => 200];
+
+        }else{
+          $result = ['status' => 413];
+        }
+
+        return response($result);
+    }
+
+  public function deleteFavoritePartner($partner_id){
+    DB::table('favorites')->where('user_id', Auth::user()->id)->where('partner_id', $partner_id)->delete();
+    $result = ['status' => 200];
+
+    return response($result);
+
+  }
+
+
+
+  public function search(Request $request){
+
+    if($request->has('q'))
+    {
+        $query = $request->get('q');
+        $news = News::arrangeUser()->with('partner')->where('title', 'like', "%$query%")->get();
+        $partners = Partner::arrangeUser()->where('name', 'like', "%$query%")->get();
+        $result = [
+            'status' => 200,
+            'data' =>
+                [
+                'news' => $news,
+                'partners' => $partners,
+                'operation_history' => []
+                ]
+                  ];
+      return response($result);
+    }
+
+
+    //operation history
+
+
+  }
+
+  public function faq()
   {
-    $favorites = Auth::user()->favoritePartners($category_id)->paginate(10);
-    $status = collect(['status' => 200]);
-    $result = $status->merge($favorites);
+      $language = Auth::user()->language;
+      $faqs = DB::table('faq')->select("question_$language AS question", "answer_$language AS answer", "created_at" )->get();
+      $result = ['status' => 200, 'data' => $faqs];
+
+
     return response($result);
   }
 
-    public function addFavoritePartner(Request $request)
-  {
-      if($request->has('partner_id') && Partner::arrangeUser()->where('id', $request->get('partner_id'))->exists()){
+  public function cardGenerate(){
+    $card = Card::where('user_id', Auth::user()->id)->get();
+    $result = ['status' => 200, 'data' => $card];
 
-        DB::table('favorites')->insert([
-          'user_id' => Auth::user()->id,
-          'partner_id' => $request->get('partner_id'),
-          'updated_at' => DB::raw("NOW()"),
-          'created_at' => DB::raw("NOW()")
-        ]);
+    return response($result);
 
-        $result = ['status' => 200];
-
-      }else{
-        $result = ['status' => 413];
-      }
-
-      return response($result);
   }
 
+  public function card(){
+    $card = Card::where('user_id', Auth::user()->id)->get();
+    $result = ['status' => 200, 'data' => $card];
+
+    return response($result);
+  }
 
 }

@@ -60,6 +60,10 @@ class Partner extends Model
     public function deletePhoto()
     {
         $photo = Photo::find($this->photo_id);
+        if ($photo == null)
+        {
+            return true;
+        }
         return $photo->remove('uploads/photos/partners/');
     }
 
@@ -73,6 +77,16 @@ class Partner extends Model
         {
             return $query;
         }
+    }
+
+    public function news()
+    {
+        return $this->hasMany(News::class)->orderByDesc("created_at");
+    }
+
+    public function lastNews()
+    {
+        return $news = $this->hasOne(News::class)->latest();
     }
 
 }
