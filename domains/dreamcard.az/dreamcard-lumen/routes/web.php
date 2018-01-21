@@ -36,7 +36,8 @@ $router->get('/cities', ['middleware' => ['auth'], 'uses' => 'UserController@cit
 
 $router->post('/users/login', 'UserController@login');
 $router->post('/users/facebook/login', 'UserController@fbLogin');
-$router->post('/users/google/login', 'UserController@gLogin');
+$router->post('/users/google/login', 'UserController@googleLogin');
+//$router->post('/users/google/login', 'UserController@gLogin');
 $router->post('/users/logout',['middleware' => ['auth', 'user'], 'uses' => 'UserController@logout']);
 
 $router->get('/users/card', 'UserController@card');
@@ -49,8 +50,11 @@ $router->post('/users/forgot_password', 'UserController@forgotPassword');
 $router->post('/users/reset_password', 'UserController@resetPassword');
 $router->get('/users/favorite/partners/{category_id}', 'UserController@favoritePartners');
 $router->get('/users/favorite/categories', 'UserController@favoriteCategories');
-$router->post('/users/favorite/partner', 'UserController@addFavoritePartner');
-$router->delete('/users/favorite/partners/{partner_id}', 'UserController@deleteFavoritePartner');
+$router->post('/users/favorite/partners', 'UserController@addFavoritePartner');
+$router->get('/users/favorite/partners/{partner_id}/delete', 'UserController@deleteFavoritePartner');
+$router->post('/users/rate/partners/', 'PartnerController@rate');
+$router->get('/users/purchases/history', 'UserController@purchasesHistory');
+
 
 $router->get('/users/card/generate', 'UserController@cardGenerate');
 

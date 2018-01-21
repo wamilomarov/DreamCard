@@ -22,7 +22,7 @@ class Partner extends Model
 
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['category', 'photo', 'rating', 'is_favorite', 'my_rate', 'campaign'];
+    protected $appends = ['category', 'photo', 'rating', 'is_favorite', 'my_rate'];
 
 
     public function getRatingAttribute()
@@ -39,12 +39,7 @@ class Partner extends Model
     public function getMyRateAttribute()
     {
         $rating = DB::table("ratings")->where(['user_id' => Auth::user()->id, 'partner_id' => $this->id])->select('rate')->first();
-        return $rating == null ? 0 : $rating;
-    }
-
-    public function getCampaignAttribute()
-    {
-        return Campaign::where([['partner_id', $this->id], ["end_date", ">", DB::raw("NOW()")]])->first();
+        return $rating == null ? 0 : $rating->rate;
     }
 
     public function getCategoryAttribute()
@@ -86,7 +81,21 @@ class Partner extends Model
 
     public function lastNews()
     {
-        return $news = $this->hasOne(News::class)->latest();
+        return $this->hasOne(News::class)->latest();
     }
 
+    public function campaigns()
+    {
+        return $this->hasMany(Campaign::class)->orderByDesc("created_at")->where("end_date", ">", DB::raw("NOW()"));
+    }
+
+    public function campaign()
+    {
+        return $this->hasOne(Campaign::class)->latest();
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

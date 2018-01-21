@@ -9,6 +9,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Card extends Model
 {
@@ -16,17 +17,26 @@ class Card extends Model
 
     protected $hidden = ['user_id', 'photo_id'];
 
-    protected $appends = [ ];
+    protected $appends = ['valid_for', 'end_date'];
 
-//    public function getUserAttribute()
-//    {
-//        return User::find($this->user_id);
-//    }
+    public function getValidForAttribute()
+    {
+        if ($this->qr_code == null)
+        {
+            return 0;
+        }
+        else
+        {
+            $diff = 120 - (strtotime(date('Y-m-d H:i:s')) - strtotime($this->qr_created_at));
+            return $diff > 0 ? $diff : 0;
+        }
+    }
 
-//    public function getPhotoAttribute()
-//    {
-//        return Photo::find($this->photo_id);
-//    }
+    public function getEndDateAttribute()
+    {
+        $date = DB::table('card_upgrades')->where('card_id', $this->id)->select('end_time')->orderByDesc('end_time')->first();
+        return $date->end_time == null ? Date('Y-m-d H:i:s') : $date->end_time;
+    }
 
     public function deletePhoto()
     {
@@ -65,5 +75,10 @@ class Card extends Model
 
         $this->number = $number;
         $this->save();
+    }
+
+    public function upgrade()
+    {
+        
     }
 }

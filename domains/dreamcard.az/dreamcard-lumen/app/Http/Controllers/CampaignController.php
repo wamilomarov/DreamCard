@@ -57,16 +57,11 @@ class CampaignController extends Controller
   }
 
   public function getCampaign(){
-    $campaigns = Campaign::arrangeUser()->paginate(10);
-    $partner = Partner::arrangeUser()->orderBy('created_at', 'desc')->limit(5)->get();
-    $data = array(
-      'data' => array(
-        'campaigns' => $campaigns,
-        'partners' => $partner
-      )
-    );
+//    $campaigns = Campaign::arrangeUser()->with('partner')->orderBy('created_at', 'desc')->paginate(10);
+//    $data = ['data' => $campaigns];
+    $campaigns = Partner::arrangeUser()->with('campaign')->orderBy('created_at', 'desc')->paginate(10);
     $status = collect(['status' => 200]);
-    $result = $status->merge($data);
+    $result = $status->merge($campaigns);
 
     return response($result);
   }

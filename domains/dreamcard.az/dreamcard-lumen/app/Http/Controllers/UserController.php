@@ -16,6 +16,8 @@ use App\Photo;
 use App\User;
 use App\Partner;
 use Facebook\Facebook;
+use Google_Client;
+use Google_Service_Drive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +32,7 @@ class UserController extends Controller
         $result = ['status' => 200, 'data' => $cities];
         return response()->json($result);
     }
+
     public function create(Request $request)
     {
 //        $request = $request->json();
@@ -51,8 +54,9 @@ class UserController extends Controller
                 $user->save();
                 $card = new Card();
                 $card->user_id = $user->id;
+                $card->generateNumber();
                 $card->save();
-                $user = User::find($user->id);
+                $user = User::find($user->id)->with('card');
                 $user = $user->makeVisible(['api_token']);
                 $result = ['status' => 200, 'data' =>  $user];
             }
@@ -69,7 +73,7 @@ class UserController extends Controller
     {
 //        $request = $request->json();
         if ($request->has('email') && $request->has('password')) {
-            $user = User::where('email', $request->get('email'))->first();
+            $user = User::where('email', $request->get('email'))->with('card')->first();
 
             if ($user && Hash::check($request->get('password'), $user->getAuthPassword())) {
                 $user->api_token = md5(microtime());
@@ -99,20 +103,136 @@ class UserController extends Controller
       try {
         // Get the \Facebook\GraphNodes\GraphUser object for the current user.
         // If you provided a 'default_access_token', the '{access-token}' is optional.
-        $response = $fb->get('/me', $request->get('access_token'));
+        $response = $fb->get('/me?fields=name,email', $request->get('access_token'));
       } catch(\Facebook\Exceptions\FacebookResponseException $e) {
         // When Graph returns an error
-        echo 'Graph returned an error: ' . $e->getMessage();
-        exit;
+//        echo 'Graph returned an error: ' . $e->getMessage();
+        $result = ['status' => $e->getCode()];
+        return response($result);
       } catch(\Facebook\Exceptions\FacebookSDKException $e) {
         // When validation fails or other local issues
-        echo 'Facebook SDK returned an error: ' . $e->getMessage();
-        exit;
+//        echo 'Facebook SDK returned an error: ' . $e->getMessage();
+        $result = ['status' => $e->getCode()];
+        return response($result);
       }
 
       $me = $response->getGraphUser();
-      echo 'Logged in as ' . $me->getName();
 
+      list($first_name, $last_name) = explode(' ', $me->getName(), 2);
+      $facebook_id = $me->getId();
+      $email = $me->getEmail();
+
+      if (User::where('facebook_id', $facebook_id)->exists())
+      {
+          $user = User::where('facebook_id', $facebook_id)->first();
+          $user->api_token = md5(microtime());
+          $user->save();
+          $user = $user->makeVisible(['api_token']);
+          $result = ['status' => 200, 'data' => $user];
+      }
+      elseif (User::where('email', $email)->exists())
+      {
+          $user = User::where('email', $email)->first();
+          $user->facebook_id = $facebook_id;
+          $user->api_token = md5(microtime());
+          $user->save();
+          $user = $user->makeVisible(['api_token']);
+          $result = ['status' => 200, 'data' => $user];
+      }
+      else
+      {
+          $user = new User();
+          $user->first_name = $first_name;
+          $user->last_name = $last_name;
+          $user->facebook_id = $facebook_id;
+          $user->email = $email;
+          if($user->save())
+          {
+              $card = new Card();
+              $card->user_id = $user->id;
+              $card->generateNumber();
+              $card->save();
+              $user = User::find($user->id);
+              $user->api_token = md5(microtime());
+              $user->save();
+              $user = $user->makeVisible(['api_token']);
+              $result = ['status' => 200, 'data' => $user];
+          }
+          else
+          {
+              $result = ['status' => 412];
+          }
+      }
+      return response()->json($result);
+    }
+    public function googleLogin(Request $request){
+        $client = new Google_Client(
+            [
+                'client_id' => "152790946469-o2g3fo0undot6764mpmggialtcebsaoo.apps.googleusercontent.com",
+                'client_secret' => "__3yBatUA4J72k0jkAnZafG5"
+            ]);
+        $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
+        var_dump($token); exit;
+        $client->setAccessToken($token);
+
+        $payload = $client->verifyIdToken($request->get('id_token'));
+        if ($payload) {
+            $userid = $payload['sub'];
+            var_dump($userid); exit;
+            // If request specified a G Suite domain:
+            //$domain = $payload['hd'];
+        } else {
+            var_dump($client); exit;
+            // Invalid ID token
+        }
+
+
+      list($first_name, $last_name) = explode(' ', $me->getName(), 2);
+      $facebook_id = $me->getId();
+      $email = $me->getEmail();
+
+      if (User::where('facebook_id', $facebook_id)->exists())
+      {
+          $user = User::where('facebook_id', $facebook_id)->first();
+          $user->api_token = md5(microtime());
+          $user->save();
+          $user = $user->makeVisible(['api_token']);
+          $result = ['status' => 200, 'data' => $user];
+      }
+      elseif (User::where('email', $email)->exists())
+      {
+          $user = User::where('email', $email)->first();
+          $user->facebook_id = $facebook_id;
+          $user->api_token = md5(microtime());
+          $user->save();
+          $user = $user->makeVisible(['api_token']);
+          $result = ['status' => 200, 'data' => $user];
+      }
+      else
+      {
+          $user = new User();
+          $user->first_name = $first_name;
+          $user->last_name = $last_name;
+          $user->facebook_id = $facebook_id;
+          $user->email = $email;
+          if($user->save())
+          {
+              $card = new Card();
+              $card->user_id = $user->id;
+              $card->generateNumber();
+              $card->save();
+              $user = User::find($user->id);
+              $user->api_token = md5(microtime());
+              $user->save();
+              $user = $user->makeVisible(['api_token']);
+              $result = ['status' => 200, 'data' => $user];
+          }
+          else
+          {
+              $result = ['status' => 412];
+          }
+      }
+      return response()->json($result);
     }
 
     public function logout()
@@ -128,6 +248,7 @@ class UserController extends Controller
     {
 //        $request = $request->json();
         $user = Auth::user();
+        var_dump($request->file('photo'));exit;
         if ($user) {
             if ($request->has('first_name')) {
                 $user->first_name = $request->get('first_name');
@@ -187,7 +308,7 @@ class UserController extends Controller
             }
 
             $user->save();
-            $result = ['status' => 200];
+            $result = ['status' => 200, 'data' => $user];
         } else {
             $result = ['status' => 408];
         }
@@ -195,9 +316,36 @@ class UserController extends Controller
         return response($result);
     }
 
+    public function purchasesHistory(Request $request)
+    {
+        $purchases = DB::table('purchases')
+        ->leftJoin('departments', 'departments.id', '=', 'purchases.department_id')
+        ->leftJoin('partners', 'partners.id', '=', 'departments.partner_id')
+        ->leftJoin('campaigns', 'campaigns.partner_id', '=', 'partners.id')
+        ->where('purchases.card_id', Auth::user()->card->id)
+        ->select('purchases.id', 'purchases.created_at', 'purchases.discount', 'partners.name');
+        if ($request->has('from_date'))
+        {
+            $purchases = $purchases->where('purchases.created_at', '>', $request->get('from_date'));
+        }
+        if ($request->has('to_date'))
+        {
+            $purchases = $purchases->where('purchases.created_at', '<', $request->get('to_date'));
+        }
+        if ($request->has('category_id'))
+        {
+            $purchases = $purchases->where('partners.category_id', $request->get('category_id'));
+        }
+
+        $purchases = $purchases->paginate(15);
+        $status = collect(['status' => 200]);
+        $result = $status->merge($purchases);
+        return response()->json($result);
+    }
+
     public function get($id)
     {
-        $user = User::find($id);
+        $user = User::with('card')->find($id);
 
         $result = ['status' => 200, 'data' => $user];
 
@@ -224,15 +372,17 @@ class UserController extends Controller
 
     public function forgotPassword(Request $request)
     {
-        $request = $request->json();
+//        $request = $request->json();
         if ($request->has('email'))
         {
-            if (User::where('email', $request->get('email'))->where('status', 2)->exists())
+            if (User::where('email', $request->get('email'))->exists())
             {
                 $token = crypt(sha1(microtime()), 'password_reset');
                 DB::table('password_resets')->insert([
                     'email' => $request->get('email'),
-                    'token' => $token
+                    'token' => $token,
+                    'created_at' => DB::raw('NOW()'),
+                    'updated_at' => DB::raw('NOW()')
                 ]);
                 $url = url() . "/users/reset_password?token=$token";
                 $subject = "Password Reset";
@@ -269,7 +419,8 @@ class UserController extends Controller
 
     public function resetPassword(Request $request)
     {
-        $request = $request->json();
+//        $request = $request->json();
+//        var_dump($request->all());
         if ($request->has('token') && $request->has('password'))
         {
             $token = $request->get('token');
@@ -295,7 +446,7 @@ class UserController extends Controller
 //              PAYMENT
     public function pay(Request $request)
     {
-        $request = $request->json();
+//        $request = $request->json();
         $this->validate($request, [
             'cardType' => ['regex:/^[v|m]$/'],
             'amount' => ['regex:/^[0-9.]*$/'],
@@ -350,7 +501,6 @@ class UserController extends Controller
 
     public function paymentCallback(Request $request)
     {
-        $request = $request->json();
         $this->validate($request, [
             'payment_key' => 'regex:/^[a-zA-Z0-9\-]*$/'
         ]);
@@ -364,7 +514,7 @@ class UserController extends Controller
             echo "<br>amount: " . $resp->amount;
             echo "<br>amount: " . $resp->paymentDate;
         } else {
-            echo "Payment was <b>unsuccessful</b>";
+            echo "<p>Payment was <b>unsuccessful</b></p>";
         }
     }
 
@@ -462,7 +612,7 @@ class UserController extends Controller
     public function favoritePartners($category_id)
     {
       $favorites = Auth::user()->favoritePartners($category_id)
-          ->with('lastNews')->paginate(10);
+          ->with(['lastNews'])->paginate(10);
       $status = collect(['status' => 200]);
       $result = $status->merge($favorites);
       return response($result);
@@ -470,7 +620,7 @@ class UserController extends Controller
 
     public function addFavoritePartner(Request $request)
     {
-        $request = $request->json();
+//        $request = $request->json();
         if($request->has('partner_id')){
 
           DB::table('favorites')->insert([
@@ -493,7 +643,7 @@ class UserController extends Controller
     DB::table('favorites')->where('user_id', Auth::user()->id)->where('partner_id', $partner_id)->delete();
     $result = ['status' => 200];
 
-    return response($result);
+    return response()->json($result);
 
   }
 
@@ -501,25 +651,36 @@ class UserController extends Controller
 
   public function search(Request $request){
 
-    if($request->has('q'))
+    if($request->has('q') && $request->get('q') != '')
     {
         $query = $request->get('q');
         $news = News::arrangeUser()->with('partner')->where('title', 'like', "%$query%")->get();
-        $partners = Partner::arrangeUser()->where('name', 'like', "%$query%")->get();
+        $partners = Partner::arrangeUser()->with('campaign')->where('name', 'like', "%$query%")->get();
+        $operation_history = DB::table('purchases')
+            ->leftJoin('departments', 'departments.id', '=', 'purchases.department_id')
+            ->leftJoin('partners', 'partners.id', '=', 'departments.partner_id')
+            ->leftJoin('campaigns', 'campaigns.partner_id', '=', 'partners.id')
+            ->where('purchases.card_id', Auth::user()->card->id)
+            ->where('partners.name', 'LIKE', "%$query%")
+            ->orWhere('campaigns.title', 'LIKE', "$query")
+            ->orWhere('departments.name', 'LIKE', "$query")
+            ->select('purchases.id', 'purchases.created_at', 'purchases.discount', 'partners.name')
+            ->get();
         $result = [
             'status' => 200,
             'data' =>
                 [
                 'news' => $news,
                 'partners' => $partners,
-                'operation_history' => []
+                'operation_history' => $operation_history
                 ]
                   ];
       return response($result);
     }
-
-
-    //operation history
+    else
+    {
+        return response()->json(['status' => 406]);
+    }
 
 
   }
@@ -535,15 +696,16 @@ class UserController extends Controller
   }
 
   public function cardGenerate(){
-    $card = Card::where('user_id', Auth::user()->id)->get();
+    $card = Card::where('user_id', Auth::user()->id)->first();
+    $card->generateQrCode();
     $result = ['status' => 200, 'data' => $card];
 
-    return response($result);
+    return response()->json($result);
 
   }
 
   public function card(){
-    $card = Card::where('user_id', Auth::user()->id)->get();
+    $card = Card::where('user_id', Auth::user()->id)->first();
     $result = ['status' => 200, 'data' => $card];
 
     return response($result);

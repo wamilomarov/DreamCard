@@ -21,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'email', 'phone', 'first_name', 'last_name', 'language'
+        'email', 'phone', 'first_name', 'last_name', 'language', 'news', 'notification', 'notification_sound'
     ];
 
     /**
@@ -33,7 +33,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password', 'firebase_id', 'photo_id', 'city_id', 'facebook_id', 'google_id', 'api_token', 'status'
     ];
 
-    protected $appends = ['city', 'photo', 'card'];
+    protected $appends = ['city', 'photo'];
 
     public function photo()
     {
@@ -42,7 +42,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function card()
     {
-        return $this->belongsTo('App\Card');
+        return $this->hasOne('App\Card');
     }
 
     public function getCityAttribute()
@@ -94,5 +94,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return $this->favoritePartners()->groupBy("partners.category_id");
     }
+
 
 }

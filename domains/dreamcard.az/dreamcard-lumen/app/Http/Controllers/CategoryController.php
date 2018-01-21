@@ -87,9 +87,9 @@ class CategoryController extends Controller
 
     public function getPartners($id)
     {
-        $categories = Partner::arrangeUser()->with('news')->where('category_id', $id)->paginate(10);
+        $partners = Partner::arrangeUser()->with('campaign')->where('category_id', $id)->paginate(10);
         $status = collect(['status' => 200]);
-        $result = $status->merge($categories);
+        $result = $status->merge($partners);
         return response($result);
     }
 

@@ -140,5 +140,43 @@ class PartnerController extends Controller
         return response($result);
     }
 
+    public function rate(Request $request)
+    {
+        if ($request->has('partner_id') && $request->has('rate'))
+        {
+            if (DB::table('ratings')->where('partner_id', $request->get('partner_id'))
+                        ->where('user_id', Auth::user()->id)
+                        ->exists())
+            {
+                DB::table('ratings')
+                    ->where('partner_id', $request->get('partner_id'))
+                    ->where('user_id', Auth::user()->id)
+                    ->update(
+                        [
+                            'rate' => $request->get('rate')
+                        ]
+                    );
+            }
+            else
+            {
+                DB::table('ratings')
+                    ->insert(
+                        [
+                            'partner_id' => $request->get('partner_id'),
+                            'user_id' => Auth::user()->id,
+                            'rate' => $request->get('rate')
+                        ]
+                    );
+            }
+
+            $result = ['status' => 200];
+
+        }
+        else
+        {
+            $result = ['status' => 406];
+        }
+        return response()->json($result);
+    }
 
 }

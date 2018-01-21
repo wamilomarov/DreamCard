@@ -60,4 +60,9 @@ class Campaign extends Model
         }
     }
 
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
 }

@@ -61,7 +61,7 @@ class CardController extends Controller
 
     public function upgrade(Request $request)
     {
-        $card = Card::arrangeUser()->find($request->get('card_id'));
+        $card = Auth::user()->card;
         $package = Package::find($request->get('package_id'));
         if ($package->discount_price == NULL)
         {
@@ -80,7 +80,7 @@ class CardController extends Controller
                     'card_id' => $card->id,
                     'package_id' => $package->id,
                     'price' => $price,
-                    'end_time' => Date('Y-m-d H:i:s', strtotime("+$package->duration days"))
+                    'end_time' => Date('Y-m-d H:i:s', strtotime("+$package->duration days", $card->end_date))
                 ]);
 
                 $card->balance -= $price;

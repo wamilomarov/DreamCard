@@ -194,36 +194,54 @@
           "current_page": 1,
           "data": [
             {
-              "id": 17,
-              "name": "Zara",
-              "username": "zara-001",
+              "id": 19,
+              "name": "Bershka",
+              "username": "bershka-01",
               "first_entry": 1,
               "deleted_at": null,
-              "created_at": "2018-01-04 21:21:00",
-              "updated_at": "2018-01-04 21:21:00",
+              "created_at": "2018-01-08 13:12:54",
+              "updated_at": "2018-01-08 13:12:54",
               "category": {
-                "id": 8,
-                "name": "Healt",
+                "id": 9,
+                "name_en": "Clothing",
+                "name_az": "",
+                "name_ru": "",
+                "small_icon_id": 35,
+                "large_icon_id": 35,
+                "order_by": 0,
                 "deleted_at": null,
-                "created_at": "2018-01-04 21:20:24",
-                "updated_at": "2018-01-04 21:20:24",
                 "small_icon": {
-                  "id": 33,
-                  "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
+                  "id": 35,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/04d53c2dd98c506864757104d23f5227.jpeg"
                 },
                 "large_icon": {
-                  "id": 33,
-                  "url": "http://dreamcard.az/api/uploads/photos/categories/ecc40d763f5a13b98b1c867ca9672ef0.png"
-                }
+                  "id": 35,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/04d53c2dd98c506864757104d23f5227.jpeg"
+                },
+                "partners_count": 2,
+                "name": ""
               },
               "photo": {
-                "id": 34,
-                "url": "http://dreamcard.az/api/uploads/photos/partners/d827da4963c7e3f21976c05c2909924f.jpeg"
+                "id": 39,
+                "url": "http://dreamcard.az/api/uploads/photos/partners/5e5635e023fe4ad5f399df4b1563bde7.jpeg"
               },
               "rating": 0,
+              "is_favorite": 1,
+              "my_rate": 0,
+              "last_news": {
+                "id": 2,
+                "title": "Bershka news2",
+                "content": "Something2",
+                "created_at": "2018-01-19 00:00:00",
+                "updated_at": "2018-01-19 00:00:00",
+                "photo": {
+                  "id": 29,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/0a3e9a226fb5139e61e76312ff18a7d8.jpeg"
+                }
+              },
               "pivot": {
                 "user_id": 1,
-                "partner_id": 17
+                "partner_id": 19
               }
             }
           ],
@@ -670,6 +688,149 @@
               "updated_at": "2018-01-06 21:48:42"
             }
           ]
+        }
+      },
+      {
+        "url":"/news",
+        "request_type":"GET",
+        "request_fields": "api_token",
+        "response_example":{
+          "status": 200,
+          "current_page": 1,
+          "data": [
+            {
+              "id": 1,
+              "title": "Bershka news",
+              "content": "Something",
+              "created_at": "2018-01-11 00:00:00",
+              "updated_at": "2018-01-11 00:00:00",
+              "photo": {
+                "id": 29,
+                "url": "http://dreamcard.az/api/uploads/photos/categories/0a3e9a226fb5139e61e76312ff18a7d8.jpeg"
+              },
+              "category": {
+                "id": 9,
+                "deleted_at": null,
+                "created_at": "2018-01-08 13:10:38",
+                "updated_at": "2018-01-08 13:10:38",
+                "small_icon": {
+                  "id": 35,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/04d53c2dd98c506864757104d23f5227.jpeg"
+                },
+                "large_icon": {
+                  "id": 35,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/04d53c2dd98c506864757104d23f5227.jpeg"
+                },
+                "partners_count": 2,
+                "name": ""
+              }
+            },
+            {
+              "id": 2,
+              "title": "Bershka news2",
+              "content": "Something2",
+              "created_at": "2018-01-19 00:00:00",
+              "updated_at": "2018-01-19 00:00:00",
+              "photo": {
+                "id": 29,
+                "url": "http://dreamcard.az/api/uploads/photos/categories/0a3e9a226fb5139e61e76312ff18a7d8.jpeg"
+              },
+              "category": {
+                "id": 9,
+                "deleted_at": null,
+                "created_at": "2018-01-08 13:10:38",
+                "updated_at": "2018-01-08 13:10:38",
+                "small_icon": {
+                  "id": 35,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/04d53c2dd98c506864757104d23f5227.jpeg"
+                },
+                "large_icon": {
+                  "id": 35,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/04d53c2dd98c506864757104d23f5227.jpeg"
+                },
+                "partners_count": 2,
+                "name": ""
+              }
+            }
+          ],
+          "first_page_url": "http://dreamcard.az/api/news?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "http://dreamcard.az/api/news?page=1",
+          "next_page_url": null,
+          "path": "http://dreamcard.az/api/news",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 2,
+          "total": 2
+        }
+      },
+      {
+        "url": "/cards/upgrade",
+        "request_type": "POST",
+        "request_fields": "api_token, package_id",
+        "response_example": {
+          "status": [200, 408, 411]
+        }
+      },
+      {
+        "url": "/users/facebook/login/",
+        "request_type": "POST",
+        "request_fields": "access_token",
+        "response_example": {
+          "status": 200,
+          "data": {
+            "id": 12,
+            "email": "kerimovscreations@gmail.com",
+            "phone": "",
+            "first_name": "Karim",
+            "last_name": "Karimov",
+            "api_token": "dd8bf669a2905091f206e6bcd71905ac",
+            "notification_sound": 1,
+            "notification": 1,
+            "news": 1,
+            "language": "az",
+            "deleted_at": null,
+            "created_at": "2018-01-20 22:41:29",
+            "updated_at": "2018-01-20 22:41:29",
+            "city": null,
+            "photo": null
+          }
+        }
+      },
+      {
+        "url": "/users/forgot_password",
+        "request_type": "POST",
+        "request_fields": "email",
+        "response_example": {
+          "status": [200, 408, 406]
+        }
+      },
+      {
+        "url":"/users/purchases/history",
+        "request_type":"GET",
+        "request_fields": "api_token, from_date?, to_date?, category_id?",
+        "response_example":{
+          "status": 200,
+          "current_page": 1,
+          "data": [
+            {
+              "id": 1,
+              "created_at": "2018-01-21 00:00:00",
+              "discount": "25.00",
+              "name": "Bershka"
+            }
+          ],
+          "first_page_url": "http://dreamcard.az/api/users/purchases/history?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "http://dreamcard.az/api/users/purchases/history?page=1",
+          "next_page_url": null,
+          "path": "http://dreamcard.az/api/users/purchases/history",
+          "per_page": 15,
+          "prev_page_url": null,
+          "to": 1,
+          "total": 1
         }
       }
 

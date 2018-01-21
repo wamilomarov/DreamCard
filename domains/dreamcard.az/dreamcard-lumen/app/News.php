@@ -11,6 +11,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class News extends Model
 {
@@ -19,7 +20,7 @@ class News extends Model
 
     protected $fillable = ['title', 'content'];
 
-    protected $appends = ['photo'];
+    protected $appends = ['photo', 'category'];
 
     protected $hidden = ['partner_id', 'photo_id'];
 
@@ -31,6 +32,11 @@ class News extends Model
     public function getPhotoAttribute()
     {
         return Photo::find($this->photo_id);
+    }
+
+    public function getCategoryAttribute()
+    {
+        return Category::find(Partner::find($this->partner_id)->category_id);
     }
 
     public function deletePhoto()
@@ -60,10 +66,6 @@ class News extends Model
         return $this->belongsTo(Partner::class);
     }
 
-    public function category()
-    {
-        return $this->partner->category;
-    }
 
 
 }
