@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Campaign;
 use App\Partner;
 use App\Photo;
 use Illuminate\Http\Request;
@@ -101,10 +102,17 @@ class PartnerController extends Controller
 
     public function getPartners()
     {
-
         $partners = Partner::arrangeUser()->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($partners);
+        return response($result);
+    }
+
+    public function getCampaigns($id)
+    {
+        $campaigns = Campaign::arrangeUser()->where('partner_id', $id)->paginate(10);
+        $status = collect(['status' => 200]);
+        $result = $status->merge($campaigns);
         return response($result);
     }
 

@@ -80,6 +80,7 @@ $router->get('/partners/disable/{id}', ['middleware' => ['auth', 'admin'], 'uses
 $router->get('/partners/restore/{id}', ['middleware' => ['auth', 'admin'], 'uses' => 'PartnerController@restore']);
 $router->get('/partners', ['middleware' => ['auth'], 'uses' => 'PartnerController@getPartners']);
 $router->get('/partners/{id}', 'PartnerController@get');
+$router->get('/partners/{id}/campaigns', 'PartnerController@getCampaigns');
 
 
 $router->post('/departments', 'DepartmentController@create');
@@ -115,6 +116,6 @@ $router->get('/news/{id}', 'NewsController@get');
 $router->post('/campaign', 'CampaignController@create');
 $router->post('/campaign/update', 'CampaignController@update');
 $router->get('/campaign/delete/{id}', 'CampaignController@delete');
-$router->get('/campaigns', 'CampaignController@getCampaign');
+$router->get('/campaigns', 'CampaignController@getCampaigns');
 $router->get('/campaigns/{id}', 'CampaignController@get');
 

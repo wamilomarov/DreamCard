@@ -50,10 +50,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return DB::table('cities')->where('id', $this->city_id)->first();
     }
 
-    public function getCardAttribute()
-    {
-        return Card::where('user_id', $this->id)->first();
-    }
 
     public function getPhotoAttribute()
     {

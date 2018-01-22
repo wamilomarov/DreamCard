@@ -35,7 +35,7 @@ class Card extends Model
     public function getEndDateAttribute()
     {
         $date = DB::table('card_upgrades')->where('card_id', $this->id)->select('end_time')->orderByDesc('end_time')->first();
-        return $date->end_time == null ? Date('Y-m-d H:i:s') : $date->end_time;
+        return $date == null || $date->end_time == null ? Date('Y-m-d H:i:s') : $date->end_time;
     }
 
     public function deletePhoto()

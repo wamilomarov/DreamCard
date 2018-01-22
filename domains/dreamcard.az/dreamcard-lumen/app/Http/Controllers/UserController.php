@@ -13,6 +13,7 @@ use App\Card;
 use App\Category;
 use App\News;
 use App\Photo;
+use App\Purchase;
 use App\User;
 use App\Partner;
 use Facebook\Facebook;
@@ -35,7 +36,7 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
-//        $request = $request->json();
+        $request = $request->json();
         if ($request->has('email') && $request->has('phone') && $request->has('password')
             && $request->has('first_name') && $request->has('last_name')) {
             if (User::where('email', $request->get('email'))
@@ -56,7 +57,7 @@ class UserController extends Controller
                 $card->user_id = $user->id;
                 $card->generateNumber();
                 $card->save();
-                $user = User::find($user->id)->with('card');
+                $user = User::with('card')->find($user->id);
                 $user = $user->makeVisible(['api_token']);
                 $result = ['status' => 200, 'data' =>  $user];
             }
@@ -71,7 +72,7 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-//        $request = $request->json();
+        $request = $request->json();
         if ($request->has('email') && $request->has('password')) {
             $user = User::where('email', $request->get('email'))->with('card')->first();
 
@@ -318,12 +319,14 @@ class UserController extends Controller
 
     public function purchasesHistory(Request $request)
     {
-        $purchases = DB::table('purchases')
+        /*$purchases = DB::table('purchases')
         ->leftJoin('departments', 'departments.id', '=', 'purchases.department_id')
         ->leftJoin('partners', 'partners.id', '=', 'departments.partner_id')
         ->leftJoin('campaigns', 'campaigns.partner_id', '=', 'partners.id')
         ->where('purchases.card_id', Auth::user()->card->id)
-        ->select('purchases.id', 'purchases.created_at', 'purchases.discount', 'partners.name');
+        ->select('purchases.id', 'purchases.created_at', 'purchases.discount', 'partners.name');*/
+
+        $purchases = Purchase::where('card_id', Auth::user()->card->id);
         if ($request->has('from_date'))
         {
             $purchases = $purchases->where('purchases.created_at', '>', $request->get('from_date'));
@@ -653,18 +656,11 @@ class UserController extends Controller
 
     if($request->has('q') && $request->get('q') != '')
     {
-        $query = $request->get('q');
-        $news = News::arrangeUser()->with('partner')->where('title', 'like', "%$query%")->get();
-        $partners = Partner::arrangeUser()->with('campaign')->where('name', 'like', "%$query%")->get();
-        $operation_history = DB::table('purchases')
-            ->leftJoin('departments', 'departments.id', '=', 'purchases.department_id')
-            ->leftJoin('partners', 'partners.id', '=', 'departments.partner_id')
-            ->leftJoin('campaigns', 'campaigns.partner_id', '=', 'partners.id')
-            ->where('purchases.card_id', Auth::user()->card->id)
-            ->where('partners.name', 'LIKE', "%$query%")
-            ->orWhere('campaigns.title', 'LIKE', "$query")
-            ->orWhere('departments.name', 'LIKE', "$query")
-            ->select('purchases.id', 'purchases.created_at', 'purchases.discount', 'partners.name')
+        $q = $request->get('q');
+        $news = News::arrangeUser()->with('partner')->where('title', 'like', "%$q%")->get();
+        $partners = Partner::arrangeUser()->with('campaign')->where('name', 'like', "%$q%")->get();
+        $operation_history = Purchase::where('card_id', Auth::user()->card->id)
+//            ->where('department', 'LIKE', "$q")
             ->get();
         $result = [
             'status' => 200,
