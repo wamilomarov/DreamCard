@@ -267,6 +267,10 @@ class UserController extends Controller
                 $user->phone = $request->get('phone');
             }
 
+            if ($request->has('firebase_id')) {
+                $user->firebase_id = $request->get('firebase_id');
+            }
+
             if ($request->has('password') && $request->has('prev_password')) {
                 if ($user && Hash::check($request->get('prev_password'), $user->getAuthPassword())) {
                     $user->password = app('hash')->make($request->get('password'));
@@ -340,7 +344,7 @@ class UserController extends Controller
             $purchases = $purchases->where('partners.category_id', $request->get('category_id'));
         }
 
-        $purchases = $purchases->paginate(15);
+        $purchases = $purchases->latest()->paginate(15);
         $status = collect(['status' => 200]);
         $result = $status->merge($purchases);
         return response()->json($result);
@@ -375,7 +379,7 @@ class UserController extends Controller
 
     public function forgotPassword(Request $request)
     {
-//        $request = $request->json();
+        $request = $request->json();
         if ($request->has('email'))
         {
             if (User::where('email', $request->get('email'))->exists())
@@ -598,6 +602,13 @@ class UserController extends Controller
         }
 
         return response($result)->header('Content-Type', 'text/xml');
+    }
+
+    public function categories()
+    {
+        $categories = Category::all();
+        $result = ['status' => 200, 'data' => $categories];
+        return response()->json($result);
     }
 
     public function favoriteCategories()

@@ -43,7 +43,7 @@ class CampaignController extends Controller
       $campaign->partner_id = $request->get('partner_id');
       $campaign->photo_id = $photo->id;
       $campaign->all_products_discount = $request->get('all_products_discount');
-      $campaign->special_product_discount = $request->get('special_product_discount');
+      $campaign->special_product_discount = $request->get('special_product_discount') == 0 || $request->get('special_product_discount') == null ? $request->get('all_products_discount') : $request->get('special_products_discount');
       $campaign->end_date = $request->get('end_date');
       $campaign->save();
       $result = ['status' => 200];
@@ -112,6 +112,20 @@ class CampaignController extends Controller
     return response($result);
   }
 
+  public function disable($id)
+    {
+        $partner = Campaign::arrangeUser()->find($id);
+        $partner->delete();
+        $result = ['status' => 200];
+        return response($result);
+    }
 
+  public function restore($id)
+    {
+        $partner = Campaign::arrangeUser()->find($id);
+        $partner->restore();
+        $result = ['status' => 200];
+        return response($result);
+    }
 
 }

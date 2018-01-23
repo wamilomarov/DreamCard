@@ -54,6 +54,7 @@ $router->post('/users/favorite/partners', 'UserController@addFavoritePartner');
 $router->get('/users/favorite/partners/{partner_id}/delete', 'UserController@deleteFavoritePartner');
 $router->post('/users/rate/partners/', 'PartnerController@rate');
 $router->get('/users/purchases/history', 'UserController@purchasesHistory');
+$router->get('/users/categories/all', 'UserController@categories');
 
 
 $router->get('/users/card/generate', 'UserController@cardGenerate');
@@ -113,9 +114,10 @@ $router->get('/news','NewsController@getNews');
 $router->get('/news/{id}', 'NewsController@get');
 
 
-$router->post('/campaign', 'CampaignController@create');
-$router->post('/campaign/update', 'CampaignController@update');
-$router->get('/campaign/delete/{id}', 'CampaignController@delete');
+$router->post('/campaigns', 'CampaignController@create');
+$router->post('/campaigns/update', 'CampaignController@update');
+$router->get('/campaigns/delete/{id}', 'CampaignController@delete');
 $router->get('/campaigns', 'CampaignController@getCampaigns');
 $router->get('/campaigns/{id}', 'CampaignController@get');
-
+$router->get('/campaigns/disable/{id}', 'CampaignController@disable');
+$router->get('/campaigns/restore/{id}', 'CampaignController@restore');

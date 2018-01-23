@@ -16,13 +16,18 @@ use Illuminate\Support\Facades\Auth;
 class Campaign extends Model
 {
     use SoftDeletes;
-    protected $fillable = [''];
+    protected $fillable = ['end_date'];
 
     protected $hidden = ['partner_id', 'department_id', 'created_at', 'updated_at', 'photo_id'];
 
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['photo'];
+    protected $appends = ['photo', 'expired'];
+
+    public function getExpiredAttribute()
+    {
+        return $this->end_date < Date("Y-m-d H:i:s");
+    }
 
     public function getPhotoAttribute()
     {

@@ -323,6 +323,7 @@
           "total": 3
         }
       },
+
       {
         "url": "/categories",
         "request_type": "GET",
@@ -482,6 +483,7 @@
           ]
         }
       },
+
       {
         "url": "/campaigns",
         "request_type": "GET",
@@ -835,130 +837,169 @@
       }
 
     ],
-    "admin": [
-      {
-        "url": "/admin/register/",
-        "request_type": "POST",
-        "request_fields": "username, email, phone, password",
-        "response_example": {
-          "status": 200,
-          "data": {
-            "username": "DreamAdmin",
-            "email": "admin@dreamcard.az",
-            "phone": "+994555555555",
-            "updated_at": "2017-10-30 08:25:37",
-            "created_at": "2017-10-30 08:25:37",
-            "id": 1
+    "admin": {
+      "admin": [
+        {
+          "url": "/admin/register/",
+          "request_type": "POST",
+          "request_fields": "username, email, phone, password",
+          "response_example": {
+            "status": 200,
+            "data": {
+              "username": "DreamAdmin",
+              "email": "admin@dreamcard.az",
+              "phone": "+994555555555",
+              "updated_at": "2017-10-30 08:25:37",
+              "created_at": "2017-10-30 08:25:37",
+              "id": 1
+            }
+          }
+        },
+        {
+          "url": "/admin/login/",
+          "request_type": "POST",
+          "request_fields": "email, password",
+          "response_example": {
+            "status": 200,
+            "data": {
+              "id": 1,
+              "username": "DreamAdmin",
+              "email": "admin@dreamcard.az",
+              "phone": "+994555555555",
+              "api_token": "d325b6fc5183957ecd5e95029479b158",
+              "created_at": "2017-10-30 08:25:37",
+              "updated_at": "2017-10-30 08:30:19"
+            }
+          }
+        },
+        {
+          "url": "/admin/logout/",
+          "request_type": "POST",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/admin/faq",
+          "request_type": "POST",
+          "request_fields": "question_en, question_az, question_ru, answer_en, answer_ru, answer_az, api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/admin/faq/update",
+          "request_type": "POST",
+          "request_fields": "id, question_en?, question_az?, question_ru?, answer_en?, answer_ru?, answer_az?, api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/admin/faq/delete/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
           }
         }
-      },
-      {
-        "url": "/admin/login/",
-        "request_type": "POST",
-        "request_fields": "email, password",
-        "response_example": {
-          "status": 200,
-          "data": {
-            "id": 1,
-            "username": "DreamAdmin",
-            "email": "admin@dreamcard.az",
-            "phone": "+994555555555",
-            "api_token": "d325b6fc5183957ecd5e95029479b158",
-            "created_at": "2017-10-30 08:25:37",
-            "updated_at": "2017-10-30 08:30:19"
+      ],
+      "categories": [
+        {
+          "url": "/categories/",
+          "request_type": "POST",
+          "request_fields": "name_en, name_az, name_ru, large_icon, api_token",
+          "response_example": {
+            "status": 200
           }
-        }
-      },
-      {
-        "url": "/admin/logout/",
-        "request_type": "POST",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/admin/faq",
-        "request_type": "POST",
-        "request_fields": "question_en, question_az, question_ru, answer_en, answer_ru, answer_az, api_token",
-        "response_example":{
-          "status": 200
-        }
-      },
-      {
-        "url": "/admin/faq/update",
-        "request_type": "POST",
-        "request_fields": "id, question_en?, question_az?, question_ru?, answer_en?, answer_ru?, answer_az?, api_token",
-        "response_example":{
-          "status": 200
-        }
-      },
-      {
-        "url": "/admin/faq/delete/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/categories/",
-        "request_type": "POST",
-        "request_fields": "name_en, name_az, name_ru, small_icon, large_icon, api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/categories/update",
-        "request_type": "POST",
-        "request_fields": "id, name_en?, name_az?, name_ru?, small_icon?, large_icon?, api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/categories/delete/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/categories/disable/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/categories",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200,
-          "current_page": 1,
-          "data": [
-            {
-              "id": 4,
-              "name": "Karim",
-              "deleted_at": null,
-              "created_at": null,
-              "updated_at": null,
-              "small_icon": {
-                "id": 1,
-                "url": "sdfvsdfv"
+        },
+        {
+          "url": "/categories/update",
+          "request_type": "POST",
+          "request_fields": "id, name_en?, name_az?, name_ru?, small_icon?, large_icon?, api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/categories/delete/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/categories/disable/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/categories",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "current_page": 1,
+            "data": [
+              {
+                "id": 4,
+                "name": "Karim",
+                "deleted_at": null,
+                "created_at": null,
+                "updated_at": null,
+                "small_icon": {
+                  "id": 1,
+                  "url": "sdfvsdfv"
+                },
+                "large_icon": {
+                  "id": 1,
+                  "url": "sdfvsdfv"
+                }
               },
-              "large_icon": {
-                "id": 1,
-                "url": "sdfvsdfv"
+              {
+                "id": 5,
+                "name": "testCategory",
+                "deleted_at": null,
+                "created_at": "2017-12-09 20:07:41",
+                "updated_at": "2017-12-09 20:07:41",
+                "small_icon": {
+                  "id": 2,
+                  "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
+                },
+                "large_icon": {
+                  "id": 3,
+                  "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
+                }
               }
-            },
-            {
+            ],
+            "first_page_url": "http://dreamcard.az/api/categories?page=1",
+            "from": 1,
+            "last_page": 1,
+            "last_page_url": "http://dreamcard.az/api/categories?page=1",
+            "next_page_url": null,
+            "path": "http://dreamcard.az/api/categories",
+            "per_page": 10,
+            "prev_page_url": null,
+            "to": 2,
+            "total": 2
+          }
+        },
+        {
+          "url": "/categories/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "data": {
               "id": 5,
-              "name": "testCategory",
+              "name_az": "test kategoriya",
+              "name_ru": "тестовая категория",
+              "name_en": "test category",
               "deleted_at": null,
               "created_at": "2017-12-09 20:07:41",
               "updated_at": "2017-12-09 20:07:41",
@@ -971,84 +1012,98 @@
                 "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
               }
             }
-          ],
-          "first_page_url": "http://dreamcard.az/api/categories?page=1",
-          "from": 1,
-          "last_page": 1,
-          "last_page_url": "http://dreamcard.az/api/categories?page=1",
-          "next_page_url": null,
-          "path": "http://dreamcard.az/api/categories",
-          "per_page": 10,
-          "prev_page_url": null,
-          "to": 2,
-          "total": 2
-        }
-      },
-      {
-        "url": "/categories/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200,
-          "data": {
-            "id": 5,
-            "name_az": "test kategoriya",
-            "name_ru": "тестовая категория",
-            "name_en": "test category",
-            "deleted_at": null,
-            "created_at": "2017-12-09 20:07:41",
-            "updated_at": "2017-12-09 20:07:41",
-            "small_icon": {
-              "id": 2,
-              "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"},
-            "large_icon": {
-              "id": 3,
-              "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
-            }
           }
         }
-      },
-      {
-        "url": "/partners/",
-        "request_type": "POST",
-        "request_fields": "name, username, password, category_id, photo, api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/partners/update",
-        "request_type": "POST",
-        "request_fields": "id, name?, username?, [password, prev_password]?, category_id?, photo?, api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/partners/delete/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/partners/disable/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/partners",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200,
-          "current_page": 1,
-          "data": [
-            {
+      ],
+      "partners": [
+        {
+          "url": "/partners/",
+          "request_type": "POST",
+          "request_fields": "name, username, password, category_id, photo, api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/partners/update",
+          "request_type": "POST",
+          "request_fields": "id, name?, username?, [password, prev_password]?, category_id?, photo?, api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/partners/delete/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/partners/disable/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/partners",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "current_page": 1,
+            "data": [
+              {
+                "id": 1,
+                "name": "Partner",
+                "username": "partner",
+                "first_entry": 1,
+                "deleted_at": null,
+                "created_at": "2017-12-10 10:32:26",
+                "updated_at": "2017-12-10 10:32:26",
+                "category": {
+                  "id": 5,
+                  "name": "testCategory",
+                  "deleted_at": null,
+                  "created_at": "2017-12-09 20:07:41",
+                  "updated_at": "2017-12-09 20:07:41",
+                  "small_icon": {
+                    "id": 2,
+                    "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
+                  },
+                  "large_icon": {
+                    "id": 3,
+                    "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
+                  }
+                },
+                "photo": {
+                  "id": 8,
+                  "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
+                }
+              }
+            ],
+            "first_page_url": "http://dreamcard.az/api/partners?page=1",
+            "from": 1,
+            "last_page": 1,
+            "last_page_url": "http://dreamcard.az/api/partners?page=1",
+            "next_page_url": null,
+            "path": "http://dreamcard.az/api/partners",
+            "per_page": 10,
+            "prev_page_url": null,
+            "to": 1,
+            "total": 1
+          }
+        },
+        {
+          "url": "/partners/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "data": {
               "id": 1,
               "name": "Partner",
               "username": "partner",
@@ -1076,200 +1131,118 @@
                 "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
               }
             }
-          ],
-          "first_page_url": "http://dreamcard.az/api/partners?page=1",
-          "from": 1,
-          "last_page": 1,
-          "last_page_url": "http://dreamcard.az/api/partners?page=1",
-          "next_page_url": null,
-          "path": "http://dreamcard.az/api/partners",
-          "per_page": 10,
-          "prev_page_url": null,
-          "to": 1,
-          "total": 1
-        }
-      },
-      {
-        "url": "/partners/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200,
-          "data": {
-            "id": 1,
-            "name": "Partner",
-            "username": "partner",
-            "first_entry": 1,
-            "deleted_at": null,
-            "created_at": "2017-12-10 10:32:26",
-            "updated_at": "2017-12-10 10:32:26",
-            "category": {
-              "id": 5,
-              "name": "testCategory",
-              "deleted_at": null,
-              "created_at": "2017-12-09 20:07:41",
-              "updated_at": "2017-12-09 20:07:41",
-              "small_icon": {
-                "id": 2,
-                "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
-              },
-              "large_icon": {
-                "id": 3,
-                "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
+          }
+        },
+        {
+          "url": "/partners/{id}/campaigns",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "current_page": 1,
+            "data": [
+              {
+                "id": 1,
+                "title": "Special Discount",
+                "all_products_discount": "25.00",
+                "special_product_discount": "35.00",
+                "end_date": "2018-01-31 00:00:00",
+                "deleted_at": null,
+                "photo": {
+                  "id": 43,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/c05e2299b2d7f2754e42e7324086d819.png"
+                },
+                "expired": false
               }
-            },
-            "photo": {
-              "id": 8,
-              "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
-            }
+            ],
+            "first_page_url": "http://dreamcard.az/api/partners/19/campaigns?page=1",
+            "from": 1,
+            "last_page": 1,
+            "last_page_url": "http://dreamcard.az/api/partners/19/campaigns?page=1",
+            "next_page_url": null,
+            "path": "http://dreamcard.az/api/partners/19/campaigns",
+            "per_page": 10,
+            "prev_page_url": null,
+            "to": 1,
+            "total": 1
           }
         }
-      },
-      {
-        "url": "/packages/",
-        "request_type": "POST",
-        "request_fields": "name, price, duration(in days), discount_price?, api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/packages/update",
-        "request_type": "POST",
-        "request_fields": "id, name?, price?, duration?, discount_price?, api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/packages/delete/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/packages/disable/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/packages",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200,
-          "current_page": 1,
-          "data": [
-            {
-              "id": 1,
-              "name": "DREAMER60",
-              "price": "20.00",
-              "discount_price": "17.00",
-              "duration": 60,
-              "deleted_at": null,
-              "created_at": "2018-01-19 00:00:00",
-              "updated_at": "2018-01-19 00:00:00"
-            }
-          ],
-          "first_page_url": "http://dreamcard.az/api/packages?page=1",
-          "from": 1,
-          "last_page": 1,
-          "last_page_url": "http://dreamcard.az/api/packages?page=1",
-          "next_page_url": null,
-          "path": "http://dreamcard.az/api/packages",
-          "per_page": 10,
-          "prev_page_url": null,
-          "to": 1,
-          "total": 1
-        }
-      },
-      {
-        "url": "/partners/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200,
-          "data": {
-            "id": 1,
-            "name": "Partner",
-            "username": "partner",
-            "first_entry": 1,
-            "deleted_at": null,
-            "created_at": "2017-12-10 10:32:26",
-            "updated_at": "2017-12-10 10:32:26",
-            "category": {
-              "id": 5,
-              "name": "testCategory",
-              "deleted_at": null,
-              "created_at": "2017-12-09 20:07:41",
-              "updated_at": "2017-12-09 20:07:41",
-              "small_icon": {
-                "id": 2,
-                "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
-              },
-              "large_icon": {
-                "id": 3,
-                "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
-              }
-            },
-            "photo": {
-              "id": 8,
-              "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
-            }
+      ],
+      "packages": [
+        {
+          "url": "/packages/",
+          "request_type": "POST",
+          "request_fields": "name, price, duration(in days), discount_price?, api_token",
+          "response_example": {
+            "status": 200
           }
-        }
-      },
-
-      {
-        "url": "/campaigns/",
-        "request_type": "POST",
-        "request_fields": "title, partner_id, all_products_discount, special_product_discount, end_date, photo, api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/packages/update",
-        "request_type": "POST",
-        "request_fields": "id, name?, price?, duration?, discount_price?, api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/packages/delete/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/packages/disable/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200
-        }
-      },
-      {
-        "url": "/packages",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200,
-          "current_page": 1,
-          "data": [
-            {
+        },
+        {
+          "url": "/packages/update",
+          "request_type": "POST",
+          "request_fields": "id, name?, price?, duration?, discount_price?, api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/packages/delete/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/packages/disable/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/packages",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "current_page": 1,
+            "data": [
+              {
+                "id": 1,
+                "name": "DREAMER60",
+                "price": "20.00",
+                "discount_price": "17.00",
+                "duration": 60,
+                "deleted_at": null,
+                "created_at": "2018-01-19 00:00:00",
+                "updated_at": "2018-01-19 00:00:00"
+              }
+            ],
+            "first_page_url": "http://dreamcard.az/api/packages?page=1",
+            "from": 1,
+            "last_page": 1,
+            "last_page_url": "http://dreamcard.az/api/packages?page=1",
+            "next_page_url": null,
+            "path": "http://dreamcard.az/api/packages",
+            "per_page": 10,
+            "prev_page_url": null,
+            "to": 1,
+            "total": 1
+          }
+        },
+        {
+          "url": "/partners/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "data": {
               "id": 1,
               "name": "Partner",
               "username": "partner",
-              "duration": 1,
+              "first_entry": 1,
               "deleted_at": null,
               "created_at": "2017-12-10 10:32:26",
               "updated_at": "2017-12-10 10:32:26",
@@ -1293,55 +1266,150 @@
                 "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
               }
             }
-          ],
-          "first_page_url": "http://dreamcard.az/api/partners?page=1",
-          "from": 1,
-          "last_page": 1,
-          "last_page_url": "http://dreamcard.az/api/partners?page=1",
-          "next_page_url": null,
-          "path": "http://dreamcard.az/api/partners",
-          "per_page": 10,
-          "prev_page_url": null,
-          "to": 1,
-          "total": 1
-        }
-      },
-      {
-        "url": "/partners/{id}",
-        "request_type": "GET",
-        "request_fields": "api_token",
-        "response_example": {
-          "status": 200,
-          "data": {
-            "id": 1,
-            "name": "Partner",
-            "username": "partner",
-            "first_entry": 1,
-            "deleted_at": null,
-            "created_at": "2017-12-10 10:32:26",
-            "updated_at": "2017-12-10 10:32:26",
-            "category": {
-              "id": 5,
-              "name": "testCategory",
-              "deleted_at": null,
-              "created_at": "2017-12-09 20:07:41",
-              "updated_at": "2017-12-09 20:07:41",
-              "small_icon": {
-                "id": 2,
-                "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
-              },
-              "large_icon": {
-                "id": 3,
-                "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
-              }
-            },
-            "photo": {
-              "id": 8,
-              "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
-            }
           }
         }
-      }
-    ]
+      ],
+      "campaigns": [
+        {
+          "url": "/campaigns/",
+          "request_type": "POST",
+          "request_fields": "title, partner_id, all_products_discount, special_product_discount, end_date, photo, api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/campaigns/update",
+          "request_type": "POST",
+          "request_fields": "id, title?, department_id?, partner_id?, photo?, all_products_discount?, special_products_discount?, end_time?, api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/campaigns/delete/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/campaigns/disable/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200
+          }
+        },
+        {
+          "url": "/campaigns",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "current_page": 1,
+            "data": [
+              {
+                "id": 1,
+                "name": "Partner",
+                "username": "partner",
+                "duration": 1,
+                "deleted_at": null,
+                "created_at": "2017-12-10 10:32:26",
+                "updated_at": "2017-12-10 10:32:26",
+                "category": {
+                  "id": 5,
+                  "name": "testCategory",
+                  "deleted_at": null,
+                  "created_at": "2017-12-09 20:07:41",
+                  "updated_at": "2017-12-09 20:07:41",
+                  "small_icon": {
+                    "id": 2,
+                    "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
+                  },
+                  "large_icon": {
+                    "id": 3,
+                    "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
+                  }
+                },
+                "photo": {
+                  "id": 8,
+                  "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
+                }
+              }
+            ],
+            "first_page_url": "http://dreamcard.az/api/partners?page=1",
+            "from": 1,
+            "last_page": 1,
+            "last_page_url": "http://dreamcard.az/api/partners?page=1",
+            "next_page_url": null,
+            "path": "http://dreamcard.az/api/partners",
+            "per_page": 10,
+            "prev_page_url": null,
+            "to": 1,
+            "total": 1
+          }
+        },
+        {
+          "url": "/campaigns/{id}",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "data": {
+              "id": 1,
+              "title": "Special Discount",
+              "all_products_discount": "25.00",
+              "special_product_discount": "35.00",
+              "end_date": "2018-01-31 00:00:00",
+              "deleted_at": null,
+              "photo": {
+                "id": 43,
+                "url": "http://dreamcard.az/api/uploads/photos/categories/c05e2299b2d7f2754e42e7324086d819.png"
+              },
+              "expired": false
+            }
+          }
+        },
+        {
+          "url": "/partners/{id}/campaigns",
+          "request_type": "GET",
+          "request_fields": "api_token",
+          "response_example": {
+            "status": 200,
+            "current_page": 1,
+            "data": [
+              {
+                "id": 1,
+                "title": "Special Discount",
+                "all_products_discount": "25.00",
+                "special_product_discount": "35.00",
+                "end_date": "2018-01-31 00:00:00",
+                "deleted_at": null,
+                "photo": {
+                  "id": 43,
+                  "url": "http://dreamcard.az/api/uploads/photos/categories/c05e2299b2d7f2754e42e7324086d819.png"
+                },
+                "expired": false
+              }
+            ],
+            "first_page_url": "http://dreamcard.az/api/partners/19/campaigns?page=1",
+            "from": 1,
+            "last_page": 1,
+            "last_page_url": "http://dreamcard.az/api/partners/19/campaigns?page=1",
+            "next_page_url": null,
+            "path": "http://dreamcard.az/api/partners/19/campaigns",
+            "per_page": 10,
+            "prev_page_url": null,
+            "to": 1,
+            "total": 1
+          }
+        }
+      ],
+      "faq": [
+
+      ]
+    }
   }
 }

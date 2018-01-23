@@ -22,8 +22,20 @@ class Partner extends Model
 
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['category', 'photo', 'rating', 'is_favorite', 'my_rate'];
+    protected $appends = ['category', 'photo', 'rating', 'is_favorite', 'my_rate', 'campaigns_count'];
 
+    public function getCampaignsCountAttribute()
+    {
+        if (Auth::user()->getTable() == 'user')
+        {
+            return Campaign::where('partner_id', $this->id)->where('end_date', '>', Date('Y-m-d H:i:s'))->count();
+        }
+        else
+        {
+            return Campaign::where('partner_id', $this->id)->count();
+        }
+
+    }
 
     public function getRatingAttribute()
     {
