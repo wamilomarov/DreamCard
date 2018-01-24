@@ -61,7 +61,7 @@ class Campaign extends Model
         }
         else
         {
-            return $query;
+            return $query->has('partner')->has('partner.category');
         }
     }
 

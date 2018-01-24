@@ -36,7 +36,16 @@ class News extends Model
 
     public function getCategoryAttribute()
     {
-        return Category::find(Partner::find($this->partner_id)->category_id);
+        $partner = Partner::arrangeUser()->find($this->partner_id);
+        if ($partner != null)
+        {
+            return Category::arrangeUser()->find($partner->category_id);
+        }
+        else
+        {
+            return $partner;
+        }
+
     }
 
     public function deletePhoto()
@@ -57,7 +66,7 @@ class News extends Model
       }
       else
       {
-        return $query;
+        return $query->has('partner')->has('partner.category');
       }
     }
 

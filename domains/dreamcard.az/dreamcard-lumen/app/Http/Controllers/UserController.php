@@ -249,7 +249,7 @@ class UserController extends Controller
     {
 //        $request = $request->json();
         $user = Auth::user();
-        var_dump($request->file('photo'));exit;
+//        var_dump($request->file('photo'));exit;
         if ($user) {
             if ($request->has('first_name')) {
                 $user->first_name = $request->get('first_name');
@@ -313,7 +313,7 @@ class UserController extends Controller
             }
 
             $user->save();
-            $result = ['status' => 200, 'data' => $user];
+            $result = ['status' => 200, 'data' => User::find($user->id)];
         } else {
             $result = ['status' => 408];
         }
@@ -339,9 +339,20 @@ class UserController extends Controller
         {
             $purchases = $purchases->where('purchases.created_at', '<', $request->get('to_date'));
         }
-        if ($request->has('category_id'))
+        if ($request->has('category_id') && $request->get('category_id') != -1)
         {
-            $purchases = $purchases->where('partners.category_id', $request->get('category_id'));
+            $category_id = $request->get('category_id');
+            $purchases = $purchases->with(
+                [
+                    'partner' => function ($query) use ($category_id)
+            {
+                return $query->where('partners.category_id', $category_id)->withTrashed();
+            }
+                ]);
+        }
+        else
+        {
+            $purchases = $purchases->with(['partner' => function($query) { return $query->withTrashed();}]);
         }
 
         $purchases = $purchases->latest()->paginate(15);
@@ -616,6 +627,7 @@ class UserController extends Controller
         $favorites = DB::table("partners")
         ->join("favorites", "favorites.partner_id", "=", "partners.id")
             ->where("favorites.user_id", Auth::user()->id)
+            ->whereNull('partners.deleted_at')
                 ->pluck("partners.category_id")->toArray();
         $categories = Category::whereIn("id", $favorites)->paginate();
         $status = collect(['status' => 200]);
@@ -668,10 +680,16 @@ class UserController extends Controller
     if($request->has('q') && $request->get('q') != '')
     {
         $q = $request->get('q');
-        $news = News::arrangeUser()->with('partner')->where('title', 'like', "%$q%")->get();
-        $partners = Partner::arrangeUser()->with('campaign')->where('name', 'like', "%$q%")->get();
-        $operation_history = Purchase::where('card_id', Auth::user()->card->id)
-//            ->where('department', 'LIKE', "$q")
+        $news = News::arrangeUser()->where('title', 'like', "%$q%")->get();
+        $partners = Partner::arrangeUser()->has('campaign')->where('name', 'like', "%$q%")->get();
+        $operation_history = Purchase::with('partner')
+            ->whereHas('partner', function ($query) use ($q){
+                    return $query->where('name', 'LIKE', "%$q%")->withTrashed();
+                })
+            ->whereHas('partner.category', function ($query){
+                return $query->withTrashed();
+            })
+            ->where('card_id', Auth::user()->card->id)
             ->get();
         $result = [
             'status' => 200,

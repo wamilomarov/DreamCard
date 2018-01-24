@@ -889,6 +889,30 @@
           }
         },
         {
+          "url": "/faq",
+          "request_type":"GET",
+          "requested_fields": "api_token",
+          "response_example":{
+            "status": 200,
+            "data": [
+              {
+                "id": 1,
+                "question": "hey?",
+                "answer": "yes",
+                "created_at": "2017-10-30 08:25:37",
+                "updated_at": "2017-10-30 08:25:37"
+              },
+              {
+                "id": 2,
+                "question": "heyy",
+                "answer": "yess",
+                "created_at": "2017-10-30 08:25:37",
+                "updated_at": "2017-10-30 08:25:37"
+              }
+            ]
+          }
+        },
+        {
           "url": "/admin/faq/update",
           "request_type": "POST",
           "request_fields": "id, question_en?, question_az?, question_ru?, answer_en?, answer_ru?, answer_az?, api_token",

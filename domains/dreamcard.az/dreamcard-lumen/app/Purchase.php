@@ -10,23 +10,21 @@ namespace App;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Purchase extends Model
 {
 
     protected $fillable = ['amount', 'discount', 'created_at'];
 
-    protected $hidden = ['card_id', 'department_id', 'campaign_id'];
+    protected $hidden = ['card_id', 'partner_id', 'campaign_id'];
 
-    protected $appends = ['partner'];
+    protected $appends = [];
 
-    public function getPartnerAttribute()
-    {
-        return Partner::find(Department::find($this->department_id)->partner_id);
-    }
 
     public function partner()
     {
-        return $this->belongsTo(Department::class)->with('partner');
+        return $this->belongsTo('App\Partner');
     }
+
 }

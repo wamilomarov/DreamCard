@@ -82,7 +82,7 @@ class Partner extends Model
         }
         else
         {
-            return $query;
+            return $query->has('category');
         }
     }
 

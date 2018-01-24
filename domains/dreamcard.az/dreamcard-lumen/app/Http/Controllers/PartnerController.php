@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 
 use App\Campaign;
+use App\Helper;
 use App\Partner;
 use App\Photo;
 use Illuminate\Http\Request;
@@ -122,6 +123,8 @@ class PartnerController extends Controller
         $status = collect(['status' => 200]);
         $result = $status->merge($campaigns);
         $result->put('partner_name', Partner::find($id)->name);
+
+//        Helper::sendPush('7336c5a2-3f59-4b17-b4e8-c4fb93227406');
 
         return response($result);
     }

@@ -81,15 +81,25 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
     }
 
-    public function favoritePartners($category_id)
+    public function favorites()
     {
-        return $this->belongsToMany("App\Partner", "favorites" )->where("category_id", "=", $category_id)->groupBy('partner_id');
+        return $this->belongsToMany("App\Partner", "favorites" )
+            ->has('category')
+            ->groupBy('partner_id');
     }
 
-    public function favoriteCategories()
+    public function favoritePartners($category_id)
     {
-        return $this->favoritePartners()->groupBy("partners.category_id");
+        return $this->belongsToMany("App\Partner", "favorites" )
+            ->with('category')
+            ->whereHas('category', function($query) use($category_id)
+            {
+                return $query->where("category_id", "=", $category_id);
+            })
+
+            ->groupBy('partner_id');
     }
+
 
 
 }
