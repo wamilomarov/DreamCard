@@ -35,7 +35,7 @@ class Category extends BaseModel
 
     public function getPartnersCountAttribute()
     {
-        return DB::table('partners')->where('category_id', $this->id)->count();
+        return DB::table('partners')->where('category_id', $this->id)->whereNull("deleted_at")->count();
     }
 
     public function getNameAttribute()

@@ -104,20 +104,21 @@ class UserController extends Controller
       try {
         // Get the \Facebook\GraphNodes\GraphUser object for the current user.
         // If you provided a 'default_access_token', the '{access-token}' is optional.
-        $response = $fb->get('/me?fields=name,email', $request->get('access_token'));
+        $response = $fb->get('/me?fields=name,email,picture,location', $request->get('access_token'));
       } catch(\Facebook\Exceptions\FacebookResponseException $e) {
         // When Graph returns an error
 //        echo 'Graph returned an error: ' . $e->getMessage();
-        $result = ['status' => $e->getCode()];
+        $result = ['status' => $e->getMessage()];
         return response($result);
       } catch(\Facebook\Exceptions\FacebookSDKException $e) {
         // When validation fails or other local issues
 //        echo 'Facebook SDK returned an error: ' . $e->getMessage();
-        $result = ['status' => $e->getCode()];
+        $result = ['status' => $e->getMessage()];
         return response($result);
       }
 
       $me = $response->getGraphUser();
+//      var_dump($me->getPicture()->getUrl()); exit;
 
       list($first_name, $last_name) = explode(' ', $me->getName(), 2);
       $facebook_id = $me->getId();
@@ -260,11 +261,27 @@ class UserController extends Controller
             }
 
             if ($request->has('email')) {
-                $user->email = $request->get('email');
+                if (!User::where('email', $request->get('email'))->exists())
+                {
+                    $user->email = $request->get('email');
+                }
+                else
+                {
+                    return response()->json(['status' => 407]);
+                }
+
             }
 
             if ($request->has('phone')) {
-                $user->phone = $request->get('phone');
+                if (!User::where('phone', $request->get('phone'))->exists())
+                {
+                    $user->phone = $request->get('phone');
+                }
+                else
+                {
+                    return response()->json(['status' => 407]);
+                }
+
             }
 
             if ($request->has('firebase_id')) {
@@ -274,7 +291,7 @@ class UserController extends Controller
             if ($request->has('password') && $request->has('prev_password')) {
                 if ($user && Hash::check($request->get('prev_password'), $user->getAuthPassword())) {
                     $user->password = app('hash')->make($request->get('password'));
-                    $user->api_token = null;  //  log out when password is changed
+//                    $user->api_token = null;  //  log out when password is changed
                 } else {
                     return response(['status' => 409]);
                 }
@@ -736,4 +753,9 @@ class UserController extends Controller
     return response($result);
   }
 
+    public function test()
+    {
+        $photo = Photo::first();
+        return $photo->test();
+    }
 }

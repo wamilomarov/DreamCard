@@ -15,6 +15,8 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+$router->get('/test', 'UserController@test');
+
 //PAYMENT API
 
 $router->post('/pay', 'UserController@pay');

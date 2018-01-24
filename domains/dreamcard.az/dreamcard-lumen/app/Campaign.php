@@ -18,7 +18,7 @@ class Campaign extends Model
     use SoftDeletes;
     protected $fillable = ['end_date'];
 
-    protected $hidden = ['partner_id', 'department_id', 'created_at', 'updated_at', 'photo_id'];
+    protected $hidden = ['partner_id', 'created_at', 'updated_at', 'photo_id'];
 
     protected $dates = ['deleted_at'];
 
@@ -69,5 +69,6 @@ class Campaign extends Model
     {
         return $this->belongsTo(Partner::class);
     }
+
 
 }

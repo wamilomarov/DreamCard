@@ -11,52 +11,33 @@ namespace App;
 
 class Helper
 {
-    public static function sendPushNotification($toids,$message,$deep_link='',$silent=0,$title='', $group = ''){
+    public static function sendPushNotification($instanceIds,$message,$deep_link='',$silent=0,$title='', $group = ''){
 
-        // bunlar config faylina dasinacag sonra
-        $push_messages[1]=array("en"=>$message);
         $push_api_url="https://onesignal.com/api/v1/notifications";
         $push_api_id="530f6a6b-69e7-4220-b161-d032a15a4906";
         $push_api_auth="Basic MWQzNjQ1YjMtZTcxZC00NTQ4LTgwOTAtNWEzOGMzYjJhM2Ix";
 
 
-        if(is_array($toids) && sizeof($toids)>0)
+        if(is_array($instanceIds) && sizeof($instanceIds)>0)
         {
-            $playerIds = getPlayerIds($toids);
-            // print_r($playerIds);exit;
             if($silent==0){
-                $fields = array(
+                $fields = [
                     'app_id' => $push_api_id,
-                    'include_player_ids' => $playerIds,
+                    'include_player_ids' => $instanceIds,
                     'data' => array("deep_link"=>$deep_link),
                     'contents' => array("en"=>$message),
                     'headings'=>array('en'=>$title),
                     'android_group' => $group,
-                    'android_group_message' => array("en" => "You have $[notif_count] new notifications")
-                );
-
-                // silent olmayan ve tek adama gnderilen butun pushlarda notify ve badge gondermek.
-                if (count($toids)==1) {
-                    $data = getUserNotifyCounts($toids[0]);
-                    $fields['data']['notify'] = array();
-                    $fields['data']['notify'] = $data['data'];
-//                $fields['data']['notify']['inbox']= $data['data']['inbox'];
-//                $fields['data']['notify']['admin_inbox']= $data['data']['admin_inbox'];
-//                $fields['data']['notify']['branch_inbox']= $data['data']['branch_inbox'];
-//                $fields['data']['notify']['product_update']= $data['data']['product_update'];
-//                $fields['data']['notify']['new_follower']= $data['data']['new_follower'];
-                    $fields['ios_badgeType']= 'SetTo';
-                    $fields['ios_badgeCount']= $data['data']['sum'];
-                }
-
+                    'android_group_message' => array("en" => "$[notif_count] yeni xəbəriniz var.")
+                ];
             }
             else
             {
-                $fields = array(
+                $fields = [
                     'app_id' => $push_api_id,
-                    'include_player_ids' => $playerIds,
+                    'include_player_ids' => $instanceIds,
                     'content_available'=>true
-                );
+                ];
             }
             $fields = json_encode($fields);
 
@@ -73,27 +54,13 @@ class Helper
             $response = curl_exec($ch);
             curl_close($ch);
 
-            $retval["status"]=1;
-            $retval["data"]["push"]=sizeof($playerIds);
-            $retval["data"]["push_message"]=$message;
-
-            // print_r($response);
-            //$retval["data"]["push_player_id"]=$playerid;
-            //sendBadgeCount($toids);
+            return $response;
 
         }
-
-
-
-
-        $response_data=array("api_curl_response"=>$response,"function_response"=>$retval);
-        foreach ($toids as $userid) {
-            $sql="INSERT INTO push_message_log (userid, send_date, request_data, response_data) VALUES 
-	('$userid',NOW(),'".$db->real_escape_string(serialize($fields))."','".$db->real_escape_string(serialize($response_data))."')";
-            $db->query($sql);
+        else
+        {
+            return false;
         }
-
-        return $retval;
 
     }
 }

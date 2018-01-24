@@ -122,9 +122,9 @@ class PartnerController extends Controller
         }
         $status = collect(['status' => 200]);
         $result = $status->merge($campaigns);
-        $result->put('partner_name', Partner::find($id)->name);
+        $result->put('partner', Partner::withTrashed()->find($id));
 
-//        Helper::sendPush('7336c5a2-3f59-4b17-b4e8-c4fb93227406');
+//        echo Helper::sendPushNotification(['7336c5a2-3f59-4b17-b4e8-c4fb93227406'], "yeni xeber", "wecw", 0, 'f');
 
         return response($result);
     }
