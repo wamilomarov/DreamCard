@@ -1242,6 +1242,16 @@
                 "deleted_at": null,
                 "created_at": "2018-01-19 00:00:00",
                 "updated_at": "2018-01-19 00:00:00"
+              },
+              {
+                "id": 6,
+                "name": "DREAMER15",
+                "price": "30.00",
+                "discount_price": "18.00",
+                "duration": 10,
+                "deleted_at": null,
+                "created_at": "2018-01-25 00:37:50",
+                "updated_at": "2018-01-25 00:58:30"
               }
             ],
             "first_page_url": "http://dreamcard.az/api/packages?page=1",
@@ -1252,43 +1262,25 @@
             "path": "http://dreamcard.az/api/packages",
             "per_page": 10,
             "prev_page_url": null,
-            "to": 1,
-            "total": 1
+            "to": 2,
+            "total": 2
           }
         },
         {
-          "url": "/partners/{id}",
+          "url": "/packages/{id}",
           "request_type": "GET",
           "request_fields": "api_token",
           "response_example": {
             "status": 200,
             "data": {
-              "id": 1,
-              "name": "Partner",
-              "username": "partner",
-              "first_entry": 1,
+              "id": 6,
+              "name": "DREAMER15",
+              "price": "30.00",
+              "discount_price": "18.00",
+              "duration": 10,
               "deleted_at": null,
-              "created_at": "2017-12-10 10:32:26",
-              "updated_at": "2017-12-10 10:32:26",
-              "category": {
-                "id": 5,
-                "name": "testCategory",
-                "deleted_at": null,
-                "created_at": "2017-12-09 20:07:41",
-                "updated_at": "2017-12-09 20:07:41",
-                "small_icon": {
-                  "id": 2,
-                  "url": "a02318fbba2ebbd465d872721f5385d4.jpeg"
-                },
-                "large_icon": {
-                  "id": 3,
-                  "url": "0bc29bc2b2352d12bd4bed1b68a06d65.jpeg"
-                }
-              },
-              "photo": {
-                "id": 8,
-                "url": "6f4208e0152891a7c89a65f6f5d0800a.jpeg"
-              }
+              "created_at": "2018-01-25 00:37:50",
+              "updated_at": "2018-01-25 00:58:30"
             }
           }
         }

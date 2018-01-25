@@ -22,7 +22,8 @@ class CategoryController extends Controller
         {
             if (!Category::arrangeUser()->where('name_az', $request->get('name_az'))->where('name_ru', $request->get('name_ru'))->where('name_en', $request->get('name_en'))->exists())
             {
-//                $small_icon = new Photo();
+                $mimeType = $request->file('large_icon')->getMimeType();
+                $small_icon = new Photo();
 //                $small_icon_result = $small_icon->upload($request->file('small_icon'), 'uploads/photos/categories/');
 
                 $large_icon = new Photo();
@@ -32,11 +33,13 @@ class CategoryController extends Controller
                 {
                     if ($large_icon_result == 200)
                     {
+                        $small_icon->url = $large_icon->resize($mimeType, 100, 100, 'uploads/photos/categories/');
+                        $small_icon->save();
                         $category = new Category();
                         $category->name_az = $request->get('name_az');
                         $category->name_ru = $request->get('name_ru');
                         $category->name_en = $request->get('name_en');
-                        $category->small_icon_id = /*$small_icon->id;*/ $large_icon->id;
+                        $category->small_icon_id = $small_icon->id;
                         $category->large_icon_id = $large_icon->id;
 
                         if ($request->has('order_by'))
@@ -96,7 +99,7 @@ class CategoryController extends Controller
     public function delete($id)
     {
         $category = Category::arrangeUser()->find($id);
-//        $category->large_icon->remove();
+        $category->large_icon->remove();
         $category->small_icon->remove();
         $category->forceDelete();
         $result = ['status' => 200];

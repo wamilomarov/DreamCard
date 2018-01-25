@@ -66,7 +66,7 @@ class PartnerController extends Controller
 
             }
 
-            if ($request->hasFile('photo')) {
+            if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
                 $photo = new Photo();
                 $photo_result = $photo->upload($request->file('photo'), 'uploads/photos/partners/');
 

@@ -108,6 +108,8 @@ $router->post('/packages/update', 'PackageController@update');
 $router->get('/packages/delete/{id}', 'PackageController@delete');
 $router->get('/packages', ['middleware' => ['auth'], 'uses' => 'PackageController@getPackages']);
 $router->get('/packages/{id}', 'PackageController@get');
+$router->get('/packages/disable/{id}', 'PackageController@disable');
+$router->get('/packages/restore/{id}', 'PackageController@restore');
 
 $router->post('/news','NewsController@create');
 $router->post('/news/update','NewsController@update');

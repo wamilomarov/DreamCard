@@ -57,7 +57,7 @@ class Category extends BaseModel
     public function deleteSmallIcon()
     {
         $photo = Photo::find($this->small_icon_id);
-        return $photo->remove('uploads/photos/categories/');
+        return $photo->remove();
     }
 
     public function deleteLargeIcon()

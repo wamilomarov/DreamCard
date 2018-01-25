@@ -114,6 +114,7 @@ class CampaignController extends Controller
             if ($photo_result == 200) {
                 $campaign->deletePhoto();
                 $campaign->photo_id = $photo->id;
+
             } else {
                 return response(['status' => $photo_result]);
             }

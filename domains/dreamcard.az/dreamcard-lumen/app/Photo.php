@@ -56,7 +56,7 @@ class Photo extends Model
         return $this->delete();
     }
 
-    public function resize($imagepath, $new_height, $new_width){
+    public function test($imagepath, $new_height, $new_width){
         $src = imagecreatefromjpeg($imagepath);
         list($width, $height) = getimagesize($imagepath);
         $tmp = imagecreatetruecolor($new_width, $new_height);
@@ -66,15 +66,18 @@ class Photo extends Model
         imagedestroy($tmp);
     }
 
-    public function test($mimeType, $new_width, $new_height)
+    public function resize($mimeType, $new_width, $new_height, $destination)
     {
         $imagepath = $this->url;
         $src = $mimeType == 'image/png' ? imagecreatefrompng($imagepath) : imagecreatefromjpeg($imagepath);
         list($width, $height) = getimagesize($imagepath);
         $tmp = imagecreatetruecolor(100, 100);
         imagecopyresampled($tmp, $src, 0,0,0,0,$new_width, $new_height, $width,$height);
-        imagejpeg($tmp, "uploads/done.jpg", 100);
+        $name = md5(uniqid());
+        imagejpeg($tmp, "$destination"."$name.jpeg", 100);
         imagedestroy($src);
         imagedestroy($tmp);
+        return "$destination/$name.jpeg";
     }
+
 }
