@@ -103,7 +103,7 @@ class Partner extends Model
 
     public function campaign()
     {
-        return $this->hasOne(Campaign::class)->latest();
+        return $this->hasOne(Campaign::class)->where("end_date", ">", DB::raw("NOW()"))->latest();
     }
 
     public function category()

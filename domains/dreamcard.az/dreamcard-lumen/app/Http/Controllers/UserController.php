@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Card;
 use App\Category;
 use App\News;
@@ -18,7 +17,8 @@ use App\User;
 use App\Partner;
 use Facebook\Facebook;
 use Google_Client;
-use Google_Service_Drive;
+use Google_Service_Oauth2;
+use Google_Service_Plus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -170,32 +170,25 @@ class UserController extends Controller
     public function googleLogin(Request $request){
         $client = new Google_Client(
             [
-                'client_id' => "152790946469-o2g3fo0undot6764mpmggialtcebsaoo.apps.googleusercontent.com",
-                'client_secret' => "__3yBatUA4J72k0jkAnZafG5"
+                'client_id' => "152790946469-9ihrbu8djntpaofqlcv4ctqbo6774cut.apps.googleusercontent.com"
             ]);
-        $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
-        var_dump($token); exit;
-        $client->setAccessToken($token);
+        $client->setApplicationName("Dreamcard");
 
         $payload = $client->verifyIdToken($request->get('id_token'));
+//        var_dump($payload);
         if ($payload) {
-            $userid = $payload['sub'];
-            var_dump($userid); exit;
-            // If request specified a G Suite domain:
-            //$domain = $payload['hd'];
+            $google_id = $payload['sub'];
+            $email = $payload['email'];
+            $first_name = $payload['given_name'];
+            $last_name = $payload['family_name'];
         } else {
-            var_dump($client); exit;
-            // Invalid ID token
+            return response()->json(['status' => 401]);
         }
 
 
-      list($first_name, $last_name) = explode(' ', $me->getName(), 2);
-      $facebook_id = $me->getId();
-      $email = $me->getEmail();
-
-      if (User::where('facebook_id', $facebook_id)->exists())
+      if (User::where('google_id', $google_id)->exists())
       {
-          $user = User::where('facebook_id', $facebook_id)->first();
+          $user = User::where('google_id', $google_id)->with('card')->first();
           $user->api_token = md5(microtime());
           $user->save();
           $user = $user->makeVisible(['api_token']);
@@ -203,8 +196,8 @@ class UserController extends Controller
       }
       elseif (User::where('email', $email)->exists())
       {
-          $user = User::where('email', $email)->first();
-          $user->facebook_id = $facebook_id;
+          $user = User::where('email', $email)->with('card')->first();
+          $user->google_id = $google_id;
           $user->api_token = md5(microtime());
           $user->save();
           $user = $user->makeVisible(['api_token']);
@@ -215,7 +208,7 @@ class UserController extends Controller
           $user = new User();
           $user->first_name = $first_name;
           $user->last_name = $last_name;
-          $user->facebook_id = $facebook_id;
+          $user->google_id = $google_id;
           $user->email = $email;
           if($user->save())
           {
@@ -223,7 +216,7 @@ class UserController extends Controller
               $card->user_id = $user->id;
               $card->generateNumber();
               $card->save();
-              $user = User::find($user->id);
+              $user = User::with('card')->find($user->id);
               $user->api_token = md5(microtime());
               $user->save();
               $user = $user->makeVisible(['api_token']);
@@ -350,26 +343,26 @@ class UserController extends Controller
         $purchases = Purchase::where('card_id', Auth::user()->card->id);
         if ($request->has('from_date'))
         {
-            $purchases = $purchases->where('purchases.created_at', '>', $request->get('from_date'));
+            $purchases = $purchases->whereDate('purchases.created_at', '>=', $request->get('from_date'));
         }
         if ($request->has('to_date'))
         {
-            $purchases = $purchases->where('purchases.created_at', '<', $request->get('to_date'));
+            $purchases = $purchases->whereDate('purchases.created_at', '<=', $request->get('to_date'));
         }
-        if ($request->has('category_id') && $request->get('category_id') != -1)
+        if ($request->has('category_id') && $request->get('category_id') != -1 && $request->get('category_id') != null)
         {
             $category_id = $request->get('category_id');
-            $purchases = $purchases->with(
-                [
-                    'partner' => function ($query) use ($category_id)
+            $purchases = $purchases->with('partner')->whereHas(
+
+                    'partner', function ($query) use ($category_id)
             {
                 return $query->where('partners.category_id', $category_id)->withTrashed();
             }
-                ]);
+                );
         }
         else
         {
-            $purchases = $purchases->with(['partner' => function($query) { return $query->withTrashed();}]);
+            $purchases = $purchases->with('partner')->whereHas('partner', function($query) { return $query->withTrashed();});
         }
 
         $purchases = $purchases->latest()->paginate(15);
