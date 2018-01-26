@@ -20,6 +20,7 @@ use Google_Client;
 use Google_Service_Oauth2;
 use Google_Service_Plus;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -366,6 +367,7 @@ class UserController extends Controller
         }
 
         $purchases = $purchases->latest()->paginate(15);
+        $purchases->appends($request->all())->render();
         $status = collect(['status' => 200]);
         $result = $status->merge($purchases);
         return response()->json($result);
@@ -380,10 +382,11 @@ class UserController extends Controller
         return response($result);
     }
 
-    public function getUsers()
+    public function getUsers(Request $request)
     {
         $users = User::withTrashed()->paginate(10);
         $status = collect(['status' => 200]);
+        $users->appends($request->all())->render();
         $result = $status->merge($users);
         return response($result);
     }
@@ -632,23 +635,25 @@ class UserController extends Controller
         return response()->json($result);
     }
 
-    public function favoriteCategories()
+    public function favoriteCategories(Request $request)
     {
         $favorites = DB::table("partners")
         ->join("favorites", "favorites.partner_id", "=", "partners.id")
             ->where("favorites.user_id", Auth::user()->id)
             ->whereNull('partners.deleted_at')
                 ->pluck("partners.category_id")->toArray();
-        $categories = Category::whereIn("id", $favorites)->paginate();
+        $categories = Category::whereIn("id", $favorites)->paginate(10);
         $status = collect(['status' => 200]);
+        $categories->appends($request->all())->render();
         $result = $status->merge($categories);
         return response($result);
     }
 
-    public function favoritePartners($category_id)
+    public function favoritePartners(Request $request, $category_id)
     {
       $favorites = Auth::user()->favoritePartners($category_id)
           ->with(['lastNews'])->paginate(10);
+      $favorites->appends($request->all())->render();
       $status = collect(['status' => 200]);
       $result = $status->merge($favorites);
       return response($result);
@@ -690,8 +695,8 @@ class UserController extends Controller
     if($request->has('q') && $request->get('q') != '')
     {
         $q = $request->get('q');
-        $news = News::arrangeUser()->where('title', 'like', "%$q%")->get();
-        $partners = Partner::arrangeUser()->has('campaign')->where('name', 'like', "%$q%")->get();
+        $news = News::arrangeUser()->where('title', 'like', "%$q%")->paginate(5);
+        $partners = Partner::arrangeUser()->has('campaign')->where('name', 'like', "%$q%")->paginate(5);
         $operation_history = Purchase::with('partner')
             ->whereHas('partner', function ($query) use ($q){
                     return $query->where('name', 'LIKE', "%$q%")->withTrashed();
@@ -700,16 +705,25 @@ class UserController extends Controller
                 return $query->withTrashed();
             })
             ->where('card_id', Auth::user()->card->id)
-            ->get();
-        $result = [
-            'status' => 200,
-            'data' =>
-                [
-                'news' => $news,
-                'partners' => $partners,
-                'operation_history' => $operation_history
-                ]
-                  ];
+            ->paginate(5);
+        $status = collect(['status' => 200]);
+        $partners->appends($request->all())->render();
+        $result = $status->merge($partners);
+        $result['data'] =
+            [
+                'news' => $news->items(),
+                'partners' => $partners->items(),
+                'operation_history' => $operation_history->items()
+            ];
+//        $result = [
+//            'status' => 200,
+//            'data' =>
+//                [
+//                'news' => $news,
+//                'partners' => $partners,
+//                'operation_history' => $operation_history
+//                ]
+//                  ];
       return response($result);
     }
     else

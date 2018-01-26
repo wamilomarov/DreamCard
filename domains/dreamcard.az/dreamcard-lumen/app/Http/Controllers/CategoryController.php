@@ -83,18 +83,20 @@ class CategoryController extends Controller
         return response($result);
     }
 
-    public function getCategories()
+    public function getCategories(Request $request)
     {
         $categories = Category::arrangeUser()->paginate(10);
         $status = collect(['status' => 200]);
+        $categories->appends($request->all())->render();
         $result = $status->merge($categories);
         return response($result);
     }
 
-    public function getPartners($id)
+    public function getPartners(Request $request, $id)
     {
         $partners = Partner::arrangeUser()->with('campaign')->where('category_id', $id)->paginate(10);
         $status = collect(['status' => 200]);
+        $partners->appends($request->all())->render();
         $result = $status->merge($partners);
         return response($result);
     }

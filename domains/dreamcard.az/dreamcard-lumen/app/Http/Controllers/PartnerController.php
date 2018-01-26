@@ -101,15 +101,16 @@ class PartnerController extends Controller
         return response($result);
     }
 
-    public function getPartners()
+    public function getPartners(Request $request)
     {
         $partners = Partner::arrangeUser()->paginate(10);
         $status = collect(['status' => 200]);
+        $partners->appends($request->all())->render();
         $result = $status->merge($partners);
         return response($result);
     }
 
-    public function getCampaigns($id)
+    public function getCampaigns(Request $request, $id)
     {
         if (Auth::user()->getTable() == 'users')
         {
@@ -120,6 +121,7 @@ class PartnerController extends Controller
             $campaigns = Campaign::arrangeUser()->where('partner_id', $id)->orderBy('deleted_at')->paginate(10);
 
         }
+        $campaigns->appends($request->all())->render();
         $status = collect(['status' => 200]);
         $result = $status->merge($campaigns);
         $result->put('partner', Partner::withTrashed()->find($id));

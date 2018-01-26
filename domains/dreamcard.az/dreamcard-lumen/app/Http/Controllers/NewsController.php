@@ -67,10 +67,11 @@ class NewsController extends Controller
         return response(['status' => 200]);
     }
 
-    public function getNews()
+    public function getNews(Request $request)
     {
         $news = News::arrangeUser()->latest()->paginate(10);
         $status = collect(['status' => 200]);
+        $news->appends($request->all())->render();
         $result = $status->merge($news);
         return response($result);
     }

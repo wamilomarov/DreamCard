@@ -90,9 +90,8 @@ class PackageController extends Controller
 
     public function getPackages()
     {
-        $packages = Package::arrangeUser()->paginate(10);
-        $status = collect(['status' => 200]);
-        $result = $status->merge($packages);
+        $packages = Package::arrangeUser()->get();
+        $result = ['status' => 200, 'data' => $packages];
         return response($result);
     }
 
