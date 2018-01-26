@@ -13,16 +13,31 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class Campaign extends Model
+class Campaign extends BaseModel
 {
     use SoftDeletes;
     protected $fillable = ['end_date'];
 
-    protected $hidden = ['partner_id', 'created_at', 'updated_at', 'photo_id'];
+    protected $hidden = ['partner_id', 'created_at', 'updated_at', 'photo_id', 'title_en', 'title_az', 'title_ru'];
 
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['photo', 'expired'];
+    protected $appends = ['photo', 'expired', 'title'];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        if (Auth::user()->getTable() == 'admins')
+        {
+            $this->makeVisible(['title_az', 'title_en', 'title_ru']);
+        }
+    }
+
+    public function getTitleAttribute()
+    {
+        $column = "title_$this->language";
+        return $this->$column;
+    }
 
     public function getExpiredAttribute()
     {

@@ -19,7 +19,7 @@ class NewsController extends Controller
     public function create(Request $request)
     {
         if ($request->has('title') && $request->has('content') &&
-            $request->hasFile('photo') && $request->has('category_id'))
+            $request->hasFile('photo') && $request->has('partner_id'))
         {
             $news = new News();
 
@@ -32,7 +32,7 @@ class NewsController extends Controller
                 $news->photo_id = $photo->id;
                 $news->title = $request->get('title');
                 $news->content = $request->get('content');
-                $news->category_id = $request->get('category_id');
+                $news->partner_id = $request->get('partner_id');
                 $news->save();
 
                 $result = ['status' => 200, 'data' => $news];
@@ -91,9 +91,9 @@ class NewsController extends Controller
                 $news->content = $request->get('content');
             }
 
-            if ($request->has('category_id'))
+            if ($request->has('partner_id'))
             {
-                $news->category_id = $request->get('category_id');
+                $news->partner_id = $request->get('partner_id');
             }
 
             if ($request->hasFile('photo'))

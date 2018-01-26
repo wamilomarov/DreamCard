@@ -72,12 +72,16 @@ class Photo extends Model
         $src = $mimeType == 'image/png' ? imagecreatefrompng($imagepath) : imagecreatefromjpeg($imagepath);
         list($width, $height) = getimagesize($imagepath);
         $tmp = imagecreatetruecolor(100, 100);
+        imagealphablending($tmp, false);
+        imagesavealpha($tmp,true);
+        $transparency = imagecolorallocatealpha($tmp, 255, 255, 255, 127);
+        imagefilledrectangle($tmp, 0, 0, $new_width, $new_height, $transparency);
         imagecopyresampled($tmp, $src, 0,0,0,0,$new_width, $new_height, $width,$height);
         $name = md5(uniqid());
-        imagejpeg($tmp, "$destination"."$name.jpeg", 100);
+        imagepng($tmp, "$destination"."$name.png", 3);
         imagedestroy($src);
         imagedestroy($tmp);
-        return "$destination/$name.jpeg";
+        return "$destination$name.png";
     }
 
 }

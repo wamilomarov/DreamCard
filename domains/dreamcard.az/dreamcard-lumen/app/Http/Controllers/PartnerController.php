@@ -25,7 +25,7 @@ class PartnerController extends Controller
 //        $request = $request->json();
         if ($request->has('name') && $request->has('category_id') && $request->hasFile('photo')
             && $request->has('username') && $request->has('password')) {
-            if (Partner::arrangeUser()->where('username', $request->has('username'))->exists()) {
+            if (Partner::arrangeUser()->where('username', $request->get('username'))->exists()) {
                 $result = ['status' => 413];
                 return response()->json($result);
             }
@@ -139,7 +139,7 @@ class PartnerController extends Controller
     public function delete($id)
     {
         $partner = Partner::arrangeUser()->find($id);
-        $partner->photo->remove();
+        $partner->photo != null ? $partner->photo->remove() : $a = "";
         $partner->forceDelete();
         $result = ['status' => 200];
         return response($result);

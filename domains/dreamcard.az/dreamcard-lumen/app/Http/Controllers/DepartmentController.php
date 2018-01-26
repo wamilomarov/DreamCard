@@ -151,7 +151,7 @@ class DepartmentController extends Controller
     public function delete($id)
     {
         $department = Department::arrangeUser()->find($id);
-        $department->photo->remove();
+        $department->photo != null ? $department->photo->remove() : $a = "";
         $department->forceDelete();
         $result = ['status' => 200];
         return response($result);

@@ -150,7 +150,6 @@ class AdminController extends Controller
     {
         $admin = Admin::find($id);
         $admin->forceDelete();
-        $admin->photo->remove();
         $result = ['status' => 200];
         return response()->json($result);
 

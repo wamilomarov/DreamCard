@@ -35,6 +35,9 @@ class CategoryController extends Controller
                     {
                         $small_icon->url = $large_icon->resize($mimeType, 100, 100, 'uploads/photos/categories/');
                         $small_icon->save();
+//                        var_dump($large_icon->id);
+//                        var_dump($small_icon->id);
+//                        exit;
                         $category = new Category();
                         $category->name_az = $request->get('name_az');
                         $category->name_ru = $request->get('name_ru');
@@ -90,7 +93,7 @@ class CategoryController extends Controller
 
     public function getPartners($id)
     {
-        $partners = Partner::arrangeUser()->has('campaign')->where('category_id', $id)->paginate(10);
+        $partners = Partner::arrangeUser()->with('campaign')->where('category_id', $id)->paginate(10);
         $status = collect(['status' => 200]);
         $result = $status->merge($partners);
         return response($result);
@@ -99,8 +102,8 @@ class CategoryController extends Controller
     public function delete($id)
     {
         $category = Category::arrangeUser()->find($id);
-        $category->large_icon->remove();
-        $category->small_icon->remove();
+        $category->small_icon != null ? $category->small_icon->remove() : $a = "";
+        $category->large_icon != null ? $category->large_icon->remove() : $a = "";
         $category->forceDelete();
         $result = ['status' => 200];
         return response($result);
@@ -124,31 +127,21 @@ class CategoryController extends Controller
               $category->name_ru = $request->get('name_ru');
             }
 
-            if ($request->hasFile('small_icon'))
-            {
-                $small_icon = new Photo();
-                $small_icon_result = $small_icon->upload($request->file('small_icon'), 'uploads/photos/categories/');
-
-                if ($small_icon_result == 200)
-                {
-                    $category->deleteSmallIcon();
-                    $category->small_icon_id = $small_icon->id;
-                }
-                else
-                {
-                    return response(['status' => $small_icon_result]);
-                }
-            }
-
             if ($request->hasFile('large_icon'))
             {
                 $large_icon = new Photo();
+                $mimeType = $request->file('large_icon');
                 $large_icon_result = $large_icon->upload($request->file('large_icon'), 'uploads/photos/categories/');
 
                 if ($large_icon_result == 200)
                 {
-                    $category->large_icon->remove();
+                    $small_icon = new Photo();
+                    $small_icon->url = $large_icon->resize($mimeType, 100, 100, 'uploads/photos/categories/');
+                    $small_icon->save();
+                    $category->small_icon != null ? $category->small_icon->remove() : $a = "";
+                    $category->large_icon != null ? $category->large_icon->remove() : $a = "";
                     $category->large_icon_id = $large_icon->id;
+                    $category->small_icon_id = $small_icon->id;
                 }
                 else
                 {

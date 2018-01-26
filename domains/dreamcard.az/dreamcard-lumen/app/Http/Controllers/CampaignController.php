@@ -21,7 +21,7 @@ class CampaignController extends Controller
 {
   public function create(Request $request){
 
-    if($request->has('title') && $request->has('partner_id') && $request->hasFile('photo')
+    if($request->has('title_en') && $request->has('title_ru') && $request->has('title_az') && $request->has('partner_id') && $request->hasFile('photo')
       && $request->has('all_products_discount') && $request->has('special_product_discount') && $request->has('end_date')
     ){
       if(Campaign::arrangeUser()->where('partner_id', $request->has('partner_id'))->exists()){
@@ -45,12 +45,20 @@ class CampaignController extends Controller
       $end_date = date_create("$year-$month-$day 00:00:00");
 
       $campaign = new Campaign();
-      $campaign->title = $request->get('title');
+      $campaign->title_en = $request->get('title_en');
+      $campaign->title_ru = $request->get('title_ru');
+      $campaign->title_az = $request->get('title_az');
       $campaign->partner_id = $request->get('partner_id');
       $campaign->photo_id = $photo->id;
       $campaign->all_products_discount = $request->get('all_products_discount');
       $campaign->special_product_discount = ($request->get('special_product_discount') == 0 || $request->get('special_product_discount') == null) ? $request->get('all_products_discount') : $request->get('special_product_discount');
       $campaign->end_date = date_format($end_date, "Y-m-d H:i:s");
+      DB::table('campaigns')->where('partner_id', $campaign->partner_id)
+          ->update(
+              [
+                  'deleted_at' => DB::raw("NOW()")
+              ]
+          );
       $campaign->save();
       $result = ['status' => 200];
 
@@ -65,7 +73,7 @@ class CampaignController extends Controller
   public function getCampaigns(){
 //    $campaigns = Campaign::arrangeUser()->with('partner')->orderBy('created_at', 'desc')->paginate(10);
 //    $data = ['data' => $campaigns];
-    $campaigns = Partner::arrangeUser()->with('campaign')->orderBy('created_at', 'desc')->paginate(10);
+    $campaigns = Partner::arrangeUser()->with('campaign')->has('campaign')->orderBy('created_at', 'desc')->paginate(10);
     $status = collect(['status' => 200]);
     $result = $status->merge($campaigns);
 
@@ -82,8 +90,14 @@ class CampaignController extends Controller
     $campaign = Campaign::arrangeUser()->find($request->get('id'));
 
     if($campaign){
-      if($request->has('title')){
-        $campaign->title = $request->get('title');
+      if($request->has('title_en')){
+        $campaign->title_en = $request->get('title_en');
+      }
+      if($request->has('title_ru')){
+        $campaign->title_ru = $request->get('title_ru');
+      }
+      if($request->has('title_az')){
+        $campaign->title_az = $request->get('title_az');
       }
       if($request->has('department_id')){
         $campaign->department_id = $request->get('department_id');
@@ -147,8 +161,14 @@ class CampaignController extends Controller
 
   public function restore($id)
     {
-        $partner = Campaign::arrangeUser()->find($id);
-        $partner->restore();
+        $campaign = Campaign::arrangeUser()->find($id);
+        DB::table('campaigns')->where('partner_id', $campaign->partner_id)
+            ->update(
+                [
+                    'deleted_at' => DB::raw("NOW()")
+                ]
+            );
+        $campaign->restore();
         $result = ['status' => 200];
         return response($result);
     }
