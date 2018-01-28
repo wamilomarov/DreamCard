@@ -16,7 +16,7 @@ class PackageController extends Controller
 {
     public function create(Request $request)
     {
-//        $request = $request->json();
+        $request = $request->json();
         if ($request->has('name') && $request->has('price') && $request->has('duration'))
         {
             if (Package::where('name', $request->get('name'))->exists())
@@ -49,6 +49,8 @@ class PackageController extends Controller
 
     public function update(Request $request)
     {
+//        var_dump($request->input('api_token'));
+        $request = $request->json();
         $package = Package::arrangeUser()->find($request->get('id'));
 
         if ($package)
@@ -65,9 +67,17 @@ class PackageController extends Controller
 
             }
 
-            if ($request->has('discount_price') && $request->get('discount_price') != 0 && $request->get('discount_price') != null)
+            if ($request->has('discount_price') && $request->get('discount_price') != null)
             {
-                $package->discount_price = $request->get('discount_price');
+                if ($request->get('discount_price') == 0)
+                {
+                    $package->discount_price = $package->price;
+                }
+                else
+                {
+                    $package->discount_price = $request->get('discount_price');
+                }
+
 
             }
 

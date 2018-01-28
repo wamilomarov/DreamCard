@@ -34,43 +34,32 @@ class AuthServiceProvider extends ServiceProvider
         // the User instance via an API token or any other method necessary.
 
         $this->app['auth']->viaRequest('api', function ($request) {
-            if ($request->has('api_token')) {
-                $user =  User::where('api_token', $request->input('api_token'))->first();
-                if ($user)
-                {
+            $req = $request->json();
+            if ($request->has('api_token') || $req->has('api_token')) {
+                $user = User::where('api_token', $request->input('api_token'))->first();
+                if ($user) {
                     return $user;
-                }
-                else
-                {
+                } else {
                     $partner = Partner::where('api_token', $request->input('api_token'))->first();
-                    if ($partner)
-                    {
+                    if ($partner) {
                         return $partner;
-                    }
-                    else
-                    {
+                    } else {
                         $department = Department::where('api_token', $request->input('api_token'))->first();
-                        if ($department)
-                        {
+                        if ($department) {
                             return $department;
-                        }
-                        else
-                        {
+                        } else {
                             $admin = Admin::where('api_token', $request->input('api_token'))->first();
-                            if ($admin)
-                            {
+                            if ($admin) {
                                 return $admin;
-                            }
-                            else
-                            {
+                            } else {
+                                echo 1;
                                 return null;
                             }
                         }
                     }
                 }
-            }
-            else
-            {
+            } else {
+                echo 2;
                 return null;
             }
         });
