@@ -737,6 +737,9 @@ class UserController extends Controller
   public function faq()
   {
       $language = Auth::user()->language;
+      if($language == null){
+        $language = "az";
+      }
       $faqs = DB::table('faq')->select("question_$language AS question", "answer_$language AS answer", "created_at" )->get();
       $result = ['status' => 200, 'data' => $faqs];
 
