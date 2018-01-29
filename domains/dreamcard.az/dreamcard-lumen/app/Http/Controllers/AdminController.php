@@ -13,6 +13,7 @@ use App\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -170,8 +171,14 @@ class AdminController extends Controller
         return response($result);
     }
 
-    public function faqCreate(Request $request){
+    public function getFaq($id){
+      $faq = DB::table('faq')->where('id', $id)->first();
+      $result = ['status' => 200, 'data' => $faq];
+      return response($result);
+    }
 
+    public function faqCreate(Request $request){
+      $request = $request->json();
       if(
         $request->has('question_en') &&
         $request->has('question_az') &&
@@ -200,6 +207,8 @@ class AdminController extends Controller
     }
 
     public function faqUpdate(Request $request){
+
+      $request = $request->json();
 
       $faq = DB::table('faq')->where('id', $request->get('id'))->get();
 

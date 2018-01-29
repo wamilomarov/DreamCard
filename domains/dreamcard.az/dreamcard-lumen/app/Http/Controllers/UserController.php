@@ -740,7 +740,7 @@ class UserController extends Controller
       if($language == null){
         $language = "az";
       }
-      $faqs = DB::table('faq')->select("question_$language AS question", "answer_$language AS answer", "created_at" )->get();
+      $faqs = DB::table('faq')->select("id", "question_$language AS question", "answer_$language AS answer", "created_at")->get();
       $result = ['status' => 200, 'data' => $faqs];
 
 

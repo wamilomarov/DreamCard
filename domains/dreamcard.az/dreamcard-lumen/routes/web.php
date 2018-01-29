@@ -31,6 +31,7 @@ $router->post('/admin/login', 'AdminController@login');
 $router->post('/admin/register', 'AdminController@create');
 $router->post('/admin/logout', ['middleware' => ['auth', 'admin'], 'uses' => 'AdminController@logout']);
 $router->post('/admin/faq', 'AdminController@faqCreate');
+$router->get('/admin/faq/{id}', 'AdminController@getFaq');
 $router->post('/admin/faq/update', 'AdminController@faqUpdate');
 $router->get('/admin/faq/delete/{id}', 'AdminController@faqDelete');
 
