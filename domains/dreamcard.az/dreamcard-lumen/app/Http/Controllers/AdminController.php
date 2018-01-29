@@ -210,35 +210,34 @@ class AdminController extends Controller
 
       $request = $request->json();
 
-      $faq = DB::table('faq')->where('id', $request->get('id'))->get();
+      $faq = DB::table('faq')->where('id', $request->get('id'))->first();
 
       if($faq){
 
         if($request->has('question_en')){
-          $faq->question_en = $request->get('question_en');
+            DB::table('faq')->where('id', $faq->id)->update(['question_en' => $request->get('question_en')]);
         }
 
         if($request->has('question_ru')){
-          $faq->question_ru = $request->get('question_ru');
+            DB::table('faq')->where('id', $faq->id)->update(['question_ru' => $request->get('question_ru')]);
         }
 
         if($request->has('question_az')){
-          $faq->question_az = $request->get('question_az');
+            DB::table('faq')->where('id', $faq->id)->update(['question_az' => $request->get('question_az')]);
         }
 
-        if($request->answer('answer_az')){
-          $faq->answer_az = $request->get('answer_az');
+        if($request->has('answer_az')){
+            DB::table('faq')->where('id', $faq->id)->update(['answer_az' => $request->get('answer_az')]);
         }
 
-        if($request->answer('answer_ru')){
-          $faq->answer_ru = $request->get('answer_ru');
+        if($request->has('answer_ru')){
+            DB::table('faq')->where('id', $faq->id)->update(['answer_ru' => $request->get('answer_ru')]);
         }
 
-        if($request->answer('answer_az')){
-          $faq->answer_en = $request->get('answer_en');
+        if($request->has('answer_en')){
+            DB::table('faq')->where('id', $faq->id)->update(['answer_en' => $request->get('answer_en')]);
         }
 
-        $faq->save();
         $result = ['status' => 200];
 
       }else{
