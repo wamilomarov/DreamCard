@@ -71,7 +71,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function scopeArrangeUser($query)
     {
-        if (Auth::user()->getTable() == 'admins')
+        if (Auth::user() != null && Auth::user()->getTable() == 'admins')
         {
             return $query->withTrashed();
         }

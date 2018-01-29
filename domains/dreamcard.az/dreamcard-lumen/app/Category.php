@@ -76,7 +76,7 @@ class Category extends BaseModel
 
     public function scopeArrangeUser($query)
     {
-        if (Auth::user()->getTable() == 'admins')
+        if (Auth::user() != null && Auth::user()->getTable() == 'admins')
         {
             return $query->withTrashed();
         }

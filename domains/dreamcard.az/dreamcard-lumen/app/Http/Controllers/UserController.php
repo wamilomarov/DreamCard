@@ -96,6 +96,7 @@ class UserController extends Controller
     }
 
     public function fbLogin(Request $request){
+        $request = $request->json();
       $fb = new Facebook([
         'app_id' => '126332011463258',
         'app_secret' => '2212a0100df3d8b1ac36a0af452b8191',
@@ -695,7 +696,7 @@ class UserController extends Controller
     if($request->has('q') && $request->get('q') != '')
     {
         $q = $request->get('q');
-        $news = News::arrangeUser()->where('title', 'like', "%$q%")->paginate(5);
+        $news = News::where('title', 'like', "%$q%")->paginate(5);
         $partners = Partner::arrangeUser()->has('campaign')->where('name', 'like', "%$q%")->paginate(5);
         $operation_history = Purchase::with('partner')
             ->whereHas('partner', function ($query) use ($q){

@@ -70,7 +70,7 @@ class Campaign extends BaseModel
 
     public function scopeArrangeUser($query)
     {
-        if (Auth::user()->getTable() != 'users')
+        if (Auth::user() != null && Auth::user()->getTable() != 'users')
         {
             return $query->withTrashed();
         }

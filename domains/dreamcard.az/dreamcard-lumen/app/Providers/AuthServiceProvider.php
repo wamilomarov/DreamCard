@@ -52,14 +52,12 @@ class AuthServiceProvider extends ServiceProvider
                             if ($admin) {
                                 return $admin;
                             } else {
-                                echo 1;
                                 return null;
                             }
                         }
                     }
                 }
             } else {
-                echo 2;
                 return null;
             }
         });

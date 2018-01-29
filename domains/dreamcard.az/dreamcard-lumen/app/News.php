@@ -34,6 +34,8 @@ class News extends Model
         return Photo::find($this->photo_id);
     }
 
+  
+
     public function getCategoryAttribute()
     {
         $partner = Partner::arrangeUser()->find($this->partner_id);
@@ -58,17 +60,7 @@ class News extends Model
         return $photo->remove('uploads/photos/news/');
     }
 
-    public function scopeArrangeUser($query)
-    {
-      if (Auth::user()->getTable() == 'admins')
-      {
-        return $query->withTrashed();
-      }
-      else
-      {
-        return $query->has('partner')->has('partner.category');
-      }
-    }
+
 
     public function partner()
     {

@@ -55,7 +55,7 @@ class Department extends Model implements AuthenticatableContract, AuthorizableC
 
     public function scopeArrangeUser($query)
     {
-        if (Auth::user()->getTable() == 'admins' || Auth::user()->getTable() == 'partners')
+        if (Auth::user() != null && (Auth::user()->getTable() == 'admins' || Auth::user()->getTable() == 'partners'))
         {
             return $query->withTrashed();
         }
