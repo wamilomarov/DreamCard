@@ -19,7 +19,7 @@ class BaseModel extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->language = Auth::user()->language != null ? Auth::user()->language : 'az';
+        $this->language = Auth::user() != null && Auth::user()->language != null ? Auth::user()->language : 'az';
     }
 
     public function sendEmail()

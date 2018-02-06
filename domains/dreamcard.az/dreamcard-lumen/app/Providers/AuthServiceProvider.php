@@ -6,6 +6,7 @@ use App\Admin;
 use App\Department;
 use App\Partner;
 use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,22 +34,34 @@ class AuthServiceProvider extends ServiceProvider
         // should return either a User instance or null. You're free to obtain
         // the User instance via an API token or any other method necessary.
 
-        $this->app['auth']->viaRequest('api', function ($request) {
-            $req = $request->json();
-            if ($request->has('api_token') || $req->has('api_token')) {
-                $user = User::where('api_token', $request->input('api_token'))->first();
+        $this->app['auth']->viaRequest('api', function (Request $request) {
+//            $request = $request->request;
+//            var_dump($request->getContentType());
+//            var_dump($_SERVER['CONTENT_TYPE']);
+//            exit;
+            if ($request->getContentType() == 'txt')
+            {
+                $request = $request->json();
+                $api_token = $request->get('api_token');
+            }
+            else
+            {
+                $api_token = $request->input('api_token');
+            }
+            if ($request->has('api_token') ) {
+                $user = User::where('api_token', $api_token)->first();
                 if ($user) {
                     return $user;
                 } else {
-                    $partner = Partner::where('api_token', $request->input('api_token'))->first();
+                    $partner = Partner::where('api_token', $api_token)->first();
                     if ($partner) {
                         return $partner;
                     } else {
-                        $department = Department::where('api_token', $request->input('api_token'))->first();
+                        $department = Department::where('api_token', $api_token)->first();
                         if ($department) {
                             return $department;
                         } else {
-                            $admin = Admin::where('api_token', $request->input('api_token'))->first();
+                            $admin = Admin::where('api_token', $api_token)->first();
                             if ($admin) {
                                 return $admin;
                             } else {

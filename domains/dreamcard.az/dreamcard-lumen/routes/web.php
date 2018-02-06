@@ -57,7 +57,8 @@ $router->post('/users/favorite/partners', ['middleware' => ['auth', 'user'], 'us
 $router->get('/users/favorite/partners/{partner_id}/delete', ['middleware' => ['auth', 'user'], 'uses' => 'UserController@deleteFavoritePartner']);
 $router->post('/users/rate/partners/', ['middleware' => ['auth', 'user'], 'uses' => 'PartnerController@rate']);
 $router->get('/users/purchases/history', ['middleware' => ['auth', 'user'], 'uses' => 'UserController@purchasesHistory']);
-$router->get('/users/categories/all', ['middleware' => ['auth', 'user'], 'uses' => 'UserController@categories']);
+$router->get('/users/categories/all', ['middleware' => ['auth'], 'uses' => 'UserController@categories']);
+$router->get('/users/partners/all', ['middleware' => ['auth'], 'uses' => 'UserController@partners']);
 
 
 $router->get('/users/card/generate', ['middleware' => ['auth', 'user'], 'uses' => 'UserController@cardGenerate']);
@@ -108,6 +109,7 @@ $router->post('/packages', ['middleware' => ['auth', 'admin'], 'uses' => 'Packag
 $router->post('/packages/update', ['middleware' => ['auth', 'admin'], 'uses' => 'PackageController@update']);
 $router->get('/packages/delete/{id}', ['middleware' => ['auth', 'admin'], 'uses' => 'PackageController@delete']);
 $router->get('/packages', 'PackageController@getPackages');
+$router->get('/discounted_packages', 'PackageController@getDiscountedPackages');
 $router->get('/packages/{id}', ['middleware' => ['auth', 'admin'], 'uses' => 'PackageController@get']);
 $router->get('/packages/disable/{id}', ['middleware' => ['auth', 'admin'], 'uses' => 'PackageController@disable']);
 $router->get('/packages/restore/{id}', ['middleware' => ['auth', 'admin'], 'uses' => 'PackageController@restore']);

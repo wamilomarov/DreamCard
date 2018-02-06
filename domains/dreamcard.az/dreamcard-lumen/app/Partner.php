@@ -26,7 +26,7 @@ class Partner extends Model
 
     public function getCampaignsCountAttribute()
     {
-        if (Auth::user()->getTable() == 'user')
+        if (Auth::user() != null && Auth::user()->getTable() == 'user')
         {
             return Campaign::where('partner_id', $this->id)->where('end_date', '>', Date('Y-m-d H:i:s'))->count();
         }
@@ -45,13 +45,28 @@ class Partner extends Model
 
     public function getIsFavoriteAttribute()
     {
-        return DB::table('favorites')->where(['user_id' => Auth::user()->id, 'partner_id' => $this->id])->count();
+        if (Auth::user())
+        {
+            return DB::table('favorites')->where(['user_id' => Auth::user()->id, 'partner_id' => $this->id])->count();
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     public function getMyRateAttribute()
     {
-        $rating = DB::table("ratings")->where(['user_id' => Auth::user()->id, 'partner_id' => $this->id])->select('rate')->first();
-        return $rating == null ? 0 : $rating->rate;
+        if (Auth::user())
+        {
+            $rating = DB::table("ratings")->where(['user_id' => Auth::user()->id, 'partner_id' => $this->id])->select('rate')->first();
+            return $rating == null ? 0 : $rating->rate;
+        }
+        else
+        {
+            return 0;
+        }
+
     }
 
     public function getCategoryAttribute()
@@ -110,4 +125,26 @@ class Partner extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function isEditableByGuard()
+    {
+        if (Auth::user()) {
+            switch (Auth::user()->getTable()) {
+                case "admins" :
+                    return true;
+                case "partners" :
+                    return $this->partner->id == Auth::user()->id ? true : false;
+                case "department" :
+                    return $this->id == Auth::user()->id ? true : false;
+                default :
+                    return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
 }

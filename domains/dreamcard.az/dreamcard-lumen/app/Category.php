@@ -27,7 +27,7 @@ class Category extends BaseModel
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        if (Auth::user()->getTable() == 'admins')
+        if (Auth::user() != null && Auth::user()->getTable() == 'admins')
         {
             $this->makeVisible(['name_az', 'name_en', 'name_ru']);
         }
@@ -83,6 +83,26 @@ class Category extends BaseModel
         else
         {
             return $query;
+        }
+    }
+
+    public function isEditableByGuard()
+    {
+        if (Auth::user()) {
+            switch (Auth::user()->getTable()) {
+                case "admins" :
+                    return true;
+                case "partners" :
+                    return $this->partner->id == Auth::user()->id ? true : false;
+                case "department" :
+                    return $this->id == Auth::user()->id ? true : false;
+                default :
+                    return false;
+            }
+        }
+        else
+        {
+            return false;
         }
     }
 

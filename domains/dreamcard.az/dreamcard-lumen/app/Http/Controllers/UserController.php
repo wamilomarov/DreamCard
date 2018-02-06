@@ -124,6 +124,7 @@ class UserController extends Controller
 
       list($first_name, $last_name) = explode(' ', $me->getName(), 2);
       $facebook_id = $me->getId();
+//      var_dump($facebook_id); exit;
       $email = $me->getEmail();
 
       if (User::where('facebook_id', $facebook_id)->exists())
@@ -172,20 +173,22 @@ class UserController extends Controller
     public function googleLogin(Request $request){
         $client = new Google_Client(
             [
-                'client_id' => "152790946469-9ihrbu8djntpaofqlcv4ctqbo6774cut.apps.googleusercontent.com"
+                'client_id' => "152790946469-o2g3fo0undot6764mpmggialtcebsaoo.apps.googleusercontent.com",
+                'client_secret' => "__3yBatUA4J72k0jkAnZafG5"
             ]);
         $client->setApplicationName("Dreamcard");
-
-        $payload = $client->verifyIdToken($request->get('id_token'));
-//        var_dump($payload);
+        $payload = file_get_contents("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=".$request->get('id_token'));
+        $payload  =json_decode($payload);
+//        $payload = $client->verifyIdToken($request->get('id_token'));
         if ($payload) {
-            $google_id = $payload['sub'];
-            $email = $payload['email'];
-            $first_name = $payload['given_name'];
-            $last_name = $payload['family_name'];
+            $google_id = $payload->sub;
+            $email = $payload->email;
+            $first_name = $payload->given_name;
+            $last_name = $payload->family_name;
         } else {
             return response()->json(['status' => 401]);
         }
+
 
 
       if (User::where('google_id', $google_id)->exists())
@@ -198,8 +201,10 @@ class UserController extends Controller
       }
       elseif (User::where('email', $email)->exists())
       {
+
           $user = User::where('email', $email)->with('card')->first();
           $user->google_id = $google_id;
+//          var_dump($user->google_id); exit;
           $user->api_token = md5(microtime());
           $user->save();
           $user = $user->makeVisible(['api_token']);
@@ -636,6 +641,13 @@ class UserController extends Controller
         return response()->json($result);
     }
 
+    public function partners()
+    {
+        $partners = Partner::all();
+        $result = ['status' => 200, 'data' => $partners];
+        return response()->json($result);
+    }
+
     public function favoriteCategories(Request $request)
     {
         $favorites = DB::table("partners")
@@ -737,7 +749,7 @@ class UserController extends Controller
 
   public function faq()
   {
-      $language = Auth::user()->language;
+      $language = Auth::user() != null ? Auth::user()->language : null;
       if($language == null){
         $language = "az";
       }

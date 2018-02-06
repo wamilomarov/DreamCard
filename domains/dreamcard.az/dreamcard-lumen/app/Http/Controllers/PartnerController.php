@@ -112,7 +112,7 @@ class PartnerController extends Controller
 
     public function getCampaigns(Request $request, $id)
     {
-        if (Auth::user()->getTable() == 'users')
+        if (Auth::user()!= null && Auth::user()->getTable() == 'users')
         {
             $campaigns = Campaign::arrangeUser()->where('partner_id', $id)->where('end_date', '>', Date("Y-m-d H:i:s"))->paginate(10);
         }

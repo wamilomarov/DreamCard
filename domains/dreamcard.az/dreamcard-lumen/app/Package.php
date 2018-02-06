@@ -31,4 +31,24 @@ class Package extends Model
             return $query;
         }
     }
+
+    public function isEditableByGuard()
+    {
+        if (Auth::user()) {
+            switch (Auth::user()->getTable()) {
+                case "admins" :
+                    return true;
+                case "partners" :
+                    return $this->partner->id == Auth::user()->id ? true : false;
+                case "department" :
+                    return $this->id == Auth::user()->id ? true : false;
+                default :
+                    return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

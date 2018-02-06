@@ -105,6 +105,13 @@ class PackageController extends Controller
         return response($result);
     }
 
+    public function getDiscountedPackages()
+    {
+        $packages = Package::arrangeUser()->whereRaw('discount_price != price')->get();
+        $result = ['status' => 200, 'data' => $packages];
+        return response($result);
+    }
+
     public function get($id)
     {
         $package = Package::arrangeUser()->find($id);

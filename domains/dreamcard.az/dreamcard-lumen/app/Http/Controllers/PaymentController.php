@@ -26,7 +26,7 @@ class PaymentController extends Controller
             'description' => $description
         );
 
-        $params['hashCode'] = $this->getHashcCode($params);
+        $params['hashCode'] = $this->getHashCode($params);
         $params['lang'] = $lang;
 
         $request = json_encode($params);
@@ -42,7 +42,7 @@ class PaymentController extends Controller
         $params = array(
             'payment_key' => $payment_key
         );
-        $params['hash_code'] = $this->getHashcCode($params);
+        $params['hash_code'] = $this->getHashCode($params);
 
         $options = array(
             'http' => array(
@@ -58,7 +58,7 @@ class PaymentController extends Controller
         return json_decode($json);
     }
 
-    private function getHashcCode($params) {
+    private function getHashCode($params) {
         return md5($this->authKey.implode($params));
     }
 

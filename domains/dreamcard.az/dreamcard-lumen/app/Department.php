@@ -67,14 +67,22 @@ class Department extends Model implements AuthenticatableContract, AuthorizableC
 
     public function isEditableByGuard()
     {
-        switch (Auth::user()->getTable())
+        if (Auth::user()) {
+            switch (Auth::user()->getTable()) {
+                case "admins" :
+                    return true;
+                case "partners" :
+                    return $this->partner->id == Auth::user()->id ? true : false;
+                case "department" :
+                    return $this->id == Auth::user()->id ? true : false;
+                default :
+                    return false;
+            }
+        }
+        else
         {
-            case "admins" : return true;
-            case "partners" : return $this->partner->id == Auth::user()->id ?  true : false;
-            case "department" : return $this->id == Auth::user()->id ?  true : false;
-            default : return false;
+            return false;
         }
     }
-
 
 }

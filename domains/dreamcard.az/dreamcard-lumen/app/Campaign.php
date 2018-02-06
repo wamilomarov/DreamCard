@@ -27,7 +27,7 @@ class Campaign extends BaseModel
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        if (Auth::user()->getTable() == 'admins')
+        if (Auth::user() != null && Auth::user()->getTable() == 'admins')
         {
             $this->makeVisible(['title_az', 'title_en', 'title_ru']);
         }
