@@ -31,6 +31,13 @@
           </excludedPaths>
         </serverdata>
       </paths>
+      <paths name="Expediter Dev">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="Mida">
         <serverdata>
           <mappings>
@@ -39,6 +46,13 @@
         </serverdata>
       </paths>
       <paths name="V2C">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="expeditor.az">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

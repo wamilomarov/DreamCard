@@ -21,12 +21,14 @@ use Google_Service_Oauth2;
 use Google_Service_Plus;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+
 
     public function cities()
     {
@@ -44,13 +46,18 @@ class UserController extends Controller
                 ->orWhere('phone', $request->get('phone'))->exists()) {
                 $result = ['status' => 407];
             } else {
+
+                $photo = new Photo();
+                $photo->url = "uploads/photos/users/sample_avatar.png";
+                $photo->save();
+
                 $user = new User();
                 $user->email = $request->get('email');
                 $user->phone = $request->get('phone');
                 $user->first_name = $request->get('first_name');
                 $user->last_name = $request->get('last_name');
                 $user->password = app('hash')->make($request->get('password'));
-                $user->photo_id = NULL;
+                $user->photo_id = $photo->id;
 
                 $user->api_token = md5(microtime());
                 $user->save();
@@ -60,11 +67,10 @@ class UserController extends Controller
                 $card->save();
                 $user = User::with('card')->find($user->id);
                 $user = $user->makeVisible(['api_token']);
-                $result = ['status' => 200, 'data' =>  $user];
+                $result = ['status' => 200, 'data' => $user];
             }
 
-        }
-        else {
+        } else {
             $result = ['status' => 406];
         }
 
@@ -86,99 +92,97 @@ class UserController extends Controller
                 $result = ['status' => 401];
             }
 
-        }
-        else
-        {
+        } else {
             $result = ['status' => 406];
         }
 
         return response($result);
     }
 
-    public function fbLogin(Request $request){
+    public function fbLogin(Request $request)
+    {
         $request = $request->json();
-      $fb = new Facebook([
-        'app_id' => '126332011463258',
-        'app_secret' => '2212a0100df3d8b1ac36a0af452b8191',
-        'default_graph_version' => 'v2.10',
-      ]);
+        $fb = new Facebook([
+            'app_id' => '126332011463258',
+            'app_secret' => '2212a0100df3d8b1ac36a0af452b8191',
+            'default_graph_version' => 'v2.10',
+        ]);
 
-      try {
-        // Get the \Facebook\GraphNodes\GraphUser object for the current user.
-        // If you provided a 'default_access_token', the '{access-token}' is optional.
-        $response = $fb->get('/me?fields=name,email,picture,location', $request->get('access_token'));
-      } catch(\Facebook\Exceptions\FacebookResponseException $e) {
-        // When Graph returns an error
+        try {
+            // Get the \Facebook\GraphNodes\GraphUser object for the current user.
+            // If you provided a 'default_access_token', the '{access-token}' is optional.
+            $response = $fb->get('/me?fields=name,email,picture,location', $request->get('access_token'));
+        } catch (\Facebook\Exceptions\FacebookResponseException $e) {
+            // When Graph returns an error
 //        echo 'Graph returned an error: ' . $e->getMessage();
-        $result = ['status' => $e->getMessage()];
-        return response($result);
-      } catch(\Facebook\Exceptions\FacebookSDKException $e) {
-        // When validation fails or other local issues
+            $result = ['status' => $e->getMessage()];
+            return response($result);
+        } catch (\Facebook\Exceptions\FacebookSDKException $e) {
+            // When validation fails or other local issues
 //        echo 'Facebook SDK returned an error: ' . $e->getMessage();
-        $result = ['status' => $e->getMessage()];
-        return response($result);
-      }
+            $result = ['status' => $e->getMessage()];
+            return response($result);
+        }
 
-      $me = $response->getGraphUser();
+        $me = $response->getGraphUser();
 //      var_dump($me->getPicture()->getUrl()); exit;
 
-      list($first_name, $last_name) = explode(' ', $me->getName(), 2);
-      $facebook_id = $me->getId();
+        list($first_name, $last_name) = explode(' ', $me->getName(), 2);
+        $facebook_id = $me->getId();
 //      var_dump($facebook_id); exit;
-      $email = $me->getEmail();
+        $email = $me->getEmail();
 
-      if (User::where('facebook_id', $facebook_id)->exists())
-      {
-          $user = User::where('facebook_id', $facebook_id)->first();
-          $user->api_token = md5(microtime());
-          $user->save();
-          $user = $user->makeVisible(['api_token']);
-          $result = ['status' => 200, 'data' => $user];
-      }
-      elseif (User::where('email', $email)->exists())
-      {
-          $user = User::where('email', $email)->first();
-          $user->facebook_id = $facebook_id;
-          $user->api_token = md5(microtime());
-          $user->save();
-          $user = $user->makeVisible(['api_token']);
-          $result = ['status' => 200, 'data' => $user];
-      }
-      else
-      {
-          $user = new User();
-          $user->first_name = $first_name;
-          $user->last_name = $last_name;
-          $user->facebook_id = $facebook_id;
-          $user->email = $email;
-          if($user->save())
-          {
-              $card = new Card();
-              $card->user_id = $user->id;
-              $card->generateNumber();
-              $card->save();
-              $user = User::find($user->id);
-              $user->api_token = md5(microtime());
-              $user->save();
-              $user = $user->makeVisible(['api_token']);
-              $result = ['status' => 200, 'data' => $user];
-          }
-          else
-          {
-              $result = ['status' => 412];
-          }
-      }
-      return response()->json($result);
+        if (User::where('facebook_id', $facebook_id)->exists()) {
+            $user = User::where('facebook_id', $facebook_id)->with('card')->first();
+            $user->api_token = md5(microtime());
+            $user->save();
+            $user = $user->makeVisible(['api_token']);
+            $result = ['status' => 200, 'data' => $user];
+        } elseif (User::where('email', $email)->exists()) {
+            $user = User::where('email', $email)->with('card')->first();
+            $user->facebook_id = $facebook_id;
+            $user->api_token = md5(microtime());
+            $user->save();
+            $user = $user->makeVisible(['api_token']);
+            $result = ['status' => 200, 'data' => $user];
+        } else {
+
+            $photo = new Photo();
+            $photo->url = "uploads/photos/users/sample_avatar.png";
+            $photo->save();
+
+            $user = new User();
+            $user->first_name = $first_name;
+            $user->last_name = $last_name;
+            $user->facebook_id = $facebook_id;
+            $user->email = $email;
+            if ($user->save()) {
+                $card = new Card();
+                $card->user_id = $user->id;
+                $card->generateNumber();
+                $card->save();
+                $user = User::with('card')->find($user->id);
+                $user->api_token = md5(microtime());
+                $user->save();
+                $user = $user->makeVisible(['api_token']);
+                $result = ['status' => 200, 'data' => $user];
+            } else {
+                $result = ['status' => 412];
+            }
+        }
+        return response()->json($result);
     }
-    public function googleLogin(Request $request){
+
+    public function googleLogin(Request $request)
+    {
         $client = new Google_Client(
             [
                 'client_id' => "152790946469-o2g3fo0undot6764mpmggialtcebsaoo.apps.googleusercontent.com",
                 'client_secret' => "__3yBatUA4J72k0jkAnZafG5"
             ]);
         $client->setApplicationName("Dreamcard");
-        $payload = file_get_contents("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=".$request->get('id_token'));
-        $payload  =json_decode($payload);
+        $payload = file_get_contents("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" . $request->get('id_token'));
+        $payload = json_decode($payload);
 //        $payload = $client->verifyIdToken($request->get('id_token'));
         if ($payload) {
             $google_id = $payload->sub;
@@ -190,51 +194,47 @@ class UserController extends Controller
         }
 
 
+        if (User::where('google_id', $google_id)->exists()) {
+            $user = User::where('google_id', $google_id)->with('card')->first();
+            $user->api_token = md5(microtime());
+            $user->save();
+            $user = $user->makeVisible(['api_token']);
+            $result = ['status' => 200, 'data' => $user];
+        } elseif (User::where('email', $email)->exists()) {
 
-      if (User::where('google_id', $google_id)->exists())
-      {
-          $user = User::where('google_id', $google_id)->with('card')->first();
-          $user->api_token = md5(microtime());
-          $user->save();
-          $user = $user->makeVisible(['api_token']);
-          $result = ['status' => 200, 'data' => $user];
-      }
-      elseif (User::where('email', $email)->exists())
-      {
-
-          $user = User::where('email', $email)->with('card')->first();
-          $user->google_id = $google_id;
+            $user = User::where('email', $email)->with('card')->first();
+            $user->google_id = $google_id;
 //          var_dump($user->google_id); exit;
-          $user->api_token = md5(microtime());
-          $user->save();
-          $user = $user->makeVisible(['api_token']);
-          $result = ['status' => 200, 'data' => $user];
-      }
-      else
-      {
-          $user = new User();
-          $user->first_name = $first_name;
-          $user->last_name = $last_name;
-          $user->google_id = $google_id;
-          $user->email = $email;
-          if($user->save())
-          {
-              $card = new Card();
-              $card->user_id = $user->id;
-              $card->generateNumber();
-              $card->save();
-              $user = User::with('card')->find($user->id);
-              $user->api_token = md5(microtime());
-              $user->save();
-              $user = $user->makeVisible(['api_token']);
-              $result = ['status' => 200, 'data' => $user];
-          }
-          else
-          {
-              $result = ['status' => 412];
-          }
-      }
-      return response()->json($result);
+            $user->api_token = md5(microtime());
+            $user->save();
+            $user = $user->makeVisible(['api_token']);
+            $result = ['status' => 200, 'data' => $user];
+        } else {
+
+            $photo = new Photo();
+            $photo->url = "uploads/photos/users/sample_avatar.png";
+            $photo->save();
+
+            $user = new User();
+            $user->first_name = $first_name;
+            $user->last_name = $last_name;
+            $user->google_id = $google_id;
+            $user->email = $email;
+            if ($user->save()) {
+                $card = new Card();
+                $card->user_id = $user->id;
+                $card->generateNumber();
+                $card->save();
+                $user = User::with('card')->find($user->id);
+                $user->api_token = md5(microtime());
+                $user->save();
+                $user = $user->makeVisible(['api_token']);
+                $result = ['status' => 200, 'data' => $user];
+            } else {
+                $result = ['status' => 412];
+            }
+        }
+        return response()->json($result);
     }
 
     public function logout()
@@ -261,24 +261,18 @@ class UserController extends Controller
             }
 
             if ($request->has('email')) {
-                if (!User::where('email', $request->get('email'))->exists())
-                {
+                if (!User::where('email', $request->get('email'))->exists()) {
                     $user->email = $request->get('email');
-                }
-                else
-                {
+                } else {
                     return response()->json(['status' => 407]);
                 }
 
             }
 
             if ($request->has('phone')) {
-                if (!User::where('phone', $request->get('phone'))->exists())
-                {
+                if (!User::where('phone', $request->get('phone'))->exists()) {
                     $user->phone = $request->get('phone');
-                }
-                else
-                {
+                } else {
                     return response()->json(['status' => 407]);
                 }
 
@@ -301,24 +295,25 @@ class UserController extends Controller
                 $user->city_id = $request->get('city_id');
             }
 
-            if($request->has('language')){
-              $user->language = $request->get('language');
+            if ($request->has('language')) {
+                $user->language = $request->get('language');
             }
 
-            if($request->has('notification_sound')){
-              $user->notification_sound = $request->get('notification_sound');
+            if ($request->has('notification_sound')) {
+                $user->notification_sound = $request->get('notification_sound');
             }
 
-            if($request->has('notification')){
-              $user->notification = $request->get('notification');
+            if ($request->has('notification')) {
+                $user->notification = $request->get('notification');
             }
 
-            if($request->has('news')){
-              $user->news = $request->get('news');
+            if ($request->has('news')) {
+                $user->news = $request->get('news');
             }
 
             if ($request->hasFile('photo')) {
                 $photo = new Photo();
+                var_dump($request->file('photo')); exit;
                 $photo_result = $photo->upload($request->file('photo'), 'uploads/photos/users/');
 
                 if ($photo_result == 200) {
@@ -348,28 +343,24 @@ class UserController extends Controller
         ->select('purchases.id', 'purchases.created_at', 'purchases.discount', 'partners.name');*/
 
         $purchases = Purchase::where('card_id', Auth::user()->card->id);
-        if ($request->has('from_date'))
-        {
+        if ($request->has('from_date')) {
             $purchases = $purchases->whereDate('purchases.created_at', '>=', $request->get('from_date'));
         }
-        if ($request->has('to_date'))
-        {
+        if ($request->has('to_date')) {
             $purchases = $purchases->whereDate('purchases.created_at', '<=', $request->get('to_date'));
         }
-        if ($request->has('category_id') && $request->get('category_id') != -1 && $request->get('category_id') != null)
-        {
+        if ($request->has('category_id') && $request->get('category_id') != -1 && $request->get('category_id') != null) {
             $category_id = $request->get('category_id');
             $purchases = $purchases->with('partner')->whereHas(
 
-                    'partner', function ($query) use ($category_id)
-            {
+                'partner', function ($query) use ($category_id) {
                 return $query->where('partners.category_id', $category_id)->withTrashed();
             }
-                );
-        }
-        else
-        {
-            $purchases = $purchases->with('partner')->whereHas('partner', function($query) { return $query->withTrashed();});
+            );
+        } else {
+            $purchases = $purchases->with('partner')->whereHas('partner', function ($query) {
+                return $query->withTrashed();
+            });
         }
 
         $purchases = $purchases->latest()->paginate(15);
@@ -410,10 +401,8 @@ class UserController extends Controller
     public function forgotPassword(Request $request)
     {
         $request = $request->json();
-        if ($request->has('email'))
-        {
-            if (User::where('email', $request->get('email'))->exists())
-            {
+        if ($request->has('email')) {
+            if (User::where('email', $request->get('email'))->exists()) {
                 $token = crypt(sha1(microtime()), 'password_reset');
                 DB::table('password_resets')->insert([
                     'email' => $request->get('email'),
@@ -431,23 +420,16 @@ class UserController extends Controller
                 $headers .= 'From: <dreamcard@dreamcard.az>' . "\r\n";
 //                $headers .= 'Cc: admin@dreamcard.az' . "\r\n";
 
-                if (mail($to, $subject, $message, $headers))
-                {
+                if (mail($to, $subject, $message, $headers)) {
                     $result = ['status' => 200];
-                }
-                else
-                {
+                } else {
                     $result = ['status' => 412];
                 }
 
-            }
-            else
-            {
+            } else {
                 $result = ['status' => 408];
             }
-        }
-        else
-        {
+        } else {
             $result = ['status' => 406];
         }
 
@@ -458,8 +440,7 @@ class UserController extends Controller
     {
 //        $request = $request->json();
 //        var_dump($request->all());
-        if ($request->has('token') && $request->has('password'))
-        {
+        if ($request->has('token') && $request->has('password')) {
             $token = $request->get('token');
             $password = $request->get('password');
 
@@ -471,9 +452,7 @@ class UserController extends Controller
             $user->save();
 
             $result = ['status' => 200];
-        }
-        else
-        {
+        } else {
             $result = ['status' => 406];
         }
 
@@ -651,10 +630,10 @@ class UserController extends Controller
     public function favoriteCategories(Request $request)
     {
         $favorites = DB::table("partners")
-        ->join("favorites", "favorites.partner_id", "=", "partners.id")
+            ->join("favorites", "favorites.partner_id", "=", "partners.id")
             ->where("favorites.user_id", Auth::user()->id)
             ->whereNull('partners.deleted_at')
-                ->pluck("partners.category_id")->toArray();
+            ->pluck("partners.category_id")->toArray();
         $categories = Category::whereIn("id", $favorites)->paginate(10);
         $status = collect(['status' => 200]);
         $categories->appends($request->all())->render();
@@ -664,70 +643,103 @@ class UserController extends Controller
 
     public function favoritePartners(Request $request, $category_id)
     {
-      $favorites = Auth::user()->favoritePartners($category_id)
-          ->with(['lastNews'])->paginate(10);
-      $favorites->appends($request->all())->render();
-      $status = collect(['status' => 200]);
-      $result = $status->merge($favorites);
-      return response($result);
+        $favorites = Auth::user()->favoritePartners($category_id)
+            ->with(['lastNews'])->paginate(10);
+        $favorites->appends($request->all())->render();
+        $status = collect(['status' => 200]);
+        $result = $status->merge($favorites);
+        return response($result);
     }
 
     public function addFavoritePartner(Request $request)
     {
 //        $request = $request->json();
-        if($request->has('partner_id')){
+        if ($request->has('partner_id')) {
 
-          DB::table('favorites')->insert([
-            'user_id' => Auth::user()->id,
-            'partner_id' => $request->get('partner_id'),
-            'updated_at' => DB::raw("NOW()"),
-            'created_at' => DB::raw("NOW()")
-          ]);
+            DB::table('favorites')->insert([
+                'user_id' => Auth::user()->id,
+                'partner_id' => $request->get('partner_id'),
+                'updated_at' => DB::raw("NOW()"),
+                'created_at' => DB::raw("NOW()")
+            ]);
 
-          $result = ['status' => 200];
+            $result = ['status' => 200];
 
-        }else{
-          $result = ['status' => 413];
+        } else {
+            $result = ['status' => 413];
         }
 
         return response($result);
     }
 
-  public function deleteFavoritePartner($partner_id){
-    DB::table('favorites')->where('user_id', Auth::user()->id)->where('partner_id', $partner_id)->delete();
-    $result = ['status' => 200];
-
-    return response()->json($result);
-
-  }
-
-
-
-  public function search(Request $request){
-
-    if($request->has('q') && $request->get('q') != '')
+    public function deleteFavoritePartner($partner_id)
     {
-        $q = $request->get('q');
-        $news = News::where('title', 'like', "%$q%")->paginate(5);
-        $partners = Partner::arrangeUser()->has('campaign')->where('name', 'like', "%$q%")->paginate(5);
-        $operation_history = Purchase::with('partner')
-            ->whereHas('partner', function ($query) use ($q){
+        DB::table('favorites')->where('user_id', Auth::user()->id)->where('partner_id', $partner_id)->delete();
+        $result = ['status' => 200];
+
+        return response()->json($result);
+
+    }
+
+    public function updatePurchase(Request $request)
+    {
+        if ($request->has('amount') && $request->has('purchase_id'))
+        {
+            $purchase = Purchase::where('id', $request->get('purchase_id'))->where('card_id', Auth::user()->card->id)->first();
+
+            if ($purchase)
+            {
+                $purchase->amount = $request->get('amount');
+                $purchase->save();
+                $result = ['status' => 200];
+            }
+            else
+            {
+                $result = ['status' => 408];
+            }
+        }
+        else
+        {
+            $result = ['status' => 406];
+        }
+
+        return response()->json($result);
+    }
+
+    public function search(Request $request)
+    {
+
+        if ($request->has('q') && $request->get('q') != '') {
+            $q = $request->get('q');
+            $news = News::where('title', 'like', "%$q%")->paginate(5);
+            $partners = Partner::arrangeUser()->has('campaign')->where('name', 'like', "%$q%")->paginate(5);
+            if (Auth::user())
+            {
+                $card_id = Auth::user()->card->id;
+            }
+            else
+            {
+                $card_id = 0;
+            }
+
+            $operation_history = Purchase::with('partner')
+                ->whereHas('partner', function ($query) use ($q) {
                     return $query->where('name', 'LIKE', "%$q%")->withTrashed();
                 })
-            ->whereHas('partner.category', function ($query){
-                return $query->withTrashed();
-            })
-            ->where('card_id', Auth::user()->card->id)
-            ->paginate(5);
-        $status = collect(['status' => 200]);
-        $partners->appends($request->all())->render();
-        $result = $status->merge($partners);
-        $result['data'] =
-            [
-                'news' => $news->items(),
-                'partners' => $partners->items(),
-                'operation_history' => $operation_history->items()
-            ];
+                ->whereHas('partner.category', function ($query) {
+                    return $query->withTrashed();
+                })
+                ->where('card_id', $card_id)
+                ->paginate(5);
+            $status = collect(['status' => 200]);
+            $partners->appends($request->all())->render();
+            $result = $status->merge($partners);
+            $result['data'] =
+                [
+                    'news' => $news->items(),
+                    'partners' => $partners->items(),
+                    'operation_history' => $operation_history->items()
+                ];
 //        $result = [
 //            'status' => 200,
 //            'data' =>
@@ -737,44 +749,44 @@ class UserController extends Controller
 //                'operation_history' => $operation_history
 //                ]
 //                  ];
-      return response($result);
+            return response($result);
+        } else {
+            return response()->json(['status' => 406]);
+        }
+
+
     }
-    else
+
+    public function faq()
     {
-        return response()->json(['status' => 406]);
+        $language = Auth::user() != null ? Auth::user()->language : null;
+        if ($language == null) {
+            $language = "az";
+        }
+        $faqs = DB::table('faq')->select("id", "question_$language AS question", "answer_$language AS answer", "created_at")->get();
+        $result = ['status' => 200, 'data' => $faqs];
+
+
+        return response($result);
     }
 
+    public function cardGenerate()
+    {
+        $card = Card::where('user_id', Auth::user()->id)->first();
+        $card->generateQrCode();
+        $result = ['status' => 200, 'data' => $card];
 
-  }
+        return response()->json($result);
 
-  public function faq()
-  {
-      $language = Auth::user() != null ? Auth::user()->language : null;
-      if($language == null){
-        $language = "az";
-      }
-      $faqs = DB::table('faq')->select("id", "question_$language AS question", "answer_$language AS answer", "created_at")->get();
-      $result = ['status' => 200, 'data' => $faqs];
+    }
 
+    public function card()
+    {
+        $card = Card::where('user_id', Auth::user()->id)->first();
+        $result = ['status' => 200, 'data' => $card];
 
-    return response($result);
-  }
-
-  public function cardGenerate(){
-    $card = Card::where('user_id', Auth::user()->id)->first();
-    $card->generateQrCode();
-    $result = ['status' => 200, 'data' => $card];
-
-    return response()->json($result);
-
-  }
-
-  public function card(){
-    $card = Card::where('user_id', Auth::user()->id)->first();
-    $result = ['status' => 200, 'data' => $card];
-
-    return response($result);
-  }
+        return response($result);
+    }
 
     public function test()
     {

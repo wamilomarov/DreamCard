@@ -18,32 +18,41 @@ class CategoryController extends Controller
 {
         public function create(Request $request)
     {
-        if ($request->has('name_az') && $request->has('name_en') && $request->has('name_ru') /*&& $request->hasFile('small_icon')*/ && $request->hasFile('large_icon'))
+        if ($request->has('name_az') && $request->has('name_en') && $request->has('name_ru') /*&& $request->hasFile('small_icon')*/ && $request->hasFile('dark_icon') && $request->hasFile('light_icon'))
         {
             if (!Category::arrangeUser()->where('name_az', $request->get('name_az'))->where('name_ru', $request->get('name_ru'))->where('name_en', $request->get('name_en'))->exists())
             {
-                $mimeType = $request->file('large_icon')->getMimeType();
-                $small_icon = new Photo();
-//                $small_icon_result = $small_icon->upload($request->file('small_icon'), 'uploads/photos/categories/');
+                $darkMimeType = $request->file('dark_icon')->getMimeType();
+                $small_dark_icon = new Photo();
 
-                $large_icon = new Photo();
-                $large_icon_result = $large_icon->upload($request->file('large_icon'), 'uploads/photos/categories/');
+                $large_dark_icon = new Photo();
+                $large_dark_icon_result = $large_dark_icon->upload($request->file('dark_icon'), 'uploads/photos/categories/');
 
-                if (/*$small_icon_result*/ 200 == 200)
+                $lightMimeType = $request->file('light_icon')->getMimeType();
+                $small_light_icon = new Photo();
+
+                $large_light_icon = new Photo();
+                $large_light_icon_result = $large_light_icon->upload($request->file('light_icon'), 'uploads/photos/categories/');
+
+
+                if ($large_light_icon_result == 200)
                 {
-                    if ($large_icon_result == 200)
+                    if ($large_dark_icon_result == 200)
                     {
-                        $small_icon->url = $large_icon->resize($mimeType, 100, 100, 'uploads/photos/categories/');
-                        $small_icon->save();
-//                        var_dump($large_icon->id);
-//                        var_dump($small_icon->id);
-//                        exit;
+                        $small_dark_icon->url = $large_dark_icon->resize($darkMimeType, 100, 100, 'uploads/photos/categories/');
+                        $small_dark_icon->save();
+
+                        $small_light_icon->url = $large_light_icon->resize($lightMimeType, 100, 100, 'uploads/photos/categories/');
+                        $small_light_icon->save();
+
                         $category = new Category();
                         $category->name_az = $request->get('name_az');
                         $category->name_ru = $request->get('name_ru');
                         $category->name_en = $request->get('name_en');
-                        $category->small_icon_id = $small_icon->id;
-                        $category->large_icon_id = $large_icon->id;
+                        $category->small_dark_icon_id = $small_dark_icon->id;
+                        $category->large_dark_icon_id = $large_dark_icon->id;
+                        $category->small_light_icon_id = $small_light_icon->id;
+                        $category->large_light_icon_id = $large_light_icon->id;
 
                         if ($request->has('order_by'))
                         {
@@ -55,12 +64,12 @@ class CategoryController extends Controller
                     }
                     else
                     {
-                        $result = ['status' => $large_icon_result];
+                        $result = ['status' => $large_dark_icon_result];
                     }
                 }
                 else
                 {
-                    $result = ['status' => 400 /*$small_icon_result*/];
+                    $result = ['status' => $large_light_icon_result];
                 }
             }
             else
@@ -104,8 +113,10 @@ class CategoryController extends Controller
     public function delete($id)
     {
         $category = Category::arrangeUser()->find($id);
-        $category->small_icon != null ? $category->small_icon->remove() : $a = "";
-        $category->large_icon != null ? $category->large_icon->remove() : $a = "";
+        $category->small_light_icon != null ? $category->small_light_icon->remove() : $a = "";
+        $category->large_light_icon != null ? $category->large_light_icon->remove() : $a = "";
+        $category->small_dark_icon != null ? $category->small_dark_icon->remove() : $a = "";
+        $category->large_dark_icon != null ? $category->large_dark_icon->remove() : $a = "";
         $category->forceDelete();
         $result = ['status' => 200];
         return response($result);
@@ -129,25 +140,47 @@ class CategoryController extends Controller
               $category->name_ru = $request->get('name_ru');
             }
 
-            if ($request->hasFile('large_icon'))
+            if ($request->hasFile('dark_icon'))
             {
-                $large_icon = new Photo();
-                $mimeType = $request->file('large_icon');
-                $large_icon_result = $large_icon->upload($request->file('large_icon'), 'uploads/photos/categories/');
+                $large_dark_icon = new Photo();
+                $darkMimeType = $request->file('dark_icon');
+                $large_dark_icon_result = $large_dark_icon->upload($request->file('dark_icon'), 'uploads/photos/categories/');
 
-                if ($large_icon_result == 200)
+                if ($large_dark_icon_result == 200)
                 {
-                    $small_icon = new Photo();
-                    $small_icon->url = $large_icon->resize($mimeType, 100, 100, 'uploads/photos/categories/');
-                    $small_icon->save();
-                    $category->small_icon != null ? $category->small_icon->remove() : $a = "";
-                    $category->large_icon != null ? $category->large_icon->remove() : $a = "";
-                    $category->large_icon_id = $large_icon->id;
-                    $category->small_icon_id = $small_icon->id;
+                    $small_dark_icon = new Photo();
+                    $small_dark_icon->url = $large_dark_icon->resize($darkMimeType, 100, 100, 'uploads/photos/categories/');
+                    $small_dark_icon->save();
+                    $category->small_dark_icon != null ? $category->small_dark_icon->remove() : $a = "";
+                    $category->large_dark_icon != null ? $category->large_dark_icon->remove() : $a = "";
+                    $category->large_dark_icon_id = $large_dark_icon->id;
+                    $category->small_dark_icon_id = $small_dark_icon->id;
                 }
                 else
                 {
-                    return response(['status' => $large_icon_result]);
+                    return response(['status' => $large_dark_icon_result]);
+                }
+            }
+
+            if ($request->hasFile('light_icon'))
+            {
+                $large_light_icon = new Photo();
+                $lightMimeType = $request->file('light_icon');
+                $large_light_icon_result = $large_light_icon->upload($request->file('light_icon'), 'uploads/photos/categories/');
+
+                if ($large_light_icon_result == 200)
+                {
+                    $small_light_icon = new Photo();
+                    $small_light_icon->url = $large_light_icon->resize($lightMimeType, 100, 100, 'uploads/photos/categories/');
+                    $small_light_icon->save();
+                    $category->small_light_icon != null ? $category->small_light_icon->remove() : $a = "";
+                    $category->large_light_icon != null ? $category->large_light_icon->remove() : $a = "";
+                    $category->large_light_icon_id = $large_light_icon->id;
+                    $category->small_light_icon_id = $small_light_icon->id;
+                }
+                else
+                {
+                    return response(['status' => $large_light_icon_result]);
                 }
             }
 

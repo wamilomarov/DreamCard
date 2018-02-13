@@ -22,7 +22,6 @@ class PartnerController extends Controller
 {
     public function create(Request $request)
     {
-//        $request = $request->json();
         if ($request->has('name') && $request->has('category_id') && $request->hasFile('photo')
             && $request->has('username') && $request->has('password')) {
             if (Partner::arrangeUser()->where('username', $request->get('username'))->exists()) {

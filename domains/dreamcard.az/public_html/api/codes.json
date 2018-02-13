@@ -834,6 +834,14 @@
           "to": 1,
           "total": 1
         }
+      },
+      {
+        "url": "/purchase/update",
+        "request_type": "POST",
+        "request_fields": "amount, purchase_id, api_token",
+        "response_example": {
+          "status": [200, 406, 408]
+        }
       }
 
     ],
@@ -933,7 +941,7 @@
         {
           "url": "/categories/",
           "request_type": "POST",
-          "request_fields": "name_en, name_az, name_ru, large_icon, api_token",
+          "request_fields": "name_en, name_az, name_ru, dark_icon, light_icon, api_token",
           "response_example": {
             "status": 200
           }

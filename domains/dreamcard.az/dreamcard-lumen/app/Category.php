@@ -18,11 +18,11 @@ class Category extends BaseModel
     use SoftDeletes;
     protected $fillable = [];
 
-    protected $hidden = ['small_icon_id', 'large_icon_id', 'order_by', 'name_az', 'name_ru', 'name_en'];
+    protected $hidden = ['small_dark_icon_id', 'small_light_icon_id', 'large_dark_icon_id', 'large_light_icon_id', 'order_by', 'name_az', 'name_ru', 'name_en'];
 
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['small_icon', 'large_icon', 'partners_count', 'name'];
+    protected $appends = ['small_dark_icon', 'small_light_icon', 'large_dark_icon', 'large_light_icon', 'partners_count', 'name'];
 
     public function __construct(array $attributes = [])
     {
@@ -44,14 +44,24 @@ class Category extends BaseModel
         return $this->$column;
     }
 
-    public function getSmallIconAttribute()
+    public function getSmallDarkIconAttribute()
     {
-        return Photo::find($this->small_icon_id);
+        return Photo::find($this->small_dark_icon_id);
     }
 
-    public function getLargeIconAttribute()
+    public function getSmallLightIconAttribute()
     {
-        return Photo::find($this->large_icon_id);
+        return Photo::find($this->small_light_icon_id);
+    }
+
+    public function getLargeDarkIconAttribute()
+    {
+        return Photo::find($this->large_dark_icon_id);
+    }
+
+    public function getLargeLightIconAttribute()
+    {
+        return Photo::find($this->large_light_icon_id);
     }
 
     public function deleteSmallIcon()

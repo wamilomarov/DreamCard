@@ -65,7 +65,7 @@ $router->get('/users/card/generate', ['middleware' => ['auth', 'user'], 'uses' =
 
 
 
-$router->get('/search', ['middleware' => ['auth'], 'uses' => 'UserController@search']);
+$router->get('/search', ['middleware' => [], 'uses' => 'UserController@search']);
 
 $router->get('/faq', 'UserController@faq');
 
@@ -128,3 +128,5 @@ $router->get('/campaigns', 'CampaignController@getCampaigns');
 $router->get('/campaigns/{id}', ['middleware' => ['auth'], 'uses' => 'CampaignController@get']);
 $router->get('/campaigns/disable/{id}', ['middleware' => ['auth', 'admin'], 'uses' => 'CampaignController@disable']);
 $router->get('/campaigns/restore/{id}', ['middleware' => ['auth', 'admin'], 'uses' => 'CampaignController@restore']);
+
+$router->post('/purchase/update', ['middleware' => ['auth'], 'uses' => 'UserController@updatePurchase']);
