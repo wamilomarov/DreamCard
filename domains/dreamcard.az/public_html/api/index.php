@@ -10,9 +10,10 @@
 | is ready to receive HTTP / Console requests from the environment.
 |
 */
-
 $app = require __DIR__.'/../../dreamcard-lumen/bootstrap/app.php';
 
+
+config(['app.timezone' => 'Asia/Baku']);
 /*
 |--------------------------------------------------------------------------
 | Run The Application

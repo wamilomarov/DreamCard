@@ -13,7 +13,8 @@
     "411": "not enough balance in your card",
     "412": "unexpected error",
     "413": "no such partner",
-    "414": "campaign already exists"
+    "414": "campaign already exists",
+    "415": "card code is not usable"
   },
   "models_explanation":
   {
@@ -1434,6 +1435,24 @@
       "faq": [
 
       ]
-    }
+    },
+    "partner": [
+      {
+        "url": "/partner/check",
+        "request_type": "POST",
+        "request_fields": "username, email, phone, password",
+        "response_example": {
+          "status": 200,
+          "data": {
+            "username": "DreamAdmin",
+            "email": "admin@dreamcard.az",
+            "phone": "+994555555555",
+            "updated_at": "2017-10-30 08:25:37",
+            "created_at": "2017-10-30 08:25:37",
+            "id": 1
+          }
+        }
+      }
+    ]
   }
 }

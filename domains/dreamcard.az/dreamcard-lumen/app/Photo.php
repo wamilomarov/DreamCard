@@ -15,9 +15,9 @@ class Photo extends Model
 {
     protected $fillable = ['id'];
 
-    protected $hidden = ['created_at', 'updated_at'];
-
     protected $appends = ['url'];
+
+    public $timestamps = false;
 
     public function getUrlAttribute()
     {

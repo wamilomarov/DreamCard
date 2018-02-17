@@ -10,9 +10,11 @@ namespace App\Http\Controllers;
 
 
 use App\Campaign;
+use App\Card;
 use App\Helper;
 use App\Partner;
 use App\Photo;
+use App\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -198,6 +200,48 @@ class PartnerController extends Controller
         {
             $result = ['status' => 406];
         }
+        return response()->json($result);
+    }
+
+    public function approvePurchase(Request $request)
+    {
+        if ($request->has('qr_code') && $request->has('campaign_id'))
+        {
+            if (Card::where('qr_code', $request->get('qr_code'))->exists() &&
+                Campaign::where('id', $request->get('campaign_id'))->exists())
+            {
+                $card = Card::where('qr_code', $request->get('qr_code'))->first();
+                if ($card->qr_code == null)
+                {
+                    $result = ['status' => 415];
+                }
+                else
+                {
+                    $diff = 120 - (strtotime(date('Y-m-d H:i:s')) - strtotime($card->qr_created_at));
+                    if ($diff <= 0)
+                    {
+                        $result = ['status' => 415];
+                    }
+                    else
+                    {
+                        $purchase = new Purchase();
+                        $purchase->card_id = $card->id;
+                        $purchase->campaign_id = $request->get('campaign_id');
+                        $purchase->save();
+                        $result = ['status' => 200];
+                    }
+                }
+            }
+            else
+            {
+                $result = ['status' => 408];
+            }
+        }
+        else
+        {
+            $result = ['status' => 406];
+        }
+
         return response()->json($result);
     }
 

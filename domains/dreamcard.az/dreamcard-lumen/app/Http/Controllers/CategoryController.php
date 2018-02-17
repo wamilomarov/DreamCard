@@ -143,7 +143,7 @@ class CategoryController extends Controller
             if ($request->hasFile('dark_icon'))
             {
                 $large_dark_icon = new Photo();
-                $darkMimeType = $request->file('dark_icon');
+                $darkMimeType = $request->file('dark_icon')->getMimeType();
                 $large_dark_icon_result = $large_dark_icon->upload($request->file('dark_icon'), 'uploads/photos/categories/');
 
                 if ($large_dark_icon_result == 200)
@@ -165,7 +165,7 @@ class CategoryController extends Controller
             if ($request->hasFile('light_icon'))
             {
                 $large_light_icon = new Photo();
-                $lightMimeType = $request->file('light_icon');
+                $lightMimeType = $request->file('light_icon')->getMimeType();
                 $large_light_icon_result = $large_light_icon->upload($request->file('light_icon'), 'uploads/photos/categories/');
 
                 if ($large_light_icon_result == 200)

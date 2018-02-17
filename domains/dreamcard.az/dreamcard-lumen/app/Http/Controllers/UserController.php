@@ -313,7 +313,6 @@ class UserController extends Controller
 
             if ($request->hasFile('photo')) {
                 $photo = new Photo();
-                var_dump($request->file('photo')); exit;
                 $photo_result = $photo->upload($request->file('photo'), 'uploads/photos/users/');
 
                 if ($photo_result == 200) {
